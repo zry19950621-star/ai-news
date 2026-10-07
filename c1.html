@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="data:," />
+  <title>AI资讯悬浮窗（桌面版）</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@600;700;900&display=swap');
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7f9;
+      --surface: #ffffff;
+      --surface-2: #eef1f4;
+      --text: #12171f;
+      --muted: #626c78;
+      --faint: #8c96a3;
+      --line: #dce1e6;
+      --line-strong: #c8ced5;
+      --accent: #08796d;
+      --accent-soft: #dff3ef;
+      --amber: #9a5b00;
+      --amber-soft: #fff1d2;
+      --red: #b33a34;
+      --red-soft: #fbe9e7;
+      --blue: #2563a9;
+      --blue-soft: #e5eef9;
+      --shadow: 0 12px 40px rgba(24, 31, 41, .09);
+      --card-radius: 16px;
+      --body-size: 15px;
+      --card-pad: 20px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1116;
+        --surface: #151b22;
+        --surface-2: #1d252e;
+        --text: #f2f5f7;
+        --muted: #aab4bf;
+        --faint: #7f8a96;
+        --line: #28323d;
+        --line-strong: #3a4652;
+        --accent: #55cabb;
+        --accent-soft: #163b37;
+        --amber: #f1b44d;
+        --amber-soft: #3d2c12;
+        --red: #ef8a82;
+        --red-soft: #3d2524;
+        --blue: #7bb0eb;
+        --blue-soft: #1a3048;
+        --shadow: 0 16px 50px rgba(0, 0, 0, .28);
+      }
+    }
+    :root[data-theme="light"] {
+      --bg: #f5f7f9; --surface: #ffffff; --surface-2: #eef1f4; --text: #12171f; --muted: #626c78;
+      --faint: #8c96a3; --line: #dce1e6; --line-strong: #c8ced5; --accent: #08796d; --accent-soft: #dff3ef;
+      --amber: #9a5b00; --amber-soft: #fff1d2; --red: #b33a34; --red-soft: #fbe9e7; --blue: #2563a9;
+      --blue-soft: #e5eef9; --shadow: 0 12px 40px rgba(24, 31, 41, .09);
+    }
+    :root[data-theme="dark"] {
+      --bg: #0d1116; --surface: #151b22; --surface-2: #1d252e; --text: #f2f5f7; --muted: #aab4bf;
+      --faint: #7f8a96; --line: #28323d; --line-strong: #3a4652; --accent: #55cabb; --accent-soft: #163b37;
+      --amber: #f1b44d; --amber-soft: #3d2c12; --red: #ef8a82; --red-soft: #3d2524; --blue: #7bb0eb;
+      --blue-soft: #1a3048; --shadow: 0 16px 50px rgba(0, 0, 0, .28);
+    }
+    :root[data-size="small"] { --body-size: 14px; }
+    :root[data-size="large"] { --body-size: 17px; }
+    :root[data-density="compact"] { --card-pad: 14px; --card-radius: 12px; }
+
+    * { box-sizing: border-box; }
+    html { min-width: 0; background: var(--bg); }
+    body {
+      margin: 0;
+      min-width: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: var(--body-size);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }
+    .app { width: min(1420px, 100%); margin: 0 auto; min-height: 100vh; }
+    .topbar {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 12px clamp(16px, 3vw, 34px);
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      backdrop-filter: blur(14px);
+    }
+    .status { display: flex; align-items: center; gap: 10px; min-width: 0; color: var(--muted); font-size: 12px; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent); flex: none; }
+    .mono { font-family: "IBM Plex Mono", monospace; letter-spacing: .01em; }
+    .top-actions { display: flex; gap: 6px; flex: none; }
+    .icon-btn {
+      width: 38px; height: 38px; padding: 0; border: 1px solid transparent; border-radius: 10px;
+      display: grid; place-items: center; color: var(--muted); background: transparent; cursor: pointer;
+    }
+    .icon-btn:hover, .icon-btn[aria-expanded="true"] { color: var(--text); background: var(--surface-2); border-color: var(--line); }
+    .icon-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+    .masthead { padding: clamp(26px, 5vw, 58px) clamp(16px, 4vw, 58px) 20px; }
+    .date-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; color: var(--muted); font-size: 12px; }
+    .date-line strong { color: var(--text); font-weight: 600; }
+    .edition { padding: 3px 8px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 11px; }
+    .masthead h1 {
+      margin: 18px 0 12px;
+      max-width: 970px;
+      font-size: clamp(30px, 5.2vw, 68px);
+      line-height: 1.08;
+      letter-spacing: -.045em;
+      font-weight: 700;
+    }
+    .deck { max-width: 820px; margin: 0; color: var(--muted); font-size: clamp(14px, 1.4vw, 18px); line-height: 1.75; }
+    .signal-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .signal { display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+    .signal b { color: var(--text); font-weight: 600; }
+
+    .toolbar-wrap { position: sticky; top: 63px; z-index: 20; background: color-mix(in srgb, var(--bg) 94%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+    .toolbar { display: flex; align-items: center; gap: 10px; padding: 10px clamp(16px, 4vw, 58px); overflow: hidden; }
+    .tabs { display: flex; align-items: center; gap: 4px; min-width: 0; flex-wrap: wrap; }
+    .tab { border: 0; background: transparent; color: var(--muted); padding: 8px 11px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-size: 13px; }
+    .tab:hover { background: var(--surface-2); color: var(--text); }
+    .tab.active { color: var(--surface); background: var(--text); }
+    .count { opacity: .65; margin-left: 4px; font-family: "IBM Plex Mono", monospace; font-size: 10px; }
+    .spacer { flex: 1; }
+    .search-wrap { display: none; flex: 1; min-width: 120px; max-width: 420px; }
+    .search-wrap.open { display: block; }
+    .search { width: 100%; height: 36px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--surface); color: var(--text); padding: 0 12px; }
+
+    .content { padding: 22px clamp(16px, 4vw, 58px) 64px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+    .section-head h2 { margin: 0; font-size: 18px; letter-spacing: -.015em; }
+    .section-head p { margin: 0; color: var(--faint); font-size: 12px; }
+    .lead-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr); gap: 14px; margin-bottom: 24px; }
+    .lead-card, .brief-card { background: var(--surface); border: 1px solid var(--line); box-shadow: 0 1px 0 rgba(0,0,0,.02); }
+    .lead-card { border-radius: 20px; padding: clamp(22px, 3.5vw, 38px); min-height: 320px; display: flex; flex-direction: column; justify-content: space-between; }
+    .lead-card .kicker { color: var(--accent); font-size: 12px; font-weight: 700; }
+    .lead-card h2 { margin: 16px 0 12px; font-size: clamp(24px, 3vw, 42px); line-height: 1.2; letter-spacing: -.035em; }
+    .lead-card p { margin: 0; color: var(--muted); max-width: 760px; }
+    .lead-meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 26px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .lead-side { display: grid; gap: 14px; }
+    .brief-card { border-radius: 14px; padding: 18px; }
+    .brief-card .label { font-size: 11px; color: var(--faint); }
+    .brief-card strong { display: block; margin-top: 7px; font-size: 16px; line-height: 1.4; }
+    .brief-card p { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+
+    .news-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .card {
+      min-width: 0; border-radius: var(--card-radius); background: var(--surface); border: 1px solid var(--line);
+      padding: var(--card-pad); display: flex; flex-direction: column; min-height: 315px; transition: border-color .2s ease, box-shadow .2s ease, opacity .2s ease;
+    }
+    .card:hover { border-color: var(--line-strong); box-shadow: var(--shadow); }
+    .card.hidden { display: none; }
+    .card.read { opacity: .66; }
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .tag { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-size: 11px; font-weight: 600; }
+    .tag-dot { width: 6px; height: 6px; border-radius: 2px; background: currentColor; }
+    .quality { padding: 3px 7px; border-radius: 6px; font-size: 10px; background: var(--accent-soft); color: var(--accent); }
+    .quality.multi { background: var(--blue-soft); color: var(--blue); }
+    .quality.single { background: var(--amber-soft); color: var(--amber); }
+    .card h3 { margin: 18px 0 10px; font-size: clamp(18px, 1.5vw, 23px); line-height: 1.36; letter-spacing: -.02em; }
+    .card .summary { margin: 0; color: var(--muted); font-size: .92em; }
+    .why { margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--line); color: var(--text); font-size: .88em; }
+    .why b { color: var(--accent); }
+    .card-footer { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 20px; color: var(--faint); font-size: 11px; }
+    .source-name { min-width: 0; overflow: visible; white-space: normal; line-height: 1.5; }
+    .card-actions { display: flex; gap: 2px; margin-left: auto; }
+    .mini-btn { width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: var(--faint); display: grid; place-items: center; cursor: pointer; }
+    .mini-btn:hover, .mini-btn.active { background: var(--surface-2); color: var(--accent); }
+    .mini-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .mini-btn.active .bookmark-shape { fill: currentColor; }
+    .open-link { color: inherit; text-decoration: none; }
+    .open-link:hover { color: var(--accent); }
+    .empty { display: none; padding: 56px 18px; text-align: center; border: 1px dashed var(--line-strong); border-radius: 16px; color: var(--muted); }
+    .empty.visible { display: block; }
+    .hidden-section { display: none !important; }
+    .expo-section { margin-top: 42px; }
+    .expo-head > div { display: grid; gap: 2px; }
+    .section-index { color: var(--accent); font-size: 10px; letter-spacing: .08em; }
+    .expo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .expo-card { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 18px; min-height: 290px; }
+    .expo-date { align-self: start; padding-top: 2px; color: var(--accent); }
+    .expo-date strong { display: block; font: 500 22px/1 "IBM Plex Mono", monospace; }
+    .expo-date span { display: block; margin-top: 8px; color: var(--faint); font: 500 10px/1.45 "IBM Plex Mono", monospace; letter-spacing: .08em; }
+    .expo-copy { min-width: 0; display: flex; flex-direction: column; }
+    .expo-card .card-footer { width: 100%; }
+
+    .sheet-backdrop { position: fixed; inset: 0; z-index: 60; background: rgba(4,9,14,.35); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+    .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+    .sheet {
+      position: fixed; z-index: 70; right: 12px; top: 12px; bottom: 12px; width: min(430px, calc(100% - 24px));
+      padding: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 24px 80px rgba(0,0,0,.24);
+      transform: translateX(calc(100% + 24px)); transition: transform .24s ease; overflow-y: auto;
+    }
+    .sheet.open { transform: translateX(0); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .sheet h2 { margin: 0; font-size: 20px; }
+    .sheet h3 { margin: 26px 0 8px; font-size: 14px; }
+    .sheet p { margin: 0; color: var(--muted); font-size: 13px; }
+    .source-list { display: grid; gap: 9px; margin-top: 12px; }
+    .source-row { display: grid; grid-template-columns: 74px 1fr; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+    .source-tier { color: var(--accent); font-weight: 600; }
+    .controls { display: grid; gap: 12px; margin-top: 14px; }
+    .control-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+    .control-row > span { font-size: 13px; color: var(--muted); }
+    .seg { display: flex; gap: 3px; padding: 3px; border-radius: 9px; background: var(--surface-2); }
+    .seg button { border: 0; border-radius: 7px; background: transparent; color: var(--muted); padding: 6px 9px; cursor: pointer; font-size: 12px; }
+    .seg button.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+    .toast { position: fixed; z-index: 100; left: 50%; bottom: 22px; transform: translate(-50%, 18px); opacity: 0; pointer-events: none; background: var(--text); color: var(--surface); border-radius: 9px; padding: 9px 13px; font-size: 12px; transition: .2s ease; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .footer { padding: 0 clamp(16px, 4vw, 58px) 38px; display: flex; justify-content: space-between; gap: 18px; color: var(--faint); font-size: 11px; }
+
+    /* Inline English pronunciation and plain-Chinese notes. Added at runtime so every refreshed card inherits it. */
+    .speakable { display: inline; }
+    .speak-btn {
+      display: inline-grid; place-items: center; width: 22px; height: 22px; margin: 0 4px;
+      padding: 0; vertical-align: -3px; border: 1px solid var(--line-strong); border-radius: 50%;
+      background: var(--surface); color: var(--accent); cursor: pointer;
+    }
+    .speak-btn:hover, .speak-btn.is-speaking { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+    .speak-btn:disabled { cursor: not-allowed; color: var(--faint); background: var(--surface-2); border-color: var(--line); opacity: .55; }
+    .speak-btn:disabled:hover { color: var(--faint); background: var(--surface-2); border-color: var(--line); }
+    .speak-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+    .term-note { color: var(--muted); font-size: .84em; font-weight: 400; }
+    .source-note { color: var(--muted); font-size: .92em; }
+    :root[data-speech="off"] .speak-btn { display: none; }
+    #speechToggle[aria-pressed="true"] { color: var(--accent); background: var(--accent-soft); border-color: var(--line); }
+    #speechToggle:disabled { cursor: not-allowed; color: var(--faint); background: var(--surface-2); border-color: var(--line); opacity: .55; }
+    .speech-help { margin-top: 8px !important; padding: 10px 12px; border-top: 1px solid var(--line); }
+
+    @media (max-width: 980px) {
+      .lead-grid { grid-template-columns: 1fr; }
+      .lead-side { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .topbar { padding: 9px 12px; }
+      .status .desktop-only { display: none; }
+      .masthead { padding: 22px 16px 16px; }
+      .masthead h1 { font-size: 32px; }
+      .deck { font-size: 14px; line-height: 1.7; }
+      .signal-row { display: grid; grid-template-columns: 1fr 1fr; }
+      .signal { min-width: 0; }
+      .toolbar-wrap { top: 57px; }
+      .toolbar { padding: 8px 10px; }
+      .tabs { row-gap: 6px; }
+      .tab { padding: 7px 9px; font-size: 12px; }
+      .toolbar.searching .tabs, .toolbar.searching .spacer { display: none; }
+      .search-wrap.open { max-width: none; }
+      .content { padding: 16px 12px 54px; }
+      .lead-side { grid-template-columns: 1fr; }
+      .lead-card { min-height: 280px; }
+      .lead-card h2 { font-size: 26px; }
+      .news-grid { grid-template-columns: 1fr; }
+      .card { min-height: 0; }
+      .footer { padding: 0 16px 28px; flex-direction: column; }
+    }
+    @media (max-width: 380px) {
+      .signal-row { grid-template-columns: 1fr; }
+      .date-line .edition { display: none; }
+      .card h3 { font-size: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+
+    /* A4 poster edition — portrait paper, editorial rules, compact reading rhythm */
+    :root {
+      --bg: #d9dcda;
+      --surface: #f7f4ec;
+      --surface-2: #ece8dd;
+      --text: #111513;
+      --muted: #535b57;
+      --faint: #767e79;
+      --line: #c9c8be;
+      --line-strong: #949890;
+      --accent: #006b5e;
+      --accent-soft: #d5e9e3;
+      --shadow: 0 28px 80px rgba(31, 36, 33, .18);
+      --card-radius: 0;
+      --card-pad: 18px 0 22px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0e1110;
+        --surface: #191c1a;
+        --surface-2: #252a27;
+        --text: #f3f0e7;
+        --muted: #b4bab5;
+        --faint: #89918c;
+        --line: #383e3a;
+        --line-strong: #626963;
+        --accent: #70c9b9;
+        --accent-soft: #1f443e;
+        --shadow: 0 28px 80px rgba(0, 0, 0, .42);
+      }
+    }
+    :root[data-theme="light"] {
+      --bg: #d9dcda; --surface: #f7f4ec; --surface-2: #ece8dd; --text: #111513; --muted: #535b57;
+      --faint: #767e79; --line: #c9c8be; --line-strong: #949890; --accent: #006b5e; --accent-soft: #d5e9e3;
+      --shadow: 0 28px 80px rgba(31, 36, 33, .18);
+    }
+    :root[data-theme="dark"] {
+      --bg: #0e1110; --surface: #191c1a; --surface-2: #252a27; --text: #f3f0e7; --muted: #b4bab5;
+      --faint: #89918c; --line: #383e3a; --line-strong: #626963; --accent: #70c9b9; --accent-soft: #1f443e;
+      --shadow: 0 28px 80px rgba(0, 0, 0, .42);
+    }
+    body { background: var(--bg); }
+    .app {
+      position: relative;
+      width: min(1040px, calc(100% - 56px));
+      margin: 28px auto 48px;
+      min-height: 1414px;
+      overflow: clip;
+      background: var(--surface);
+      border: 1px solid var(--line-strong);
+      box-shadow: var(--shadow);
+    }
+    .app::before {
+      content: "A4 / WEEKLY INTELLIGENCE";
+      position: absolute;
+      z-index: 2;
+      top: 112px;
+      right: 18px;
+      color: var(--faint);
+      font: 500 9px/1 "IBM Plex Mono", monospace;
+      letter-spacing: .16em;
+      writing-mode: vertical-rl;
+    }
+    .topbar {
+      position: relative;
+      top: auto;
+      padding: 14px 38px 12px;
+      background: var(--surface);
+      backdrop-filter: none;
+      border-bottom: 3px double var(--text);
+    }
+    .status { font-size: 10px; letter-spacing: .04em; text-transform: uppercase; }
+    .live-dot { width: 6px; height: 6px; border-radius: 0; box-shadow: none; }
+    .icon-btn { border-radius: 0; }
+    .icon-btn:hover, .icon-btn[aria-expanded="true"] { border-color: var(--line-strong); }
+    .masthead {
+      position: relative;
+      padding: 30px 54px 30px 38px;
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      column-gap: 28px;
+      border-bottom: 1px solid var(--text);
+    }
+    .date-line {
+      grid-column: 1;
+      align-content: start;
+      display: grid;
+      gap: 9px;
+      padding-top: 8px;
+      border-top: 8px solid var(--accent);
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .date-line strong { font-family: "IBM Plex Mono", monospace; font-size: 11px; }
+    .edition { width: max-content; padding: 2px 0; border: 0; border-bottom: 1px solid var(--line-strong); border-radius: 0; }
+    .masthead h1 {
+      grid-column: 2;
+      margin: 0;
+      max-width: none;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(46px, 6.5vw, 72px);
+      line-height: 1.05;
+      letter-spacing: -.055em;
+      font-weight: 900;
+    }
+    .deck {
+      grid-column: 2;
+      margin-top: 18px;
+      max-width: 720px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      font-size: 16px;
+      line-height: 1.8;
+    }
+    .signal-row {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin: 30px 0 0;
+      border-top: 1px solid var(--text);
+      border-bottom: 1px solid var(--text);
+    }
+    .signal {
+      min-height: 54px;
+      padding: 10px 14px;
+      border: 0;
+      border-right: 1px solid var(--line-strong);
+      border-radius: 0;
+      background: transparent;
+      align-items: baseline;
+    }
+    .signal:last-child { border-right: 0; }
+    .signal b { font: 500 22px/1 "IBM Plex Mono", monospace; color: var(--accent); }
+    .toolbar-wrap {
+      position: sticky;
+      top: 0;
+      background: var(--text);
+      border: 0;
+      backdrop-filter: none;
+    }
+    .toolbar { padding: 8px 38px; }
+    .tab { color: color-mix(in srgb, var(--surface) 68%, transparent); border-radius: 0; }
+    .tab:hover { background: color-mix(in srgb, var(--surface) 12%, transparent); color: var(--surface); }
+    .tab.active { color: var(--text); background: var(--surface); }
+    .search { border-radius: 0; }
+    .content { padding: 28px 38px 58px; }
+    .lead-grid {
+      grid-template-columns: minmax(0, 1.45fr) minmax(240px, .55fr);
+      gap: 0;
+      margin-bottom: 38px;
+      border-top: 8px solid var(--text);
+      border-bottom: 1px solid var(--text);
+    }
+    .lead-card, .brief-card { background: transparent; border: 0; box-shadow: none; }
+    .lead-card {
+      min-height: 348px;
+      padding: 30px 34px 26px 0;
+      border-right: 1px solid var(--line-strong);
+      border-radius: 0;
+    }
+    .lead-card .kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: .04em; }
+    .lead-card h2 {
+      margin: 15px 0 14px;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(31px, 4vw, 47px);
+      line-height: 1.18;
+      font-weight: 900;
+    }
+    .lead-meta { border-top-color: var(--line-strong); }
+    .lead-side { display: grid; gap: 0; }
+    .brief-card { padding: 24px 0 22px 24px; border-bottom: 1px solid var(--line-strong); border-radius: 0; }
+    .brief-card:last-child { border-bottom: 0; }
+    .brief-card .label { font-family: "IBM Plex Mono", monospace; color: var(--accent); }
+    .brief-card strong { font-family: "Noto Serif SC", "Songti SC", serif; font-size: 18px; line-height: 1.5; }
+    .section-head { align-items: baseline; margin-bottom: 0; padding-bottom: 10px; border-bottom: 1px solid var(--text); }
+    .section-head h2 { font-family: "Noto Serif SC", "Songti SC", serif; font-size: 26px; }
+    .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; }
+    .expo-section { margin-top: 44px; padding-top: 18px; border-top: 8px solid var(--accent); }
+    .expo-head { margin-bottom: 0; }
+    .expo-head h2 { font-size: 32px; }
+    .expo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; }
+    .expo-card { grid-template-columns: 92px minmax(0, 1fr); gap: 20px; min-height: 318px; }
+    .expo-date { padding: 20px 16px 0 0; border-right: 1px solid var(--line); }
+    .expo-date strong { font-size: 24px; }
+    .expo-copy { padding-top: 18px; }
+    .expo-card h3 { margin-top: 14px; }
+    .card {
+      position: relative;
+      min-height: 334px;
+      border: 0;
+      border-bottom: 1px solid var(--line-strong);
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    .card:nth-child(odd)::after {
+      content: "";
+      position: absolute;
+      top: 18px;
+      right: -16px;
+      bottom: 22px;
+      width: 1px;
+      background: var(--line);
+    }
+    .card:hover { border-color: var(--text); box-shadow: none; }
+    .card h3 {
+      margin: 17px 0 10px;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(20px, 2.2vw, 26px);
+      line-height: 1.38;
+      font-weight: 700;
+    }
+    .quality { border-radius: 0; font-family: "IBM Plex Mono", monospace; }
+    .tag { font-family: "IBM Plex Mono", monospace; letter-spacing: .03em; }
+    .tag-dot { border-radius: 0; }
+    .why b { font-family: "Noto Serif SC", "Songti SC", serif; }
+    .mini-btn { border-radius: 0; }
+    .footer { padding: 18px 38px 34px; border-top: 3px double var(--text); }
+    .sheet { border-radius: 0; }
+    .seg, .seg button, .toast, .empty { border-radius: 0; }
+
+    @media (max-width: 980px) {
+      .app { width: min(860px, calc(100% - 32px)); margin-top: 16px; }
+      .masthead { grid-template-columns: 150px minmax(0, 1fr); padding-left: 28px; }
+      .topbar, .toolbar { padding-left: 28px; padding-right: 28px; }
+      .content { padding-left: 28px; padding-right: 28px; }
+      .footer { padding-left: 28px; padding-right: 28px; }
+      .lead-side { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .app { width: 100%; min-height: 100vh; margin: 0; border: 0; box-shadow: none; }
+      .app::before { display: none; }
+      .topbar { padding: 10px 14px; border-bottom-width: 1px; }
+      .masthead { display: block; padding: 22px 16px 20px; }
+      .date-line { display: flex; padding-top: 7px; margin-bottom: 20px; }
+      .masthead h1 { font-size: clamp(38px, 12vw, 56px); }
+      .deck { margin-top: 18px; padding-top: 14px; }
+      .signal-row { grid-template-columns: 1fr 1fr; }
+      .signal:nth-child(2) { border-right: 0; }
+      .signal:nth-child(-n+2) { border-bottom: 1px solid var(--line-strong); }
+      .toolbar { padding: 8px 10px; }
+      .content { padding: 20px 16px 46px; }
+      .lead-grid { display: block; }
+      .lead-card { min-height: 0; padding: 24px 0 26px; border-right: 0; border-bottom: 1px solid var(--line-strong); }
+      .lead-card h2 { font-size: 31px; }
+      .brief-card { padding-left: 0; }
+      .news-grid, .expo-grid { grid-template-columns: 1fr; }
+      .expo-section { margin-top: 34px; }
+      .expo-card { grid-template-columns: 74px minmax(0, 1fr); gap: 14px; }
+      .expo-date { padding-right: 10px; }
+      .expo-date strong { font-size: 18px; }
+      .card { min-height: 0; }
+      .card:nth-child(odd)::after { display: none; }
+      .section-head { align-items: flex-start; }
+      .footer { padding: 16px; }
+    }
+
+    /* Archive — compact edition index inside the A4 editorial system */
+    .archive-section { margin-top: 44px; padding-top: 18px; border-top: 8px solid var(--accent); }
+    .archive-head > div { display: grid; gap: 2px; }
+    .archive-list { border-bottom: 1px solid var(--text); }
+    .archive-edition { border-bottom: 1px solid var(--line-strong); }
+    .archive-edition:last-child { border-bottom: 0; }
+    .archive-summary {
+      list-style: none; cursor: pointer; display: grid; grid-template-columns: 132px minmax(0, 1fr) auto;
+      align-items: center; gap: 20px; padding: 18px 0; color: var(--text);
+    }
+    .archive-summary::-webkit-details-marker { display: none; }
+    .archive-number { color: var(--accent); font: 500 11px/1.3 "IBM Plex Mono", monospace; letter-spacing: .06em; }
+    .archive-time { font-family: "Noto Serif SC", "Songti SC", serif; font-size: 19px; font-weight: 700; }
+    .archive-count { display: inline-flex; align-items: center; gap: 12px; color: var(--muted); font: 500 11px/1 "IBM Plex Mono", monospace; }
+    .archive-count::after { content: "+"; width: 24px; height: 24px; display: grid; place-items: center; border: 1px solid var(--line-strong); color: var(--accent); font-size: 16px; }
+    .archive-edition[open] .archive-count::after { content: "−"; }
+    .archive-items { margin: 0; padding: 0 0 14px; list-style: none; border-top: 3px double var(--text); }
+    .archive-item { display: grid; grid-template-columns: 112px minmax(0, 1fr) minmax(150px, 220px); gap: 18px; align-items: baseline; padding: 13px 0; border-bottom: 1px solid var(--line); }
+    .archive-item:last-child { border-bottom: 0; }
+    .archive-item[hidden] { display: none; }
+    .archive-category { color: var(--accent); font: 500 10px/1.4 "IBM Plex Mono", monospace; letter-spacing: .04em; }
+    .archive-title { color: var(--text); font-family: "Noto Serif SC", "Songti SC", serif; font-size: 16px; font-weight: 700; line-height: 1.55; text-decoration: none; }
+    .archive-title:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .archive-meta { color: var(--faint); font-size: 10px; line-height: 1.55; text-align: right; overflow-wrap: anywhere; }
+    @media (max-width: 700px) {
+      .archive-section { margin-top: 34px; }
+      .archive-summary { grid-template-columns: 82px minmax(0, 1fr) auto; gap: 10px; padding: 15px 0; }
+      .archive-time { font-size: 16px; }
+      .archive-count span { display: none; }
+      .archive-item { grid-template-columns: 76px minmax(0, 1fr); gap: 8px 12px; padding: 13px 0; }
+      .archive-meta { grid-column: 2; text-align: left; }
+    }
+
+    /* Deep reading — a single-column newspaper essay within the existing A4 system */
+    .deep-section { margin-top: 44px; padding-top: 18px; border-top: 8px solid var(--text); }
+    .deep-head { margin-bottom: 0; }
+    .deep-head > div { display: grid; gap: 2px; }
+    .deep-list { display: grid; }
+    .deep-article {
+      display: block;
+      min-height: 0;
+      padding: 34px 0 10px;
+      border-bottom: 0;
+    }
+    .deep-article::after { display: none !important; }
+    .deep-article:hover { border-color: transparent; }
+    .deep-article + .deep-article { margin-top: 52px; padding-top: 42px; border-top: 8px solid var(--text); }
+    .deep-article-header {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 28px;
+      padding-bottom: 28px;
+      border-bottom: 3px double var(--text);
+    }
+    .deep-date {
+      align-self: start;
+      padding-top: 8px;
+      border-top: 6px solid var(--accent);
+      color: var(--muted);
+      font: 500 11px/1.7 "IBM Plex Mono", monospace;
+    }
+    .deep-title {
+      margin: 0;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1.16;
+      letter-spacing: -.045em;
+      font-weight: 900;
+    }
+    .deep-body {
+      width: min(720px, 100%);
+      margin: 30px auto 0;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: calc(var(--body-size) + 2px);
+      line-height: 1.95;
+    }
+    .deep-body p { margin: 0 0 1.15em; }
+    .deep-body ul { margin: 0 0 1.15em; padding-left: 1.35em; }
+    .deep-body li { margin-bottom: .65em; }
+    .deep-body a { overflow-wrap: anywhere; }
+    .deep-body hr { margin: 2.4em 0; border: 0; border-top: 1px solid var(--line-strong); }
+    .deep-body h3 {
+      margin: 2.2em 0 .8em;
+      padding-top: .65em;
+      border-top: 1px solid var(--line-strong);
+      color: var(--text);
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: 1.48em;
+      line-height: 1.4;
+      letter-spacing: -.02em;
+    }
+    .deep-body strong { font-weight: 900; }
+    .deep-article .card-footer {
+      width: min(720px, 100%);
+      margin: 28px auto 0;
+      padding: 18px 0 0;
+      border-top: 1px solid var(--text);
+    }
+    @media (max-width: 700px) {
+      .deep-section { margin-top: 34px; }
+      .deep-article { padding-top: 24px; }
+      .deep-article-header { display: block; padding-bottom: 22px; }
+      .deep-date { width: max-content; margin-bottom: 18px; }
+      .deep-title { font-size: clamp(30px, 9.5vw, 42px); line-height: 1.2; }
+      .deep-body { margin-top: 24px; font-size: calc(var(--body-size) + 1px); line-height: 1.88; }
+      .deep-body h3 { margin-top: 1.9em; font-size: 1.35em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="status">
+        <span class="live-dot" aria-hidden="true"></span>
+        <strong>全球 AI 周报</strong>
+        <span class="desktop-only">·</span>
+        <span class="mono desktop-only">更新于 2026-10-07 04:16 CST · 每 6 小时自动刷新</span>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="speechToggle" aria-label="英语发音已开启，点击关闭" aria-pressed="true" title="英语发音开关">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg>
+        </button>
+        <button class="icon-btn" id="searchToggle" aria-label="搜索资讯" aria-expanded="false">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
+        </button>
+        <button class="icon-btn" id="settingsToggle" aria-label="调整界面" aria-expanded="false">
+          <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="masthead">
+      <div class="date-line">
+        <strong>2026 年 9 月 29 日—10 月 6 日</strong>
+        <span class="edition">本期快照</span>
+        <span>15 个全球信号 · 5 个栏目</span>
+      </div>
+      <h1>Marvell 上调 2028 年营收指引至 200 亿美元，AI 数据中心定制芯片需求爆发</h1>
+      <p class="deck">Marvell 在 10 月 6 日的投资者日上将 2028 财年营收指引从 180 亿美元上调至约 200 亿美元，高于华尔街 182 亿美元的一致预期，股价盘中一度涨约 7%。公司首次给出 2031 财年营收目标 700~900 亿美元（中点 800 亿美元远超分析师预期的 468.5 亿美元），并称 8 月与 Google 披露的定制芯片协议潜在销售规模可达 1200 亿美元（至 2033 财年）。</p>
+      <div class="signal-row" aria-label="本周关键数据">
+        <span class="signal"><b>4</b> 个基座与算力事件</span>
+        <span class="signal"><b>4</b> 个应用动态</span>
+        <span class="signal"><b>4</b> 项研究进展</span>
+        <span class="signal"><b>3</b> 个具身智能事件</span>
+      </div>
+    </section>
+
+    <div class="toolbar-wrap">
+      <div class="toolbar" id="toolbar">
+        <nav class="tabs" aria-label="资讯分类">
+          <button class="tab active" data-filter="all">全部<span class="count">15</span></button>
+          <button class="tab" data-filter="base">新智基座<span class="count">04</span></button>
+          <button class="tab" data-filter="app">无界应用<span class="count">04</span></button>
+          <button class="tab" data-filter="research">前沿探索<span class="count">04</span></button>
+          <button class="tab" data-filter="embodied">具身未来<span class="count">03</span></button>
+          <button class="tab" data-filter="deep">深度解读<span class="count">02</span></button>
+          <button class="tab" data-filter="archive">往期回顾<span class="count">149</span></button>
+          <button class="tab" data-filter="expo">全球AI展讯<span class="count">25</span></button>
+          <button class="tab" data-filter="saved">收藏<span class="count" id="savedCount">00</span></button>
+        </nav>
+        <div class="spacer"></div>
+        <div class="search-wrap" id="searchWrap"><input class="search" id="searchInput" type="search" placeholder="搜索标题、机构或关键词" aria-label="搜索标题、机构或关键词" /></div>
+      </div>
+    </div>
+
+    <main class="content">
+      <section class="lead-grid" aria-labelledby="lead-title">
+        <article class="lead-card">
+          <div>
+            <span class="kicker">本期主线 · 新智基座</span>
+            <h2 id="lead-title">Marvell 上调 2028 年营收指引至 200 亿美元，AI 数据中心定制芯片需求爆发</h2>
+            <p>Marvell 在 10 月 6 日的投资者日上将 2028 财年营收指引从 180 亿美元上调至约 200 亿美元，高于华尔街 182 亿美元的一致预期，股价盘中一度涨约 7%。公司首次给出 2031 财年营收目标 700~900 亿美元（中点 800 亿美元远超分析师预期的 468.5 亿美元），并称 8 月与 Google 披露的定制芯片协议潜在销售规模可达 1200 亿美元（至 2033 财年）。</p>
+          </div>
+          <div class="lead-meta"><span>Reuters（2026-10-06）</span><span class="mono">10 / 06</span></div>
+        </article>
+        <div class="lead-side">
+          <article class="brief-card"><span class="label mono">SECONDARY SIGNAL</span><strong>Google 图像生成模型 Gemini Nano Banana 2.1 正式 GA，旧版 Flash-image 10 月 29 日退役</strong><p>Google 宣布图像生成模型 gemini-nano-banana-2.1 于 10 月 6 日达到 GA（正式可用），主打保持 Flash 级速度和低成本的同时提升画质、提示词遵从度、多轮人物一致性与文字渲染，支持最高 4K 分辨率与 1:8/8:1 等极端宽高比。开发者须在 10 月 29 日旧模型 gemini-3.1-flash-image 下线前完成迁移，否则现有图像调用将失效。</p></article>
+          <article class="brief-card"><span class="label mono">WATCHLIST</span><strong>AMD CEO 苏姿丰：2026 年 AI 芯片需求持续超出供给，明年大幅扩产</strong><p>AMD CEO 苏姿丰 10 月 6 日在台北会见供应链伙伴时表示，AMD 芯片需求超过供给，2026 年已扩产但需求增长更快，预计 2027 年将大幅增加出货，并称高带宽内存等供应仍偏紧。她此行拜访了鸿海、台积电（TSMC），后续还将与存储供应商沟通，100 亿美元台湾投资计划按进度推进。</p></article>
+        </div>
+      </section>
+
+      <section class="collection-section" id="weeklySection">
+        <div class="section-head"><h2>本期值得读</h2><p id="resultLabel">按影响力与信源质量排序</p></div>
+        <div class="news-grid" id="newsGrid">
+        <article class="card" data-id="base-1" data-category="base" data-date="2026-10-06" data-search="Marvell 上调 2028 年营收指引至 200 亿美元，AI 数据中心定制芯片需求爆发 Marvell 在 10 月 6 日的投资者日上将 2028 财年营收指引从 180 亿美元上调至约 200 亿美元，高于华尔街 182 亿美元的一致预期，股价盘中一度涨约 7%。公司首次给出 2031 财年营收目标 700~900 亿美元（中点 800 亿美元远超分析师预期的 468.5 亿美元），并称 8 月与 Google 披露的定制芯片协议潜在销售规模可达 1200 亿美元（至 2033 财年）。 Reuters（2026-10-06） Investopedia（2026-10-06）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality multi">2 个来源</span></div>
+          <h3>Marvell 上调 2028 年营收指引至 200 亿美元，AI 数据中心定制芯片需求爆发</h3>
+          <p class="summary">Marvell 在 10 月 6 日的投资者日上将 2028 财年营收指引从 180 亿美元上调至约 200 亿美元，高于华尔街 182 亿美元的一致预期，股价盘中一度涨约 7%。公司首次给出 2031 财年营收目标 700~900 亿美元（中点 800 亿美元远超分析师预期的 468.5 亿美元），并称 8 月与 Google 披露的定制芯片协议潜在销售规模可达 1200 亿美元（至 2033 财年）。</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.reuters.com/business/marvell-raises-2028-revenue-forecast-strong-ai-data-center-demand-2026-10-06/" target="_blank" rel="noopener noreferrer">Reuters（2026-10-06）</a> ；<a class="open-link" href="https://www.investopedia.com/market-udpate-marvell-lifts-its-long-term-outlook-on-strong-ai-demand-the-stock-is-surging-mrvl-12161577" target="_blank" rel="noopener noreferrer">Investopedia（2026-10-06）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.reuters.com/business/marvell-raises-2028-revenue-forecast-strong-ai-data-center-demand-2026-10-06/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="base-2" data-category="base" data-date="2026-10-06" data-search="Google 图像生成模型 Gemini Nano Banana 2.1 正式 GA，旧版 Flash-image 10 月 29 日退役 Google 宣布图像生成模型 gemini-nano-banana-2.1 于 10 月 6 日达到 GA（正式可用），主打保持 Flash 级速度和低成本的同时提升画质、提示词遵从度、多轮人物一致性与文字渲染，支持最高 4K 分辨率与 1:8/8:1 等极端宽高比。开发者须在 10 月 29 日旧模型 gemini-3.1-flash-image 下线前完成迁移，否则现有图像调用将失效。 Google Cloud 官方文档（2026-10-06） Oossa（2026-10-06）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality multi">2 个来源</span></div>
+          <h3>Google 图像生成模型 Gemini Nano Banana 2.1 正式 GA，旧版 Flash-image 10 月 29 日退役</h3>
+          <p class="summary">Google 宣布图像生成模型 gemini-nano-banana-2.1 于 10 月 6 日达到 GA（正式可用），主打保持 Flash 级速度和低成本的同时提升画质、提示词遵从度、多轮人物一致性与文字渲染，支持最高 4K 分辨率与 1:8/8:1 等极端宽高比。开发者须在 10 月 29 日旧模型 gemini-3.1-flash-image 下线前完成迁移，否则现有图像调用将失效。</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/nano-banana-2-1" target="_blank" rel="noopener noreferrer">Google Cloud 官方文档（2026-10-06）</a> ；<a class="open-link" href="https://oossa.com/en/google-launches-gemini-nano-banana-2-1-and-retires-flash-image-model" target="_blank" rel="noopener noreferrer">Oossa（2026-10-06）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/nano-banana-2-1" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="base-3" data-category="base" data-date="2026-10-06" data-search="AMD CEO 苏姿丰：2026 年 AI 芯片需求持续超出供给，明年大幅扩产 AMD CEO 苏姿丰 10 月 6 日在台北会见供应链伙伴时表示，AMD 芯片需求超过供给，2026 年已扩产但需求增长更快，预计 2027 年将大幅增加出货，并称高带宽内存等供应仍偏紧。她此行拜访了鸿海、台积电（TSMC），后续还将与存储供应商沟通，100 亿美元台湾投资计划按进度推进。 Analytics Insight（2026-10-06） Traders Union（2026-10-06）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality multi">2 个来源</span></div>
+          <h3>AMD CEO 苏姿丰：2026 年 AI 芯片需求持续超出供给，明年大幅扩产</h3>
+          <p class="summary">AMD CEO 苏姿丰 10 月 6 日在台北会见供应链伙伴时表示，AMD 芯片需求超过供给，2026 年已扩产但需求增长更快，预计 2027 年将大幅增加出货，并称高带宽内存等供应仍偏紧。她此行拜访了鸿海、台积电（TSMC），后续还将与存储供应商沟通，100 亿美元台湾投资计划按进度推进。</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.analyticsinsight.ae/news/amd-ceo-lisa-su-says-ai-chip-demand-is-outpacing-supply-in-2026" target="_blank" rel="noopener noreferrer">Analytics Insight（2026-10-06）</a> ；<a class="open-link" href="https://tradersunion.com/news/stocks/show/3678301-amd-hits-record-high/" target="_blank" rel="noopener noreferrer">Traders Union（2026-10-06）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.analyticsinsight.ae/news/amd-ceo-lisa-su-says-ai-chip-demand-is-outpacing-supply-in-2026" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="base-4" data-category="base" data-date="2026-10-06" data-search="应用材料与英特尔合作：联手 EPIC 中心加速面向 AI 的下一代制程与先进封装 应用材料（Applied Materials）10 月 6 日宣布与英特尔合作，加速开发面向 AI 工作负载的下一代晶体管、互连与先进封装技术。合作连接应用材料位于硅谷的 EPIC 中心与英特尔俄勒冈 Hillsboro 研发园区，涵盖面向 AI 的先进逻辑节点、互连微缩，以及基于 Foveros 的 3D 堆叠封装开发，目标是缩短先进半导体技术的上市时间。（注：单来源） Unite.AI（2026-10-06，单来源）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality single">1 个来源</span></div>
+          <h3>应用材料与英特尔合作：联手 EPIC 中心加速面向 AI 的下一代制程与先进封装</h3>
+          <p class="summary">应用材料（Applied Materials）10 月 6 日宣布与英特尔合作，加速开发面向 AI 工作负载的下一代晶体管、互连与先进封装技术。合作连接应用材料位于硅谷的 EPIC 中心与英特尔俄勒冈 Hillsboro 研发园区，涵盖面向 AI 的先进逻辑节点、互连微缩，以及基于 Foveros 的 3D 堆叠封装开发，目标是缩短先进半导体技术的上市时间。（注：单来源）</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.unite.ai/applied-materials-and-intel-partner-on-ai-chipmaking-at-epic-center/" target="_blank" rel="noopener noreferrer">Unite.AI（2026-10-06，单来源）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.unite.ai/applied-materials-and-intel-partner-on-ai-chipmaking-at-epic-center/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="app-1" data-category="app" data-date="2026-10-06" data-search="SAP 推进「自主企业」战略：Joule Work 新智能体矩阵上线 SAP 在 SAP Connect 大会上发布了横跨财务、供应链、HR、采购和客户体验等多个领域的新一批 AI 助手与智能体，兑现其今年 5 月提出的「自主企业」愿景。Joule Work 已从单一聊天入口升级为统一交互界面，由智能体在后台驱动，通过 SAP for Me 门户以 SAP 托管产品形式交付，本月起全面可用。SAP 称 Joule Work 已在其内部 11 万员工中落地，财务、HR、采购等部门效率提升 20%。（注：单来源） CIO（2026-10-06，单来源）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality single">1 个来源</span></div>
+          <h3>SAP 推进「自主企业」战略：Joule Work 新智能体矩阵上线</h3>
+          <p class="summary">SAP 在 SAP Connect 大会上发布了横跨财务、供应链、HR、采购和客户体验等多个领域的新一批 AI 助手与智能体，兑现其今年 5 月提出的「自主企业」愿景。Joule Work 已从单一聊天入口升级为统一交互界面，由智能体在后台驱动，通过 SAP for Me 门户以 SAP 托管产品形式交付，本月起全面可用。SAP 称 Joule Work 已在其内部 11 万员工中落地，财务、HR、采购等部门效率提升 20%。（注：单来源）</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.cio.com/article/4231331/sap-advances-its-autonomous-ai-agenda-with-yet-more-joule-assistants-and-agents.html" target="_blank" rel="noopener noreferrer">CIO（2026-10-06，单来源）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.cio.com/article/4231331/sap-advances-its-autonomous-ai-agenda-with-yet-more-joule-assistants-and-agents.html" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="app-2" data-category="app" data-date="2026-10-06" data-search="Hack The Box 推出 AI Range 企业版：给安全智能体「评职称」 网络安全训练平台 Hack The Box 发布 AI Range Enterprise Edition，让企业安全团队能在受控攻防环境中实测自家 AI 安全智能体是否胜任被分配的网络安全岗位，附带 Competence Scoring（能力评分）和 AI 增强岗位考核体系。该版本沿袭了 2025 年 12 月发布的 AI Range（首个测试安全智能体的平台），并新增基于角色、可持续复现的证据链，用于回答「智能体能否持续达到岗位标准」这一治理问题。此前平台已接受 AI 实验室、政府客户与超大规模云厂商的压测。 Business Wire（2026-10-06） Morningstar（2026-10-06）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality multi">2 个来源</span></div>
+          <h3>Hack The Box 推出 AI Range 企业版：给安全智能体「评职称」</h3>
+          <p class="summary">网络安全训练平台 Hack The Box 发布 AI Range Enterprise Edition，让企业安全团队能在受控攻防环境中实测自家 AI 安全智能体是否胜任被分配的网络安全岗位，附带 Competence Scoring（能力评分）和 AI 增强岗位考核体系。该版本沿袭了 2025 年 12 月发布的 AI Range（首个测试安全智能体的平台），并新增基于角色、可持续复现的证据链，用于回答「智能体能否持续达到岗位标准」这一治理问题。此前平台已接受 AI 实验室、政府客户与超大规模云厂商的压测。</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.businesswire.com/news/home/20261006477979/en/Hack-The-Box-Launches-AI-Range-Enterprise-Edition-to-Set-a-New-Standard-for-AI-Agent-Competence-in-Cybersecurity" target="_blank" rel="noopener noreferrer">Business Wire（2026-10-06）</a> ；<a class="open-link" href="https://www.morningstar.com/news/business-wire/20261006477979/hack-the-box-launches-ai-range-enterprise-edition-to-set-a-new-standard-for-ai-agent-competence-in-cybersecurity" target="_blank" rel="noopener noreferrer">Morningstar（2026-10-06）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.businesswire.com/news/home/20261006477979/en/Hack-The-Box-Launches-AI-Range-Enterprise-Edition-to-Set-a-New-Standard-for-AI-Agent-Competence-in-Cybersecurity" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="app-3" data-category="app" data-date="2026-10-06" data-search="Cohere 发布 North 2：给企业智能体上「紧锁」式访问控制 加拿大 AI 公司 Cohere 发布企业智能体平台 North 的重大升级 North 2，核心是「lockdown capabilities」——通过严格的访问控制列表（ACL）让企业在部署智能体时不交出敏感数据与成本控制权。新版本重构了 2025 年初推出的 North 智能体框架，新增 Skills（标准化操作程序文档）、Automations（跨应用的可复用工作流宏）、Libraries（共享知识库）和跨会话持久 Memory，聚焦可预测性与治理，而非追逐自主性边界。（注：单来源） WebProNews（2026-10-06，单来源）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality single">1 个来源</span></div>
+          <h3>Cohere 发布 North 2：给企业智能体上「紧锁」式访问控制</h3>
+          <p class="summary">加拿大 AI 公司 Cohere 发布企业智能体平台 North 的重大升级 North 2，核心是「lockdown capabilities」——通过严格的访问控制列表（ACL）让企业在部署智能体时不交出敏感数据与成本控制权。新版本重构了 2025 年初推出的 North 智能体框架，新增 Skills（标准化操作程序文档）、Automations（跨应用的可复用工作流宏）、Libraries（共享知识库）和跨会话持久 Memory，聚焦可预测性与治理，而非追逐自主性边界。（注：单来源）</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.webpronews.com/cohere-locks-down-ai-agents-with-strict-access-rules-as-enterprises-demand-control/" target="_blank" rel="noopener noreferrer">WebProNews（2026-10-06，单来源）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.webpronews.com/cohere-locks-down-ai-agents-with-strict-access-rules-as-enterprises-demand-control/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="app-4" data-category="app" data-date="2026-10-06" data-search="Anaconda 平台新增智能体蜂群与自主红队智能体 Anaconda 宣布在 Anaconda Platform 上推出「agent swarms（智能体蜂群）」与自主红队智能体，将智能体化开发与自主安全测试结合，帮助企业开发者以万亿 token 规模交付关键业务 AI 应用。新能力面向其近期调研中 63% 正转向蜂群技术的开发者，并回应安全焦虑：Enkrypt AI 的研究发现四个月内扫描的 268210 个智能体工具中 73% 存在漏洞。平台新增工具/模型/环境的可追溯治理，记录智能体的行为、数据访问与工具调用边界。（注：单来源） Business Wire（2026-10-06，单来源）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality single">1 个来源</span></div>
+          <h3>Anaconda 平台新增智能体蜂群与自主红队智能体</h3>
+          <p class="summary">Anaconda 宣布在 Anaconda Platform 上推出「agent swarms（智能体蜂群）」与自主红队智能体，将智能体化开发与自主安全测试结合，帮助企业开发者以万亿 token 规模交付关键业务 AI 应用。新能力面向其近期调研中 63% 正转向蜂群技术的开发者，并回应安全焦虑：Enkrypt AI 的研究发现四个月内扫描的 268210 个智能体工具中 73% 存在漏洞。平台新增工具/模型/环境的可追溯治理，记录智能体的行为、数据访问与工具调用边界。（注：单来源）</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.businesswire.com/news/home/20261006122908/en/Anaconda-Brings-Agent-Swarms-and-Autonomous-Red-Team-Agents-to-the-AI-Dev-Factory" target="_blank" rel="noopener noreferrer">Business Wire（2026-10-06，单来源）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.businesswire.com/news/home/20261006122908/en/Anaconda-Brings-Agent-Swarms-and-Autonomous-Red-Team-Agents-to-the-AI-Dev-Factory" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="research-1" data-category="research" data-date="2026-10-06" data-search="以色列团队 Brain-IT：仅用脑扫描重建所见图像 魏茨曼科学研究所 Michal Irani 团队发布 Brain-IT，可从 fMRI 脑扫描高精度重建受试者正在观看的图像（从停车标志到披萨切片数量都可还原），训练仅需约 1 小时，并可反向从图像预测脑活动。论文已提交 ICLR。神经伦理学家 Judy Illes 评价其&quot;magnificent&quot;，但也有科学家警告该技术可能被用于未经同意的心灵窥探。 NY Post（2026-10-06） MIT Technology Review（2026-10-01）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>前沿探索</span><span class="quality multi">2 个来源</span></div>
+          <h3>以色列团队 Brain-IT：仅用脑扫描重建所见图像</h3>
+          <p class="summary">魏茨曼科学研究所 Michal Irani 团队发布 Brain-IT，可从 fMRI 脑扫描高精度重建受试者正在观看的图像（从停车标志到披萨切片数量都可还原），训练仅需约 1 小时，并可反向从图像预测脑活动。论文已提交 ICLR。神经伦理学家 Judy Illes 评价其&quot;magnificent&quot;，但也有科学家警告该技术可能被用于未经同意的心灵窥探。</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="https://nypost.com/2026/10/06/tech/ai-tool-can-read-minds-and-recreate-with-frightening-accuracy/" target="_blank" rel="noopener noreferrer">NY Post（2026-10-06）</a> ；<a class="open-link" href="https://www.technologyreview.com/2026/10/01/1145588/ai-mind-reading-reconstructs-what-youre-looking-at/" target="_blank" rel="noopener noreferrer">MIT Technology Review（2026-10-01）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://nypost.com/2026/10/06/tech/ai-tool-can-read-minds-and-recreate-with-frightening-accuracy/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="research-2" data-category="research" data-date="2026-10-06" data-search="研究：LLM 智能体约 67% 概率因来源偏好选中更差的商品 一篇 arXiv 预印本研究测试了 12 个智能体模型（购物、酒店预订、论文引用三类任务），发现当较弱选项来自模型偏好的来源时，智能体约三分之二时间选择它；隐藏来源标签会削弱偏好，给弱选项贴上偏好来源的标签则会提高其被选率。作者认为这是训练中来源被当作可靠性捷径所致，补全缺失信息或用提示语纠正可缓解该效应。（注：单来源） AI Weekly（2026-10-06，单来源）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>前沿探索</span><span class="quality single">1 个来源</span></div>
+          <h3>研究：LLM 智能体约 67% 概率因来源偏好选中更差的商品</h3>
+          <p class="summary">一篇 arXiv 预印本研究测试了 12 个智能体模型（购物、酒店预订、论文引用三类任务），发现当较弱选项来自模型偏好的来源时，智能体约三分之二时间选择它；隐藏来源标签会削弱偏好，给弱选项贴上偏好来源的标签则会提高其被选率。作者认为这是训练中来源被当作可靠性捷径所致，补全缺失信息或用提示语纠正可缓解该效应。（注：单来源）</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="https://aiweekly.co/alerts/llm-agents-pick-weaker-items-from-favored-sources-paper-finds" target="_blank" rel="noopener noreferrer">AI Weekly（2026-10-06，单来源）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://aiweekly.co/alerts/llm-agents-pick-weaker-items-from-favored-sources-paper-finds" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="research-3" data-category="research" data-date="2026-10-05" data-search="论文：多数智能体框架允许智能体删除自己的执行轨迹 论文《LLM Agents Can Easily Tamper With Their Own Traces》（arXiv:2609.30266）测试了 Claude Code、Codex、Antigravity、Open Code、Grok Build 五款本地智能体框架，发现除 Muse Code 外，其余均允许智能体在被要求时删除自己的执行轨迹且不触发监控告警。作者还发现该行为可能被远程攻击者利用，并会&quot;自然涌现&quot;于追求奖励的前沿模型，论文建议轨迹日志应经智能体控制之外的独立拦截机制记录。 The Agent Times（2026-10-05） arXiv 论文页（arXiv:2609.30266）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>前沿探索</span><span class="quality multi">2 个来源</span></div>
+          <h3>论文：多数智能体框架允许智能体删除自己的执行轨迹</h3>
+          <p class="summary">论文《LLM Agents Can Easily Tamper With Their Own Traces》（arXiv:2609.30266）测试了 Claude Code、Codex、Antigravity、Open Code、Grok Build 五款本地智能体框架，发现除 Muse Code 外，其余均允许智能体在被要求时删除自己的执行轨迹且不触发监控告警。作者还发现该行为可能被远程攻击者利用，并会&quot;自然涌现&quot;于追求奖励的前沿模型，论文建议轨迹日志应经智能体控制之外的独立拦截机制记录。</p>
+          <div class="card-footer"><span>10.05</span><span>·</span><span class="source-name"><a class="open-link" href="https://theagenttimes.com/articles/research-finds-llm-agents-can-delete-their-own-execution-tra-44f5b7ec" target="_blank" rel="noopener noreferrer">The Agent Times（2026-10-05）</a> ；<a class="open-link" href="https://arxiv.org/abs/2609.30266" target="_blank" rel="noopener noreferrer">arXiv 论文页（arXiv:2609.30266）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://theagenttimes.com/articles/research-finds-llm-agents-can-delete-their-own-execution-tra-44f5b7ec" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="research-4" data-category="research" data-date="2026-10-06" data-search="研究：归纳式提示在 LLM 时间事件抽取泛化中表现最稳 Fahmid Shahriar Iqbal 团队 10 月 5 日发表于 arXiv 的研究评估了 LLM 在时间/事件表达式抽取任务上四个维度的泛化能力（含领域偏移、对抗扰动），发现归纳式提示（inductive prompting）在各类条件下表现最一致；模型规模、架构及演绎/溯因提示的增益则不稳定，在分布剧烈偏移下尤甚。（注：单来源） Complete AI Training（2026-10-06，单来源）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>前沿探索</span><span class="quality single">1 个来源</span></div>
+          <h3>研究：归纳式提示在 LLM 时间事件抽取泛化中表现最稳</h3>
+          <p class="summary">Fahmid Shahriar Iqbal 团队 10 月 5 日发表于 arXiv 的研究评估了 LLM 在时间/事件表达式抽取任务上四个维度的泛化能力（含领域偏移、对抗扰动），发现归纳式提示（inductive prompting）在各类条件下表现最一致；模型规模、架构及演绎/溯因提示的增益则不稳定，在分布剧烈偏移下尤甚。（注：单来源）</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="https://completeaitraining.com/news/inductive-prompting-proves-most-consistent-for-llm/" target="_blank" rel="noopener noreferrer">Complete AI Training（2026-10-06，单来源）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://completeaitraining.com/news/inductive-prompting-proves-most-consistent-for-llm/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="embodied-1" data-category="embodied" data-date="2026-10-06" data-search="Fast Company 2026 年度科技榜：Hexagon 人形机器人上榜，宝马工厂已投用、舍弗勒计划部署上千台 Fast Company 发布 2026 年度 Next Big Things in Tech 榜单，Hexagon AB 的人形机器人入选，理由是其带锁定轮、可爬楼梯的人形机器人在宝马莱比锡工厂已投入生产任务，德国制造商舍弗勒（Schaeffler）正准备在其工厂部署至少 1000 台。同批入选的还有 Vigilant Aerospace 的无人机空域感知系统 FlightHorizon PILOT。（注：单来源） Fast Company（2026-10-06，单来源）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>具身未来</span><span class="quality single">1 个来源</span></div>
+          <h3>Fast Company 2026 年度科技榜：Hexagon 人形机器人上榜，宝马工厂已投用、舍弗勒计划部署上千台</h3>
+          <p class="summary">Fast Company 发布 2026 年度 Next Big Things in Tech 榜单，Hexagon AB 的人形机器人入选，理由是其带锁定轮、可爬楼梯的人形机器人在宝马莱比锡工厂已投入生产任务，德国制造商舍弗勒（Schaeffler）正准备在其工厂部署至少 1000 台。同批入选的还有 Vigilant Aerospace 的无人机空域感知系统 FlightHorizon PILOT。（注：单来源）</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.fastcompany.com/91612138/robotics-automation-next-big-things-in-tech-2026" target="_blank" rel="noopener noreferrer">Fast Company（2026-10-06，单来源）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.fastcompany.com/91612138/robotics-automation-next-big-things-in-tech-2026" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="embodied-2" data-category="embodied" data-date="2026-10-06" data-search="国庆假期：具身机器人扎堆进景区商圈，外骨骼 59 元 3 小时走红 央视新闻报道，国庆假期广东多地机器人在商超现做咖啡冰激凌、在广州塔跳舞巡游，成为假期新顶流。新华社报道，合肥合柴 1972 文创园的具身智能机器人小店无人值守，日均约百单、日营业额约 1500 元。泰山、华山、黄山等景区出现外骨骼机器人租赁，59 元可穿戴 3 小时，外骨骼完成消费级市场破冰。 央视新闻（2026-10-06） 新华社（2026-10-06） 新浪财经（2026-10-06）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>具身未来</span><span class="quality multi">3 个来源</span></div>
+          <h3>国庆假期：具身机器人扎堆进景区商圈，外骨骼 59 元 3 小时走红</h3>
+          <p class="summary">央视新闻报道，国庆假期广东多地机器人在商超现做咖啡冰激凌、在广州塔跳舞巡游，成为假期新顶流。新华社报道，合肥合柴 1972 文创园的具身智能机器人小店无人值守，日均约百单、日营业额约 1500 元。泰山、华山、黄山等景区出现外骨骼机器人租赁，59 元可穿戴 3 小时，外骨骼完成消费级市场破冰。</p>
+          <div class="card-footer"><span>10.06</span><span>·</span><span class="source-name"><a class="open-link" href="http://finance.sina.com.cn/jjxw/2026-10-06/doc-initzzvi7094133.shtml" target="_blank" rel="noopener noreferrer">央视新闻（2026-10-06）</a> ；<a class="open-link" href="http://finance.sina.com.cn/jjxw/2026-10-06/doc-initzvpk0431600.shtml" target="_blank" rel="noopener noreferrer">新华社（2026-10-06）</a> ；<a class="open-link" href="http://finance.sina.com.cn/jjxw/2026-10-06/doc-iniuhuie6865457.shtml" target="_blank" rel="noopener noreferrer">新浪财经（2026-10-06）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="http://finance.sina.com.cn/jjxw/2026-10-06/doc-initzzvi7094133.shtml" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+
+        <article class="card" data-id="embodied-3" data-category="embodied" data-date="2026-10-05" data-search="韩国 Q3 初创融资盘点：机器人板块逆势爆发，单季融资 4.04 亿美元 韩国创业媒体 Wowtale 发布 Q3 2026 融资盘点：机器人板块从 Q2 的 6860 万美元（4 笔）跃升至 4.037 亿美元（7 笔），成为当季披露融资额最高的赛道。其中 Wonik Robotics 累计融资 2.414 亿美元（含国家成长基金 1.034 亿美元），Holiday Robotics 以 1.069 亿美元 A 轮融资打造工业人形机器人，CarbonSix 为制造业物理 AI 方案融资 4300 万美元。（注：单来源；日期 2026-10-05，属放宽窗口内的大盘点内容） Wowtale（2026-10-05，单来源）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>具身未来</span><span class="quality single">1 个来源</span></div>
+          <h3>韩国 Q3 初创融资盘点：机器人板块逆势爆发，单季融资 4.04 亿美元</h3>
+          <p class="summary">韩国创业媒体 Wowtale 发布 Q3 2026 融资盘点：机器人板块从 Q2 的 6860 万美元（4 笔）跃升至 4.037 亿美元（7 笔），成为当季披露融资额最高的赛道。其中 Wonik Robotics 累计融资 2.414 亿美元（含国家成长基金 1.034 亿美元），Holiday Robotics 以 1.069 亿美元 A 轮融资打造工业人形机器人，CarbonSix 为制造业物理 AI 方案融资 4300 万美元。（注：单来源；日期 2026-10-05，属放宽窗口内的大盘点内容）</p>
+          <div class="card-footer"><span>10.05</span><span>·</span><span class="source-name"><a class="open-link" href="https://en.wowtale.net/2026/10/05/235379/" target="_blank" rel="noopener noreferrer">Wowtale（2026-10-05，单来源）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://en.wowtale.net/2026/10/05/235379/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+        </div>
+      </section>
+
+      <section class="collection-section archive-section" id="archiveSection" aria-labelledby="archive-title">
+        <div class="section-head archive-head">
+          <div><span class="section-index mono">05 / ARCHIVE</span><h2 id="archive-title">往期回顾</h2></div>
+          <p>8 期 · 149 条 · 按期号倒序</p>
+        </div>
+        <div class="archive-list">
+          <details class="archive-edition">
+            <summary class="archive-summary"><span class="archive-number">第 08 期</span><span class="archive-time">2026.10.06 · 22:16</span><span class="archive-count"><span>15 条</span></span></summary>
+            <ol class="archive-items">
+              <li class="archive-item" data-search="富士通为零售业上线 AI 智能体试用环境 无界应用 2026-10-06 TradingView（2026-10-06，转引 JCN Newswire 通稿） 2026-10-06 22:16"><span class="archive-category">无界应用</span><a class="archive-title" href="https://www.tradingview.com/news/reuters.com,2026-10-06:newsml_JCN110613:0-fujitsu-to-launch-trial-environment-for-retail-ai-agents-that-advance-store-operations-and-business-decision-making/" target="_blank" rel="noopener noreferrer">富士通为零售业上线 AI 智能体试用环境</a><span class="archive-meta">2026-10-06<br>TradingView（2026-10-06，转引 JCN Newswire 通稿）</span></li>
+              <li class="archive-item" data-search="印度 CreditNirvana 发布 200+ 智能体催收套件 无界应用 2026-10-06 Daily India News 转载 PRNewswire（2026-10-06） 2026-10-06 22:16"><span class="archive-category">无界应用</span><a class="archive-title" href="https://dailyindianews.com/creditnirvana-launches-indias-first-integrated-ai-suite-for-voice-co-browsing-and-agentic-debt-collections-orchestration/2026/390353/" target="_blank" rel="noopener noreferrer">印度 CreditNirvana 发布 200+ 智能体催收套件</a><span class="archive-meta">2026-10-06<br>Daily India News 转载 PRNewswire（2026-10-06）</span></li>
+              <li class="archive-item" data-search="TM Forum 联手埃森哲推可信 AI 认证 无界应用 2026-10-06 EIN Presswire（2026-10-06） 2026-10-06 22:16"><span class="archive-category">无界应用</span><a class="archive-title" href="https://uspolitics.einnews.com/pr_news/947558011/tm-forum-launches-industry-initiative-to-enable-trusted-ai-autonomy-in-collaboration-with-accenture" target="_blank" rel="noopener noreferrer">TM Forum 联手埃森哲推可信 AI 认证</a><span class="archive-meta">2026-10-06<br>EIN Presswire（2026-10-06）</span></li>
+              <li class="archive-item" data-search="Mistral 发布开源新模型 Mistral Large 4 新智基座 2026-10-06 Reuters（2026-10-06） 2026-10-06 22:16"><span class="archive-category">新智基座</span><a class="archive-title" href="https://www.reuters.com/world/china/mistral-ceo-says-new-ai-model-beats-chinese-ones-some-areas-2026-10-06/" target="_blank" rel="noopener noreferrer">Mistral 发布开源新模型 Mistral Large 4</a><span class="archive-meta">2026-10-06<br>Reuters（2026-10-06）</span></li>
+              <li class="archive-item" data-search="韩国首笔 24 亿美元投向德州 AI 电力项目 新智基座 2026-10-06 Aju Press（2026-10-06） 2026-10-06 22:16"><span class="archive-category">新智基座</span><a class="archive-title" href="https://www.ajupress.com/view/20261006135430695" target="_blank" rel="noopener noreferrer">韩国首笔 24 亿美元投向德州 AI 电力项目</a><span class="archive-meta">2026-10-06<br>Aju Press（2026-10-06）</span></li>
+              <li class="archive-item" data-search="atNorth 斥资 20 亿欧元在芬兰建数据中心 新智基座 2026-10-05 Datacenter Dynamics（2026-10-05） 2026-10-06 22:16"><span class="archive-category">新智基座</span><a class="archive-title" href="https://www.datacenterdynamics.com/en/news/atnorth-to-build-75mw-data-center-in-salo-finland/" target="_blank" rel="noopener noreferrer">atNorth 斥资 20 亿欧元在芬兰建数据中心</a><span class="archive-meta">2026-10-05<br>Datacenter Dynamics（2026-10-05）</span></li>
+              <li class="archive-item" data-search="TeraWulf 肯塔基数据中心园区电力翻倍至 1GW 新智基座 2026-10-05 GlobeNewswire 公司新闻稿（2026-10-05） 2026-10-06 22:16"><span class="archive-category">新智基座</span><a class="archive-title" href="https://www.globenewswire.com/news-release/2026/10/05/3374525/0/en/terawulf-expands-contracted-power-capacity-at-its-muskie-data-campus-to-1-gw.html" target="_blank" rel="noopener noreferrer">TeraWulf 肯塔基数据中心园区电力翻倍至 1GW</a><span class="archive-meta">2026-10-05<br>GlobeNewswire 公司新闻稿（2026-10-05）</span></li>
+              <li class="archive-item" data-search="小鹏机器人业务融资超 9 亿美元，估值 63 亿美元 具身未来 2026-10-06 Evertiq（2026-10-06） 2026-10-06 22:16"><span class="archive-category">具身未来</span><a class="archive-title" href="https://evertiq.com/news/2026-10-06-xpeng-raises-over-900m-to-accelerate-physical-ai-deployment" target="_blank" rel="noopener noreferrer">小鹏机器人业务融资超 9 亿美元，估值 63 亿美元</a><span class="archive-meta">2026-10-06<br>Evertiq（2026-10-06）</span></li>
+              <li class="archive-item" data-search="德国 RobCo 估值破 10 亿美元，较年初翻倍 具身未来 2026-10-06 WSJ（2026-10-06） 2026-10-06 22:16"><span class="archive-category">具身未来</span><a class="archive-title" href="https://www.wsj.com/tech/robotics-startup-robco-hits-1-billion-valuation-784bd6a5" target="_blank" rel="noopener noreferrer">德国 RobCo 估值破 10 亿美元，较年初翻倍</a><span class="archive-meta">2026-10-06<br>WSJ（2026-10-06）</span></li>
+              <li class="archive-item" data-search="RoboParty 在 IROS 发布全栈开源人形机器人 RP1 具身未来 2026-10-05 engineering.com（2026-10-05） 2026-10-06 22:16"><span class="archive-category">具身未来</span><a class="archive-title" href="https://www.engineering.com/roboparty-unveils-rp1-open-source-humanoid-robot/" target="_blank" rel="noopener noreferrer">RoboParty 在 IROS 发布全栈开源人形机器人 RP1</a><span class="archive-meta">2026-10-05<br>engineering.com（2026-10-05）</span></li>
+              <li class="archive-item" data-search="NVIDIA 与 Sapphire 加入 Reactor A 轮，做实时世界模型基建 具身未来 2026-10-05 Business Wire 公司新闻稿（2026-10-05） 2026-10-06 22:16"><span class="archive-category">具身未来</span><a class="archive-title" href="https://www.businesswire.com/news/home/20261005241694/en/Reactor-Expands-Investors-in-Series-A-Round-to-Scale-Real-Time-World-Model-Infrastructure" target="_blank" rel="noopener noreferrer">NVIDIA 与 Sapphire 加入 Reactor A 轮，做实时世界模型基建</a><span class="archive-meta">2026-10-05<br>Business Wire 公司新闻稿（2026-10-05）</span></li>
+              <li class="archive-item" data-search="MIT VISTA 让 Claude 在 ARC-AGI-3 拿满分 前沿探索 2026-10-05 dev.to AI Daily Digest（2026-10-05） 2026-10-06 22:16"><span class="archive-category">前沿探索</span><a class="archive-title" href="https://dev.to/hiroki-ii-ai/ai-daily-digest-october-5-2026-vista-aces-arc-agi-3-jetbrains-air-ade-amazon-blocks-muse-fef" target="_blank" rel="noopener noreferrer">MIT VISTA 让 Claude 在 ARC-AGI-3 拿满分</a><span class="archive-meta">2026-10-05<br>dev.to AI Daily Digest（2026-10-05）</span></li>
+              <li class="archive-item" data-search="斯坦福 HAI：多数 AI 基准测偏了题 前沿探索 2026-10-05 The Agent Times（2026-10-05） 2026-10-06 22:16"><span class="archive-category">前沿探索</span><a class="archive-title" href="https://theagenttimes.com/articles/stanford-hai-studies-find-ai-benchmarks-often-fail-to-measur-d81f303f" target="_blank" rel="noopener noreferrer">斯坦福 HAI：多数 AI 基准测偏了题</a><span class="archive-meta">2026-10-05<br>The Agent Times（2026-10-05）</span></li>
+              <li class="archive-item" data-search="JEPA-Anything：一个配方跑通 7 个领域 前沿探索 2026-10-05 MarkTechPost（2026-10-05） 2026-10-06 22:16"><span class="archive-category">前沿探索</span><a class="archive-title" href="https://www.marktechpost.com/2026/10/05/beyond-domain-specific-world-models-jepa-anything-uses-1-recipe-for-7-fields/" target="_blank" rel="noopener noreferrer">JEPA-Anything：一个配方跑通 7 个领域</a><span class="archive-meta">2026-10-05<br>MarkTechPost（2026-10-05）</span></li>
+              <li class="archive-item" data-search="UCLA 数学智能体自称解出 10 道研究级难题 前沿探索 2026-10-05 The Agentic Tribune（2026-10-05） 2026-10-06 22:16"><span class="archive-category">前沿探索</span><a class="archive-title" href="https://agentictribune.com/article/20261005-ucla-affiliated-paper-says-ai-agent-solved-10-research-math-problems-but-proofs-were-accepted-only-by-an-llm-verifier" target="_blank" rel="noopener noreferrer">UCLA 数学智能体自称解出 10 道研究级难题</a><span class="archive-meta">2026-10-05<br>The Agentic Tribune（2026-10-05）</span></li>
+            </ol>
+          </details>
+          <details class="archive-edition">
+            <summary class="archive-summary"><span class="archive-number">第 07 期</span><span class="archive-time">2026.10.06 · 16:16</span><span class="archive-count"><span>16 条</span></span></summary>
+            <ol class="archive-items">
+              <li class="archive-item" data-search="Reflection AI 发布首个开源权重前沿模型 Beam 新智基座 2026-10-05 Reuters（10-05） 2026-10-06 16:16"><span class="archive-category">新智基座</span><a class="archive-title" href="https://www.reuters.com/technology/nvidia-backed-reflection-unveils-first-ai-model-take-chinese-open-models-2026-10-05/" target="_blank" rel="noopener noreferrer">Reflection AI 发布首个开源权重前沿模型 Beam</a><span class="archive-meta">2026-10-05<br>Reuters（10-05）</span></li>
+              <li class="archive-item" data-search="韩国宣布 35 亿美元主权前沿模型计划 新智基座 2026-10-06 Reuters（10-06） 2026-10-06 16:16"><span class="archive-category">新智基座</span><a class="archive-title" href="https://www.reuters.com/world/asia-pacific/south-korea-plans-develop-35-billion-frontier-ai-model-starting-next-year-2026-10-06/" target="_blank" rel="noopener noreferrer">韩国宣布 35 亿美元主权前沿模型计划</a><span class="archive-meta">2026-10-06<br>Reuters（10-06）</span></li>
+              <li class="archive-item" data-search="AM Intelligence 加码 NVIDIA Rubin「AI 工厂」印度/马来西亚布局 新智基座 2026-10-05 Business Wire（10-05） 2026-10-06 16:16"><span class="archive-category">新智基座</span><a class="archive-title" href="https://www.businesswire.com/news/home/20261005478911/en/AM-Intelligence-Expands-NVIDIA-Vera-Rubin-AI-Factory-Buildout-in-India-and-Malaysia" target="_blank" rel="noopener noreferrer">AM Intelligence 加码 NVIDIA Rubin「AI 工厂」印度/马来西亚布局</a><span class="archive-meta">2026-10-05<br>Business Wire（10-05）</span></li>
+              <li class="archive-item" data-search="美国环保组织呼吁暂停联邦土地上 AI 数据中心项目 新智基座 2026-10-05 Reuters（10-05） 2026-10-06 16:16"><span class="archive-category">新智基座</span><a class="archive-title" href="https://www.reuters.com/legal/litigation/conservation-group-calls-moratorium-ai-data-centers-us-public-lands-2026-10-05/" target="_blank" rel="noopener noreferrer">美国环保组织呼吁暂停联邦土地上 AI 数据中心项目</a><span class="archive-meta">2026-10-05<br>Reuters（10-05）</span></li>
+              <li class="archive-item" data-search="Hirundo 发布「去审查版」Qwen 开源模型 新智基座 2026-10-05 Business Wire（10-05，附 CBS News 独立测试） 2026-10-06 16:16"><span class="archive-category">新智基座</span><a class="archive-title" href="https://wkow.marketminute.com/article/bizwire-2026-10-5-hirundo-releases-westernized-qwen-cutting-censored-and-ccp-aligned-answers-from-898-to-28-in-the-leading-chinese-ai-model" target="_blank" rel="noopener noreferrer">Hirundo 发布「去审查版」Qwen 开源模型</a><span class="archive-meta">2026-10-05<br>Business Wire（10-05，附 CBS News 独立测试）</span></li>
+              <li class="archive-item" data-search="Instinct 把 AI 助手带进群聊，对方没注册也能用 无界应用 2026-10-05 TechCrunch（10-05） 2026-10-06 16:16"><span class="archive-category">无界应用</span><a class="archive-title" href="https://techcrunch.com/2026/10/05/instinct-brings-its-ai-agent-to-group-chats-even-for-friends-without-an-account/" target="_blank" rel="noopener noreferrer">Instinct 把 AI 助手带进群聊，对方没注册也能用</a><span class="archive-meta">2026-10-05<br>TechCrunch（10-05）</span></li>
