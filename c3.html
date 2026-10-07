@@ -544,6 +544,7 @@ tapestry.news（MIT Tech Review 9-28 争议报道转述）：<a class="open-link
           else if (/^en-(us|gb)$/.test(lang) && /(natural|enhanced|premium|neural)/.test(name)) score = 850;
           else if (lang === 'en-us') score = 800;
           else if (lang === 'en-gb') score = 780;
+          else if (/^en(?:-|$)/.test(lang)) score = 700;
           if (score > -1 && voice.localService) score += 2;
           return { voice: voice, score: score, index: index };
         }).filter(function (item) { return item.score > -1; });
@@ -552,7 +553,7 @@ tapestry.news（MIT Tech Review 9-28 争议报道转述）：<a class="open-link
       }
 
       function updateSpeechAvailability() {
-        var available = voicesReady && !!selectedEnglishVoice;
+        var available = 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
         var help = document.getElementById('speechHelp');
         var topToggle = document.getElementById('speechToggle');
         Array.prototype.slice.call(document.querySelectorAll('.speak-btn')).forEach(function (button) {
@@ -564,7 +565,7 @@ tapestry.news（MIT Tech Review 9-28 争议报道转述）：<a class="open-link
         if (!voicesReady) {
           help.textContent = '正在加载设备上的英语语音；可用后，小喇叭会优先选择自然、清晰的播音语音。';
         } else if (!selectedEnglishVoice) {
-          help.textContent = '当前设备没有可用的英语语音，发音按钮已停用。';
+          help.textContent = available ? '点击小喇叭使用系统默认英语语音。若没有声音，请用 Safari 或 Chrome 打开，并检查手机媒体音量及英语语音设置。' : '当前浏览器不支持朗读，请用 Safari 或 Chrome 打开。';
         } else {
           help.textContent = '当前使用“' + selectedEnglishVoice.name + '”，语速 0.93、标准音调；小喇叭可单独点读英文。';
         }
@@ -596,7 +597,7 @@ tapestry.news（MIT Tech Review 9-28 争议报道转述）：<a class="open-link
             selectedEnglishVoice = chooseBestEnglishVoice(voices);
             voicesReady = true;
             updateSpeechAvailability();
-            if (!selectedEnglishVoice) showToast('当前设备没有可用的英语语音');
+
             resolve(selectedEnglishVoice);
           }
           window.speechSynthesis.addEventListener('voiceschanged', finish);
@@ -610,7 +611,7 @@ tapestry.news（MIT Tech Review 9-28 争议报道转述）：<a class="open-link
               selectedEnglishVoice = chooseBestEnglishVoice(window.speechSynthesis.getVoices());
               voicesReady = true;
               updateSpeechAvailability();
-              if (!selectedEnglishVoice) showToast('当前设备没有可用的英语语音');
+  
               resolve(selectedEnglishVoice);
             }, 2500);
           }
@@ -633,31 +634,48 @@ tapestry.news（MIT Tech Review 9-28 争议报道转述）：<a class="open-link
         updateSpeechAvailability();
       }
 
+      // Keep the utterance alive and speak within the user's tap, including on iOS.
+      var currentUtterance = null;
       function speakEnglish(text, button) {
+        if (!speechEnabled) return;
         if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
-          showToast('当前浏览器不支持语音朗读');
+          showToast('当前浏览器不支持朗读，请用 Safari 或 Chrome 打开');
           return;
         }
-        initializeEnglishVoice().then(function (voice) {
-          if (!voice) {
-            showToast('当前设备没有可用的英语语音');
-            return;
+        var synth = window.speechSynthesis;
+        var voice = chooseBestEnglishVoice(synth.getVoices());
+        selectedEnglishVoice = voice;
+        synth.cancel();
+        if (activeSpeechButton) activeSpeechButton.classList.remove('is-speaking');
+        var utterance = new SpeechSynthesisUtterance(text);
+        if (voice) utterance.voice = voice;
+        utterance.lang = voice ? voice.lang : 'en-US';
+        utterance.rate = 0.93;
+        utterance.pitch = 1;
+        currentUtterance = utterance;
+        activeSpeechButton = button;
+        button.classList.add('is-speaking');
+        function cleanup() {
+          if (currentUtterance !== utterance) return;
+          button.classList.remove('is-speaking');
+          activeSpeechButton = null;
+          currentUtterance = null;
+        }
+        utterance.onend = cleanup;
+        utterance.onerror = function (event) {
+          if (currentUtterance !== utterance) return;
+          cleanup();
+          if (event.error !== 'canceled' && event.error !== 'interrupted') {
+            showToast('朗读未能播放，请检查媒体音量，并用 Safari 或 Chrome 打开');
           }
-          window.speechSynthesis.cancel();
-          if (activeSpeechButton) activeSpeechButton.classList.remove('is-speaking');
-          var utterance = new SpeechSynthesisUtterance(text);
-          utterance.voice = voice;
-          utterance.lang = voice.lang || 'en-US';
-          utterance.rate = 0.93;
-          utterance.pitch = 1.0;
-          activeSpeechButton = button;
-          button.classList.add('is-speaking');
-          utterance.onend = utterance.onerror = function () {
-            button.classList.remove('is-speaking');
-            if (activeSpeechButton === button) activeSpeechButton = null;
-          };
-          window.speechSynthesis.speak(utterance);
-        });
+        };
+        try {
+          synth.speak(utterance);
+          if (synth.paused) synth.resume();
+        } catch (error) {
+          cleanup();
+          showToast('朗读未能播放，请用 Safari 或 Chrome 打开');
+        }
       }
 
       function applyFilters() {
