@@ -4,27 +4,8 @@
 <title>AI资讯</title></head>
 <body><div style="font-family:sans-serif;color:#888;padding:40px;text-align:center">加载中…</div>
 <script>
-var VER='202610081422', IMGVER='202610081400', DPARTS=3, IMGPARTS=1;
-function b64ToBytes(b64){var s=atob(b64),n=s.length,u=new Uint8Array(n);for(var i=0;i<n;i++)u[i]=s.charCodeAt(i);return u;}
-function gunzip(bytes){
-  if(!window.DecompressionStream) return Promise.reject(new Error('no DecompressionStream'));
-  var ds=new DecompressionStream('gzip');
-  return new Response(new Blob([bytes]).stream().pipeThrough(ds)).text();
-}
-function fail(){document.body.innerHTML='<div style="padding:40px;text-align:center;color:#888">加载失败，请刷新重试</div>';}
-function get(u){return fetch(u).then(function(r){if(!r.ok)throw new Error(u);return r.text();});}
-(function(){
-  var ps=[];for(var i=1;i<=DPARTS;i++)ps.push(get('d'+i+'.b64?v='+VER));
-  Promise.all(ps).then(function(parts){return gunzip(b64ToBytes(parts.join('')));}).then(function(html){
-    document.open();document.write(html);document.close();
-    var qs=[];for(var j=1;j<=IMGPARTS;j++)qs.push(fetch('img-p'+j+'.json?v='+IMGVER).then(function(r){if(!r.ok)throw new Error('img');return r.json();}));
-    return Promise.all(qs);
-  }).then(function(parts){
-    var map={};parts.forEach(function(p){for(var k in p)map[k]=p[k];});
-    document.querySelectorAll('img[data-img]').forEach(function(im){
-      var k=im.getAttribute('data-img');if(map[k])im.src=map[k];
-    });
-  }).catch(fail);
-})();
-</script>
-</body></html>
+var VER='202610091559';
+Promise.all(["c1.html", "c2.html", "c3.html", "c4.html", "c5.html", "c6.html"].map(function(u){return fetch(u+'?v='+VER).then(function(r){if(!r.ok)throw new Error(u);return r.text();});}))
+.then(function(p){document.open();document.write(p.join(''));document.close();})
+.catch(function(){document.body.innerHTML='<div style="padding:40px;text-align:center;color:#888">加载失败，请刷新重试</div>';});
+</script></body></html>
