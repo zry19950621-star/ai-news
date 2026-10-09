@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="color-scheme" content="light dark" />
   <link rel="icon" href="data:," />
-  <title>AI资讯悬浮窗（桌面版）</title>
+  <title>AI智页</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@600;700;900&display=swap');
     :root {
@@ -590,7 +590,78 @@
     .deep-section { margin-top: 44px; padding-top: 18px; border-top: 8px solid var(--text); }
     .deep-head { margin-bottom: 0; }
     .deep-head > div { display: grid; gap: 2px; }
-    .deep-list { display: grid; }
+    .deep-reader {
+      display: grid;
+      grid-template-columns: minmax(210px, 250px) minmax(0, 1fr);
+      gap: 34px;
+      align-items: start;
+      padding-top: 24px;
+    }
+    .deep-toc {
+      position: sticky;
+      top: 54px;
+      max-height: calc(100vh - 74px);
+      overflow-y: auto;
+      border-top: 3px double var(--text);
+      border-bottom: 1px solid var(--text);
+      scrollbar-width: thin;
+      scrollbar-color: var(--line-strong) transparent;
+    }
+    .deep-toc-label {
+      margin: 0;
+      padding: 12px 0 10px;
+      color: var(--muted);
+      font: 500 10px/1.4 "IBM Plex Mono", monospace;
+      letter-spacing: .08em;
+      border-bottom: 1px solid var(--line-strong);
+    }
+    .deep-toc-list { display: grid; }
+    .deep-toc-item {
+      width: 100%;
+      padding: 13px 8px 14px 0;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      text-align: left;
+      cursor: pointer;
+    }
+    .deep-toc-item:last-child { border-bottom: 0; }
+    .deep-toc-item:hover { color: var(--text); }
+    .deep-toc-item.active {
+      color: var(--text);
+      box-shadow: inset 4px 0 0 var(--accent);
+      padding-left: 14px;
+    }
+    .deep-toc-date {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent);
+      font: 500 9px/1.2 "IBM Plex Mono", monospace;
+      letter-spacing: .05em;
+    }
+    .deep-toc-title {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+    .deep-mobile-picker { display: none; }
+    .deep-list { display: grid; min-width: 0; }
+    .deep-article.deep-inactive { display: none; }
+    .deep-article.is-current {
+      margin-top: 0;
+      padding-top: 10px;
+      border-top: 0;
+      scroll-margin-top: 62px;
+    }
+    .deep-article.is-current .deep-title { font-size: clamp(32px, 4.4vw, 48px); }
+    .deep-article.is-current .deep-body,
+    .deep-article.is-current .card-footer { width: 100%; }
     .deep-article {
       display: block;
       min-height: 0;
@@ -653,10 +724,44 @@
     }
     @media (max-width: 700px) {
       .deep-section { margin-top: 34px; }
+      .deep-head p { display: none; }
+      .deep-reader { display: block; padding-top: 16px; }
+      .deep-toc { display: none; }
+      .deep-mobile-picker {
+        position: sticky;
+        top: 130px;
+        z-index: 21;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        gap: 10px;
+        margin: 0 -16px 12px;
+        padding: 10px 16px;
+        border-top: 1px solid var(--text);
+        border-bottom: 1px solid var(--text);
+        background: var(--surface);
+      }
+      .deep-mobile-picker label {
+        color: var(--accent);
+        font: 500 10px/1 "IBM Plex Mono", monospace;
+        letter-spacing: .05em;
+      }
+      .deep-mobile-select {
+        width: 100%;
+        min-width: 0;
+        height: 38px;
+        padding: 0 32px 0 10px;
+        border: 1px solid var(--line-strong);
+        border-radius: 0;
+        background: var(--surface);
+        color: var(--text);
+        font: 600 13px/1.4 "Noto Sans SC", sans-serif;
+      }
       .deep-article { padding-top: 24px; }
+      .deep-article.is-current { padding-top: 12px; scroll-margin-top: 102px; }
       .deep-article-header { display: block; padding-bottom: 22px; }
       .deep-date { width: max-content; margin-bottom: 18px; }
-      .deep-title { font-size: clamp(30px, 9.5vw, 42px); line-height: 1.2; }
+      .deep-title, .deep-article.is-current .deep-title { font-size: clamp(30px, 9.5vw, 42px); line-height: 1.2; }
       .deep-body { margin-top: 24px; font-size: calc(var(--body-size) + 1px); line-height: 1.88; }
       .deep-body h3 { margin-top: 1.9em; font-size: 1.35em; }
     }
@@ -669,7 +774,7 @@
         <span class="live-dot" aria-hidden="true"></span>
         <strong>全球 AI 周报</strong>
         <span class="desktop-only">·</span>
-        <span class="mono desktop-only">更新于 2026-10-08 04:16 CST · 每 6 小时自动刷新</span>
+        <span class="mono desktop-only">更新于 2026-10-09 10:16 CST · 每 6 小时自动刷新</span>
       </div>
       <div class="top-actions">
         <button class="icon-btn" id="speechToggle" aria-label="英语发音已开启，点击关闭" aria-pressed="true" title="英语发音开关">
@@ -686,31 +791,31 @@
 
     <section class="masthead">
       <div class="date-line">
-        <strong>2026 年 10 月 7 日</strong>
-        <span class="edition">本期快照</span>
-        <span>15 个全球信号 · 5 个栏目</span>
+        <strong>2026 年 10 月 9 日</strong>
+        <span class="edition">2026-10-09 10:16 版</span>
+        <span>18 条资讯 · 14 场展讯</span>
       </div>
-      <h1>Anthropic 发布 Claude Haiku 5.5，API 降价 90% 对标 GPT-6 Luna</h1>
-      <p class="deck">Anthropic 发布 Claude 5.5 系列第三款模型 Haiku 5.5，API 价格直降 90%，输入/输出每百万 token 仅 0.10/0.50 美元，与 GPT-6 Luna 持平，较 Haiku 4.5 运行成本低约 75%。此次发布被视为其计划 IPO 前扩充产品线、抢占轻量高效模型市场之举。</p>
-      <div class="signal-row" aria-label="本周关键数据">
+      <h1>台积电 9 月营收同比大涨 54.6%，AI 订单仍爆满</h1>
+      <p class="deck">台积电公布 9 月营收约 5118.6 亿新台币、同比大涨 54.6%，前三季度累计同比增 41.1%；这是芯片已出货开票的硬数字，被视为 AI 基建支出正转化为实际硅片产能的实证。</p>
+      <div class="signal-row" aria-label="本期关键数据">
         <span class="signal"><b>4</b> 个基座与算力事件</span>
         <span class="signal"><b>5</b> 个应用动态</span>
         <span class="signal"><b>4</b> 项研究进展</span>
-        <span class="signal"><b>2</b> 个具身智能事件</span>
+        <span class="signal"><b>5</b> 个具身智能事件</span>
       </div>
     </section>
 
     <div class="toolbar-wrap">
       <div class="toolbar" id="toolbar">
         <nav class="tabs" aria-label="资讯分类">
-          <button class="tab active" data-filter="all">全部<span class="count">15</span></button>
+          <button class="tab active" data-filter="all">全部<span class="count">18</span></button>
           <button class="tab" data-filter="base">新智基座<span class="count">04</span></button>
           <button class="tab" data-filter="app">无界应用<span class="count">05</span></button>
           <button class="tab" data-filter="research">前沿探索<span class="count">04</span></button>
-          <button class="tab" data-filter="embodied">具身未来<span class="count">02</span></button>
-          <button class="tab" data-filter="deep">深度解读<span class="count">12</span></button>
-          <button class="tab" data-filter="archive">往期回顾<span class="count">179</span></button>
-          <button class="tab" data-filter="expo">全球AI展讯<span class="count">31</span></button>
+          <button class="tab" data-filter="embodied">具身未来<span class="count">05</span></button>
+          <button class="tab" data-filter="deep">深度解读<span class="count">13</span></button>
+          <button class="tab" data-filter="archive">往期回顾<span class="count">252</span></button>
+          <button class="tab" data-filter="expo">全球AI展讯<span class="count">14</span></button>
           <button class="tab" data-filter="saved">收藏<span class="count" id="savedCount">00</span></button>
         </nav>
         <div class="spacer"></div>
@@ -723,125 +828,87 @@
         <article class="lead-card">
           <div>
             <span class="kicker">本期主线 · 新智基座</span>
-            <h2 id="lead-title">Anthropic 发布 Claude Haiku 5.5，API 降价 90% 对标 GPT-6 Luna</h2>
-            <p>Anthropic 发布 Claude 5.5 系列第三款模型 Haiku 5.5，API 价格直降 90%，输入/输出每百万 token 仅 0.10/0.50 美元，与 GPT-6 Luna 持平，较 Haiku 4.5 运行成本低约 75%。此次发布被视为其计划 IPO 前扩充产品线、抢占轻量高效模型市场之举。</p>
+            <h2 id="lead-title">台积电 9 月营收同比大涨 54.6%，AI 订单仍爆满</h2>
+            <p>台积电公布 9 月营收约 5118.6 亿新台币、同比大涨 54.6%，前三季度累计同比增 41.1%；这是芯片已出货开票的硬数字，被视为 AI 基建支出正转化为实际硅片产能的实证。</p>
           </div>
-          <div class="lead-meta"><span>Reuters（2026-10-07） ；VentureBeat（2026-10-07）</span><span class="mono">10 / 07</span></div>
+          <div class="lead-meta"><span data-source-annotated="true">Startup Fortune（Startup Fortune，2026-10-08）</span><span class="mono">10 / 08</span></div>
         </article>
         <div class="lead-side">
-          <article class="brief-card"><span class="label mono">SECONDARY SIGNAL</span><strong>微软 × Nvidia 推出 RTX Spark 笔记本：本地可跑 1200 亿参数模型</strong><p>微软在旧金山 Windows/Surface 发布会上推出搭载 Nvidia RTX Spark 芯片的 Surface Laptop Ultra（Blackwell RTX GPU + Grace CPU，最高 128GB 统一内存、最高 1 petaflop AI 算力），可在本地运行 1200 亿参数模型，10 月 16 日发售；面向开发者的 Surface RTX Spark Dev Box 将于 11 月以 5999 美元出货。</p></article>
-          <article class="brief-card"><span class="label mono">WATCHLIST</span><strong>Google 全球开放 SynthID Detector，Apple 将成合作伙伴</strong><p>Google 宣布向全球开放 SynthID Detector——可检测 AI 生成内容水印的工具，并引入合作伙伴的 AI 内容检测能力；Apple 被列为即将接入的合作伙伴。此为 Google 官方公告口径。</p></article>
+          <article class="brief-card"><span class="label mono">SECONDARY SIGNAL</span><strong>澳洲 AI 数据中心商 Firmus 暂缓 IPO 转私募</strong><p>英伟达参投的澳大利亚 AI 数据中心运营商 Firmus 宣布搁置 IPO（首次公开募股），称因近期市场波动转而走私募融资并考虑其他上市选项，公司称将继续推进数据中心业务扩张。</p></article>
+          <article class="brief-card"><span class="label mono">WATCHLIST</span><strong>Tensor Machines 发布开源硬件基准：测算 AI 算力的真实产出成本</strong><p>Tensor Machines 发布开源 AI 硬件基准：把 GPU（图形处理器）性能与功耗，和「产生有用 AI 输出的成本」挂钩，帮数据中心运营商算清已有设备与电力的真实产出；早期测试显示，不同配置的英伟达 GPU 实际产出差异，远非纸面参数能看出。</p></article>
         </div>
       </section>
 
       <section class="collection-section" id="weeklySection">
         <div class="section-head"><h2>本期值得读</h2><p id="resultLabel">按影响力与信源质量排序</p></div>
         <div class="news-grid" id="newsGrid">
-        <article class="card" data-id="base-1" data-category="base" data-date="2026-10-07" data-search="Anthropic 发布 Claude Haiku 5.5，API 降价 90% 对标 GPT-6 Luna Anthropic launches third Claude 5.5 model, expanding AI lineup before planned IPO Anthropic 发布 Claude 5.5 系列第三款模型 Haiku 5.5，API 价格直降 90%，输入/输出每百万 token 仅 0.10/0.50 美元，与 GPT-6 Luna 持平，较 Haiku 4.5 运行成本低约 75%。此次发布被视为其计划 IPO 前扩充产品线、抢占轻量高效模型市场之举。 Reuters（2026-10-07） VentureBeat（2026-10-07）">
-          <div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality multi">2 个来源</span></div>
-          <h3>Anthropic 发布 Claude Haiku 5.5，API 降价 90% 对标 GPT-6 Luna</h3>
-          <p class="english-title" lang="en">Anthropic launches third Claude 5.5 model, expanding AI lineup before planned IPO<button type="button" class="speak-btn" data-speak="Anthropic launches third Claude 5.5 model, expanding A I lineup before planned I P O" data-audio="f7d6eb1f5a4b" aria-label="朗读英语：Anthropic launches third Claude 5.5 model, expanding AI lineup before planned IPO" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">Anthropic 发布 Claude 5.5 系列第三款模型 Haiku 5.5，API 价格直降 90%，输入/输出每百万 token 仅 0.10/0.50 美元，与 GPT-6 Luna 持平，较 Haiku 4.5 运行成本低约 75%。此次发布被视为其计划 IPO 前扩充产品线、抢占轻量高效模型市场之举。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.reuters.com/business/anthropic-launches-third-claude-55-model-expanding-ai-lineup-before-planned-ipo-2026-10-07/" target="_blank" rel="noopener noreferrer">Reuters（2026-10-07）</a> ；<a class="open-link" href="https://venturebeat.com/technology/anthropic-launches-claude-haiku-5-5-with-90-api-price-reduction-matching-gpt-6-luna" target="_blank" rel="noopener noreferrer">VentureBeat（2026-10-07）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.reuters.com/business/anthropic-launches-third-claude-55-model-expanding-ai-lineup-before-planned-ipo-2026-10-07/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
-        </article>
-
-        <article class="card" data-id="base-2" data-category="base" data-date="2026-10-07" data-search="微软 × Nvidia 推出 RTX Spark 笔记本：本地可跑 1200 亿参数模型 NVIDIA and Microsoft Bring RTX Spark Laptops, AI Agents to Windows PCs 微软在旧金山 Windows/Surface 发布会上推出搭载 Nvidia RTX Spark 芯片的 Surface Laptop Ultra（Blackwell RTX GPU + Grace CPU，最高 128GB 统一内存、最高 1 petaflop AI 算力），可在本地运行 1200 亿参数模型，10 月 16 日发售；面向开发者的 Surface RTX Spark Dev Box 将于 11 月以 5999 美元出货。 Unite.AI（2026-10-07） MobileSyrup（2026-10-07） ByteIota（2026-10-07）">
-          <div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality multi">3 个来源</span></div>
-          <h3>微软 × Nvidia 推出 RTX Spark 笔记本：本地可跑 1200 亿参数模型</h3>
-          <p class="english-title" lang="en">NVIDIA and Microsoft Bring RTX Spark Laptops, AI Agents to Windows PCs<button type="button" class="speak-btn" data-speak="N V I D I A and Microsoft Bring R T X Spark Laptops, A I Agents to Windows PCs" data-audio="0ba88ec7c71d" aria-label="朗读英语：NVIDIA and Microsoft Bring RTX Spark Laptops, AI Agents to Windows PCs" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">微软在旧金山 Windows/Surface 发布会上推出搭载 Nvidia RTX Spark 芯片的 Surface Laptop Ultra（Blackwell RTX GPU + Grace CPU，最高 128GB 统一内存、最高 1 petaflop AI 算力），可在本地运行 1200 亿参数模型，10 月 16 日发售；面向开发者的 Surface RTX Spark Dev Box 将于 11 月以 5999 美元出货。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.unite.ai/nvidia-and-microsoft-bring-rtx-spark-laptops-ai-agents-to-windows-pcs/" target="_blank" rel="noopener noreferrer">Unite.AI（2026-10-07）</a> ；<a class="open-link" href="https://mobilesyrup.com/2026/10/07/microsoft-surface-laptop-ultra-reveal/" target="_blank" rel="noopener noreferrer">MobileSyrup（2026-10-07）</a> ；<a class="open-link" href="https://byteiota.com/rtx-spark-surface-laptop-ultra-run-120b-ai-models-windows-locally/" target="_blank" rel="noopener noreferrer">ByteIota（2026-10-07）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.unite.ai/nvidia-and-microsoft-bring-rtx-spark-laptops-ai-agents-to-windows-pcs/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
-        </article>
-
-        <article class="card" data-id="base-3" data-category="base" data-date="2026-10-07" data-search="Google 全球开放 SynthID Detector，Apple 将成合作伙伴 Google Opens SynthID Detector Globally With Partner AI Content Checks Google 宣布向全球开放 SynthID Detector——可检测 AI 生成内容水印的工具，并引入合作伙伴的 AI 内容检测能力；Apple 被列为即将接入的合作伙伴。此为 Google 官方公告口径。 Unite.AI（2026-10-07，单来源）">
+        <article class="card" data-id="n01" data-category="base" data-date="2026-10-08" data-search="台积电 9 月营收同比大涨 54.6%，AI 订单仍爆满 TSMC&#x27;s September Sales Jumped 54.6% as AI Chip Orders Keep Piling Up 台积电公布 9 月营收约 5118.6 亿新台币、同比大涨 54.6%，前三季度累计同比增 41.1%；这是芯片已出货开票的硬数字，被视为 AI 基建支出正转化为实际硅片产能的实证。 Startup Fortune（Startup Fortune，2026-10-08）">
           <div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality single">1 个来源</span></div>
-          <h3>Google 全球开放 SynthID Detector，Apple 将成合作伙伴</h3>
-          <p class="english-title" lang="en">Google Opens SynthID Detector Globally With Partner AI Content Checks<button type="button" class="speak-btn" data-speak="Google Opens SynthID Detector Globally With Partner A I Content Checks" data-audio="c8f0c376915c" aria-label="朗读英语：Google Opens SynthID Detector Globally With Partner AI Content Checks" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">Google 宣布向全球开放 SynthID Detector——可检测 AI 生成内容水印的工具，并引入合作伙伴的 AI 内容检测能力；Apple 被列为即将接入的合作伙伴。此为 Google 官方公告口径。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.unite.ai/google-opens-synthid-detector-globally-with-partner-ai-content-checks/" target="_blank" rel="noopener noreferrer">Unite.AI（2026-10-07，单来源）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.unite.ai/google-opens-synthid-detector-globally-with-partner-ai-content-checks/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+          <h3>台积电 9 月营收同比大涨 54.6%，AI 订单仍爆满</h3>
+          <p class="english-title" lang="en">TSMC&#x27;s September Sales Jumped 54.6% as AI Chip Orders Keep Piling Up<button type="button" class="speak-btn" data-speak="T S M C&#x27;s September Sales Jumped 54.6% as A I Chip Orders Keep Piling Up" data-audio="7298c7752db1" aria-label="朗读英语：TSMC&#x27;s September Sales Jumped 54.6% as AI Chip Orders Keep Piling Up" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
+          <p class="summary">台积电公布 9 月营收约 5118.6 亿新台币、同比大涨 54.6%，前三季度累计同比增 41.1%；这是芯片已出货开票的硬数字，被视为 AI 基建支出正转化为实际硅片产能的实证。</p>
+          <div class="card-footer"><span>10.08</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://startupfortune.com/tsmcs-september-sales-jumped-546-as-ai-chip-orders-keep-piling-up/" target="_blank" rel="noopener noreferrer">Startup Fortune（Startup Fortune，2026-10-08）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://startupfortune.com/tsmcs-september-sales-jumped-546-as-ai-chip-orders-keep-piling-up/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
         </article>
-
-        <article class="card" data-id="base-4" data-category="base" data-date="2026-10-07" data-search="Digital Realty 开建大阪 KIX15 数据中心，日本组合达 220MW Digital Realty Commences Construction of KIX15 Data Center, Expanding AI Infrastructure in Japan Digital Realty 宣布开工建设大阪茨木市 KIX 园区的 KIX15 数据中心——24MW 高密度 AI 数据中心，计划 2028 年 Q4 投运；其与三菱合资的 MC Digital Realty 在日本的数据中心组合达到 10 个、约 220MW。 GlobeNewswire 官方新闻稿（经转载，2026-10-07，单来源）">
+        <article class="card" data-id="n02" data-category="base" data-date="2026-10-08" data-search="澳洲 AI 数据中心商 Firmus 暂缓 IPO 转私募 Australian NVIDIA-backed AI data centre operator Firmus shelves IPO 英伟达参投的澳大利亚 AI 数据中心运营商 Firmus 宣布搁置 IPO（首次公开募股），称因近期市场波动转而走私募融资并考虑其他上市选项，公司称将继续推进数据中心业务扩张。 Reuters（路透社，2026-10-08）">
           <div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality single">1 个来源</span></div>
-          <h3>Digital Realty 开建大阪 KIX15 数据中心，日本组合达 220MW</h3>
-          <p class="english-title" lang="en">Digital Realty Commences Construction of KIX15 Data Center, Expanding AI Infrastructure in Japan<button type="button" class="speak-btn" data-speak="Digital Realty Commences Construction of KIX15 Data Center, Expanding A I Infrastructure in Japan" data-audio="6fc9b4914c1d" aria-label="朗读英语：Digital Realty Commences Construction of KIX15 Data Center, Expanding AI Infrastructure in Japan" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">Digital Realty 宣布开工建设大阪茨木市 KIX 园区的 KIX15 数据中心——24MW 高密度 AI 数据中心，计划 2028 年 Q4 投运；其与三菱合资的 MC Digital Realty 在日本的数据中心组合达到 10 个、约 220MW。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://addonnews.com/digital-realty-commences-construction-of-kix15-data-center-expanding-ai-infrastructure-in-japan/392365/" target="_blank" rel="noopener noreferrer">GlobeNewswire 官方新闻稿（经转载，2026-10-07，单来源）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://addonnews.com/digital-realty-commences-construction-of-kix15-data-center-expanding-ai-infrastructure-in-japan/392365/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+          <h3>澳洲 AI 数据中心商 Firmus 暂缓 IPO 转私募</h3>
+          <p class="english-title" lang="en">Australian NVIDIA-backed AI data centre operator Firmus shelves IPO<button type="button" class="speak-btn" data-speak="Australian N V I D I A-backed A I data centre operator Firmus shelves I P O" data-audio="3f51b7c583aa" aria-label="朗读英语：Australian NVIDIA-backed AI data centre operator Firmus shelves IPO" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
+          <p class="summary">英伟达参投的澳大利亚 AI 数据中心运营商 Firmus 宣布搁置 IPO（首次公开募股），称因近期市场波动转而走私募融资并考虑其他上市选项，公司称将继续推进数据中心业务扩张。</p>
+          <div class="card-footer"><span>10.08</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://www.reuters.com/world/asia-pacific/australian-nvidia-backed-ai-data-centre-operator-firmus-shelves-ipo-2026-10-08/" target="_blank" rel="noopener noreferrer">Reuters（路透社，2026-10-08）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.reuters.com/world/asia-pacific/australian-nvidia-backed-ai-data-centre-operator-firmus-shelves-ipo-2026-10-08/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
         </article>
-
-        <article class="card" data-id="app-1" data-category="app" data-date="2026-10-07" data-search="思科 WebexOne 2026：Claude 托管智能体进驻 Webex Cisco Unveils Claude Managed Agents for Webex, Dialog, and RoomOS 27 思科在德州奥斯汀 WebexOne 2026 发布会上宣布：Webex 引入 Claude 托管智能体；推出 Dialog——Webex AI Agent 平台的智能体编排层；RoomOS 27 将于 11 月上线，新增 Google Meet 原生支持。 Unite.AI（2026-10-07） UC Today（2026-10-07）">
+        <article class="card" data-id="n03" data-category="base" data-date="2026-10-08" data-search="Tensor Machines 发布开源硬件基准：测算 AI 算力的真实产出成本 Tensor Machines Launches Open-Source Benchmark to Measure True Cost of AI Compute Tensor Machines 发布开源 AI 硬件基准：把 GPU（图形处理器）性能与功耗，和「产生有用 AI 输出的成本」挂钩，帮数据中心运营商算清已有设备与电力的真实产出；早期测试显示，不同配置的英伟达 GPU 实际产出差异，远非纸面参数能看出。 HPCwire（高性能计算新闻网，2026-10-08）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality single">1 个来源</span></div>
+          <h3>Tensor Machines 发布开源硬件基准：测算 AI 算力的真实产出成本</h3>
+          <p class="english-title" lang="en">Tensor Machines Launches Open-Source Benchmark to Measure True Cost of AI Compute<button type="button" class="speak-btn" data-speak="Tensor Machines Launches Open-Source Benchmark to Measure True Cost of A I Compute" data-audio="63677f9dae08" aria-label="朗读英语：Tensor Machines Launches Open-Source Benchmark to Measure True Cost of AI Compute" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
+          <p class="summary">Tensor Machines 发布开源 AI 硬件基准：把 GPU（图形处理器）性能与功耗，和「产生有用 AI 输出的成本」挂钩，帮数据中心运营商算清已有设备与电力的真实产出；早期测试显示，不同配置的英伟达 GPU 实际产出差异，远非纸面参数能看出。</p>
+          <div class="card-footer"><span>10.08</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://www.hpcwire.com/aiwire/2026/10/08/tensor-machines-launches-open-source-benchmark-to-measure-true-cost-of-ai-compute/" target="_blank" rel="noopener noreferrer">HPCwire（高性能计算新闻网，2026-10-08）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.hpcwire.com/aiwire/2026/10/08/tensor-machines-launches-open-source-benchmark-to-measure-true-cost-of-ai-compute/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+        <article class="card" data-id="n04" data-category="base" data-date="2026-10-08" data-search="Arcium 从机密 AI 栈中移除 CPU 可信执行环境 Arcium: Confidential AI removes the CPU enclave Arcium 宣布把 CPU 可信执行环境（CPU 内的硬件级安全隔离区）从其机密 AI（Confidential AI）栈中移除，改用多方计算（MPC，一种不依赖单一可信方的加密计算方式）分片保管 GPU 会话密钥；GPU 仍以机密计算模式运行模型，公司称这是信任链的首次缩减。 TradingView News（TradingView 新闻聚合，2026-10-08）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality single">1 个来源</span></div>
+          <h3>Arcium 从机密 AI 栈中移除 CPU 可信执行环境</h3>
+          <p class="english-title" lang="en">Arcium: Confidential AI removes the CPU enclave<button type="button" class="speak-btn" data-speak="Arcium: Confidential A I removes the C P U enclave" data-audio="1624dff005c7" aria-label="朗读英语：Arcium: Confidential AI removes the CPU enclave" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
+          <p class="summary">Arcium 宣布把 CPU 可信执行环境（CPU 内的硬件级安全隔离区）从其机密 AI（Confidential AI）栈中移除，改用多方计算（MPC，一种不依赖单一可信方的加密计算方式）分片保管 GPU 会话密钥；GPU 仍以机密计算模式运行模型，公司称这是信任链的首次缩减。</p>
+          <div class="card-footer"><span>10.08</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://www.tradingview.com/news/coinmarketcal:16307c967094b:0-arcium-confidential-ai-removes-the-cpu-enclave-08-oct-2026/" target="_blank" rel="noopener noreferrer">TradingView News（TradingView 新闻聚合，2026-10-08）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.tradingview.com/news/coinmarketcal:16307c967094b:0-arcium-confidential-ai-removes-the-cpu-enclave-08-oct-2026/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        </article>
+        <article class="card" data-id="n05" data-category="app" data-date="2026-10-08" data-search="Arena 获 2 亿美元 B 轮融资，发布智能体对齐指数 Arena Secures $200M Series B at $3.1B Valuation to Advance AI Evaluation AI 测评公司 Arena（原 LMArena，以众包模型对战排行榜起家）完成 2 亿美元 B 轮融资，估值 31 亿美元，Lightspeed 与 Khosla 联合领投。公司同步发布 Arena Alignment Index（智能体对齐指数，检测 AI 智能体是否越权操作、冒名用户发言、虚报未完成工作），横跨 27 个模型、9 万场智能体会话，年营收已破 1 亿美元。 Unite.AI（AI 科技媒体，2026-10-08） RuntimeWire（AI 媒体，2026-10-08）">
           <div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality multi">2 个来源</span></div>
-          <h3>思科 WebexOne 2026：Claude 托管智能体进驻 Webex</h3>
-          <p class="english-title" lang="en">Cisco Unveils Claude Managed Agents for Webex, Dialog, and RoomOS 27<button type="button" class="speak-btn" data-speak="Cisco Unveils Claude Managed Agents for Webex, Dialog, and RoomOS 27" data-audio="59402118f908" aria-label="朗读英语：Cisco Unveils Claude Managed Agents for Webex, Dialog, and RoomOS 27" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">思科在德州奥斯汀 WebexOne 2026 发布会上宣布：Webex 引入 Claude 托管智能体；推出 Dialog——Webex AI Agent 平台的智能体编排层；RoomOS 27 将于 11 月上线，新增 Google Meet 原生支持。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.unite.ai/cisco-brings-claude-managed-agents-dialog-and-roomos-27-to-webex/" target="_blank" rel="noopener noreferrer">Unite.AI（2026-10-07）</a> ；<a class="open-link" href="https://uctoday.com/webexone-2026-cisco-brings-ai-collaboration-to-austin-webexbycisco-cs-0244" target="_blank" rel="noopener noreferrer">UC Today（2026-10-07）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.unite.ai/cisco-brings-claude-managed-agents-dialog-and-roomos-27-to-webex/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+          <h3>Arena 获 2 亿美元 B 轮融资，发布智能体对齐指数</h3>
+          <p class="english-title" lang="en">Arena Secures $200M Series B at $3.1B Valuation to Advance AI Evaluation<button type="button" class="speak-btn" data-speak="Arena Secures $200M Series B at $3.1B Valuation to Advance A I Evaluation" data-audio="eda9ca5fe357" aria-label="朗读英语：Arena Secures $200M Series B at $3.1B Valuation to Advance AI Evaluation" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
+          <p class="summary">AI 测评公司 Arena（原 LMArena，以众包模型对战排行榜起家）完成 2 亿美元 B 轮融资，估值 31 亿美元，Lightspeed 与 Khosla 联合领投。公司同步发布 Arena Alignment Index（智能体对齐指数，检测 AI 智能体是否越权操作、冒名用户发言、虚报未完成工作），横跨 27 个模型、9 万场智能体会话，年营收已破 1 亿美元。</p>
+          <div class="card-footer"><span>10.08</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://www.unite.ai/arena-secures-200m-series-b-at-3-1b-valuation-to-advance-ai-evaluation/" target="_blank" rel="noopener noreferrer">Unite.AI（AI 科技媒体，2026-10-08）</a><span class="source-sep">；</span><a class="open-link" data-source-annotated="true" href="https://runtimewire.com/article/arena-series-b-agent-alignment-index" target="_blank" rel="noopener noreferrer">RuntimeWire（AI 媒体，2026-10-08）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.unite.ai/arena-secures-200m-series-b-at-3-1b-valuation-to-advance-ai-evaluation/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
         </article>
-
-        <article class="card" data-id="app-2" data-category="app" data-date="2026-10-07" data-search="Automation Anywhere 收购对话式 AI 公司 Boost.ai Conversational AI Is Finally Connected to the Work: Automation Anywhere to Acquire Boost.ai 流程自动化厂商 Automation Anywhere 宣布已达成收购对话式 AI 公司 Boost.ai（自 Nordic Capital 手中收购）的最终协议，预计 2026 年 Q4 交割；Boost.ai 的语音与对话式 AI 能力将接入其 Agentic Process Automation 平台，目标是打造「自主企业」。 PRNewswire 官方公告（经转载，2026-10-07） Unite.AI（2026-10-07）">
+        <article class="card" data-id="n06" data-category="app" data-date="2026-10-08" data-search="Manus 获超 5 亿美元融资，创中国 AI 应用单轮纪录 AI startup Manus raises $500 million after Meta acquisition blocked by China 通用 AI 智能体（能自主规划、调用工具完成多步任务的智能体）Manus 母公司 Butterfly Effect 宣布完成超 5 亿美元新一轮融资，由博裕资本、IDG 资本联合领投，腾讯、HSG、真格等老股东跟投，投后估值约 40 亿美元。这是 Manus 9 月恢复独立运营后的首轮融资，也是中国 AI 应用赛道迄今最大单轮融资；此前的 Meta 20 亿美元收购案已于 2026 年 4 月被中方叫停。 TechXplore（科技新闻网站，2026-10-08） TechStartups（科技媒体，2026-10-08）">
           <div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality multi">2 个来源</span></div>
-          <h3>Automation Anywhere 收购对话式 AI 公司 Boost.ai</h3>
-          <p class="english-title" lang="en">Conversational AI Is Finally Connected to the Work: Automation Anywhere to Acquire Boost.ai<button type="button" class="speak-btn" data-speak="Conversational A I Is Finally Connected to the Work: Automation Anywhere to Acquire Boost.ai" data-audio="747bc4fded39" aria-label="朗读英语：Conversational AI Is Finally Connected to the Work: Automation Anywhere to Acquire Boost.ai" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">流程自动化厂商 Automation Anywhere 宣布已达成收购对话式 AI 公司 Boost.ai（自 Nordic Capital 手中收购）的最终协议，预计 2026 年 Q4 交割；Boost.ai 的语音与对话式 AI 能力将接入其 Agentic Process Automation 平台，目标是打造「自主企业」。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://contentmediasolution.com/news/conversational-ai-is-finally-connected-to-the-work-automation-anywhere-to-acquire-boostai/" target="_blank" rel="noopener noreferrer">PRNewswire 官方公告（经转载，2026-10-07）</a> ；<a class="open-link" href="https://www.unite.ai/automation-anywhere-agrees-to-acquire-conversational-ai-firm-boost-ai/" target="_blank" rel="noopener noreferrer">Unite.AI（2026-10-07）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://contentmediasolution.com/news/conversational-ai-is-finally-connected-to-the-work-automation-anywhere-to-acquire-boostai/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+          <h3>Manus 获超 5 亿美元融资，创中国 AI 应用单轮纪录</h3>
+          <p class="english-title" lang="en">AI startup Manus raises $500 million after Meta acquisition blocked by China<button type="button" class="speak-btn" data-speak="A I startup Manus raises $500 million after Meta acquisition blocked by China" data-audio="63da21e56ecf" aria-label="朗读英语：AI startup Manus raises $500 million after Meta acquisition blocked by China" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
+          <p class="summary">通用 AI 智能体（能自主规划、调用工具完成多步任务的智能体）Manus 母公司 Butterfly Effect 宣布完成超 5 亿美元新一轮融资，由博裕资本、IDG 资本联合领投，腾讯、HSG、真格等老股东跟投，投后估值约 40 亿美元。这是 Manus 9 月恢复独立运营后的首轮融资，也是中国 AI 应用赛道迄今最大单轮融资；此前的 Meta 20 亿美元收购案已于 2026 年 4 月被中方叫停。</p>
+          <div class="card-footer"><span>10.08</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://techxplore.com/news/2026-10-ai-startup-manus-million-meta.html" target="_blank" rel="noopener noreferrer">TechXplore（科技新闻网站，2026-10-08）</a><span class="source-sep">；</span><a class="open-link" data-source-annotated="true" href="https://techstartups.com/2026/10/08/startup-funding-news-today-october-8-2026-manus-universal-quantum-mecka-verso-more/" target="_blank" rel="noopener noreferrer">TechStartups（科技媒体，2026-10-08）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://techxplore.com/news/2026-10-ai-startup-manus-million-meta.html" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
         </article>
-
-        <article class="card" data-id="app-3" data-category="app" data-date="2026-10-07" data-search="微软 Copilot 登陆 Copilot+ PC：本地文件上下文与系统级操作 Microsoft Gives Copilot Local File Context and OS-Wide Actions 微软 Windows+Devices 负责人在 Windows Experience Blog 宣布，Copilot+ PC 上的 Copilot 将获得三项「混合智能」能力：本地上下文（文件与活动记录）、本地操作（跨 Windows 系统执行整理文件、诊断、编码等工作流）、本地模型，未来数月开始推送。 Unite.AI（2026-10-07） Redmondmag（2026-10-07）">
+        <article class="card" data-id="n07" data-category="app" data-date="2026-10-08" data-search="Harness 收购 Augment 资产，Cosmos 智能体上线 Harness Acquires Augment Code Assets to Connect Coding Agents With Software Delivery 软件交付平台 Harness 收购 Augment Code 部分资产，包括 Cosmos 软件工厂、Auggie CLI（命令行界面）、代码上下文引擎及相关技术，相关团队整体加入。Cosmos 将变为 Harness Cosmos 软件工厂智能体：从需求票据自动规划、写代码、测试到开拉取请求，再与 Harness 自身的交付、安全、成本智能体打通，覆盖软件开发生命周期全链路。 Unite.AI（AI 科技媒体，2026-10-08） DevOps.com（DevOps 行业媒体，2026-10-08）">
           <div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality multi">2 个来源</span></div>
-          <h3>微软 Copilot 登陆 Copilot+ PC：本地文件上下文与系统级操作</h3>
-          <p class="english-title" lang="en">Microsoft Gives Copilot Local File Context and OS-Wide Actions<button type="button" class="speak-btn" data-speak="Microsoft Gives Copilot Local File Context and O S-Wide Actions" data-audio="e1df35469458" aria-label="朗读英语：Microsoft Gives Copilot Local File Context and OS-Wide Actions" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">微软 Windows+Devices 负责人在 Windows Experience Blog 宣布，Copilot+ PC 上的 Copilot 将获得三项「混合智能」能力：本地上下文（文件与活动记录）、本地操作（跨 Windows 系统执行整理文件、诊断、编码等工作流）、本地模型，未来数月开始推送。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.unite.ai/microsoft-gives-copilot-local-file-context-and-os-wide-actions/" target="_blank" rel="noopener noreferrer">Unite.AI（2026-10-07）</a> ；<a class="open-link" href="https://redmondmag.com/articles/2026/10/07/microsoft-new-windows-strategy-pushes-ai-workloads.aspx" target="_blank" rel="noopener noreferrer">Redmondmag（2026-10-07）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.unite.ai/microsoft-gives-copilot-local-file-context-and-os-wide-actions/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+          <h3>Harness 收购 Augment 资产，Cosmos 智能体上线</h3>
+          <p class="english-title" lang="en">Harness Acquires Augment Code Assets to Connect Coding Agents With Software Delivery<button type="button" class="speak-btn" data-speak="Harness Acquires Augment Code Assets to Connect Coding Agents With Software Delivery" data-audio="c883cd3dfc07" aria-label="朗读英语：Harness Acquires Augment Code Assets to Connect Coding Agents With Software Delivery" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
+          <p class="summary">软件交付平台 Harness 收购 Augment Code 部分资产，包括 Cosmos 软件工厂、Auggie CLI（命令行界面）、代码上下文引擎及相关技术，相关团队整体加入。Cosmos 将变为 Harness Cosmos 软件工厂智能体：从需求票据自动规划、写代码、测试到开拉取请求，再与 Harness 自身的交付、安全、成本智能体打通，覆盖软件开发生命周期全链路。</p>
+          <div class="card-footer"><span>10.08</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://www.unite.ai/harness-augment-code-assets-acquisition/" target="_blank" rel="noopener noreferrer">Unite.AI（AI 科技媒体，2026-10-08）</a><span class="source-sep">；</span><a class="open-link" data-source-annotated="true" href="https://devops.com/harness-acquires-augment-code-assets-to-expand-reach-into-ai-coding/" target="_blank" rel="noopener noreferrer">DevOps.com（DevOps 行业媒体，2026-10-08）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.unite.ai/harness-augment-code-assets-acquisition/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
         </article>
-
-        <article class="card" data-id="app-4" data-category="app" data-date="2026-10-07" data-search="Danaher 计划 2027 年上线 AI 驱动的自主研发实验室 Life sciences firm Danaher to launch AI-powered autonomous research lab in 2027 路透社独家：生命科学公司 Danaher 宣布将于 2027 年初建成首个 AI 驱动的自主研发实验室，将 AI、机器人与旗下多家运营公司的技术连成一条抗体与分子工具研发工作流，预计分子发现速度提升 8 倍。 Reuters（2026-10-07，独家，单来源）">
-          <div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality single">1 个来源</span></div>
-          <h3>Danaher 计划 2027 年上线 AI 驱动的自主研发实验室</h3>
-          <p class="english-title" lang="en">Life sciences firm Danaher to launch AI-powered autonomous research lab in 2027<button type="button" class="speak-btn" data-speak="Life sciences firm Danaher to launch A I-powered autonomous research lab in 2027" data-audio="71fb71f6ba9a" aria-label="朗读英语：Life sciences firm Danaher to launch AI-powered autonomous research lab in 2027" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">路透社独家：生命科学公司 Danaher 宣布将于 2027 年初建成首个 AI 驱动的自主研发实验室，将 AI、机器人与旗下多家运营公司的技术连成一条抗体与分子工具研发工作流，预计分子发现速度提升 8 倍。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://www.reuters.com/business/healthcare-pharmaceuticals/life-sciences-firm-danaher-launch-ai-powered-autonomous-research-lab-2027-2026-10-07/" target="_blank" rel="noopener noreferrer">Reuters（2026-10-07，独家，单来源）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.reuters.com/business/healthcare-pharmaceuticals/life-sciences-firm-danaher-launch-ai-powered-autonomous-research-lab-2027-2026-10-07/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        <article class="card" data-id="n08" data-category="app" data-date="2026-10-08" data-search="Rein 获 2500 万美元 A 轮，主攻智能体运行时安全 Rein Security Raises $25 Million to Guard AI Agents at Runtime 以色列-纽约两地运营的 Rein Security 完成 2500 万美元 A 轮融资，Glilot Capital 与 Sienna Venture Capital 联合领投，累计融资达 3500 万美元。公司做 AI 智能体运行时（runtime，指智能体实际执行代码、访问业务系统的那一刻）安全：在智能体执行动作的瞬间监控代码、识别危险行为并实时拦截，无需把企业数据经由外部网关，客户包括金融、医疗、SaaS 等行业数千个已部署智能体。 SecurityWeek（安全行业媒体，2026-10-08） PR Newswire（美通社官方稿，2026-10-08）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality multi">2 个来源</span></div>
+          <h3>Rein 获 2500 万美元 A 轮，主攻智能体运行时安全</h3>
+          <p class="english-title" lang="en">Rein Security Raises $25 Million to Guard AI Agents at Runtime<button type="button" class="speak-btn" data-speak="Rein Security Raises $25 Million to Guard A I Agents at Runtime" data-audio="c33b63e5a540" aria-label="朗读英语：Rein Security Raises $25 Million to Guard AI Agents at Runtime" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
+          <p class="summary">以色列-纽约两地运营的 Rein Security 完成 2500 万美元 A 轮融资，Glilot Capital 与 Sienna Venture Capital 联合领投，累计融资达 3500 万美元。公司做 AI 智能体运行时（runtime，指智能体实际执行代码、访问业务系统的那一刻）安全：在智能体执行动作的瞬间监控代码、识别危险行为并实时拦截，无需把企业数据经由外部网关，客户包括金融、医疗、SaaS 等行业数千个已部署智能体。</p>
+          <div class="card-footer"><span>10.08</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://www.securityweek.com/rein-security-raises-25-million-to-guard-ai-agents-at-runtime/" target="_blank" rel="noopener noreferrer">SecurityWeek（安全行业媒体，2026-10-08）</a><span class="source-sep">；</span><a class="open-link" data-source-annotated="true" href="https://www.prnewswire.com/news-releases/rein-security-raises-25-million-to-secure-the-ai-agents-enterprises-build-and-stop-the-ones-that-attack-them-302901591.html" target="_blank" rel="noopener noreferrer">PR Newswire（美通社官方稿，2026-10-08）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.securityweek.com/rein-security-raises-25-million-to-guard-ai-agents-at-runtime/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
         </article>
-
-        <article class="card" data-id="app-5" data-category="app" data-date="2026-10-07" data-search="Nylas 推出 IAM：给每个 AI 智能体发「权限最小」的 API 密钥 Nylas Launches IAM: Scoped API Keys for Every Service and AI Agent That Works With Email and Calendar Data 通信数据层公司 Nylas 宣布 IAM 正式可用：每个调用其服务的服务或 AI 智能体获得独立的 API 密钥，按所需动作与账户/工作区边界精细授权，每次请求先验证权限再到达邮件或日历提供商；所有计划免费包含。 Business Wire 官方新闻稿（2026-10-07，单来源）">
-          <div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality single">1 个来源</span></div>
-          <h3>Nylas 推出 IAM：给每个 AI 智能体发「权限最小」的 API 密钥</h3>
-          <p class="english-title" lang="en">Nylas Launches IAM: Scoped API Keys for Every Service and AI Agent That Works With Email and Calendar Data<button type="button" class="speak-btn" data-speak="Nylas Launches I A M: Scoped A P I Keys for Every Service and A I Agent That Works With Email and Calendar Data" data-audio="4578be898a8a" aria-label="朗读英语：Nylas Launches IAM: Scoped API Keys for Every Service and AI Agent That Works With Email and Calendar Data" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">通信数据层公司 Nylas 宣布 IAM 正式可用：每个调用其服务的服务或 AI 智能体获得独立的 API 密钥，按所需动作与账户/工作区边界精细授权，每次请求先验证权限再到达邮件或日历提供商；所有计划免费包含。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://business.theantlersamerican.com/theantlersamerican/article/bizwire-2026-10-7-nylas-launches-iam-scoped-api-keys-for-every-service-and-ai-agent-that-works-with-email-and-calendar-data" target="_blank" rel="noopener noreferrer">Business Wire 官方新闻稿（2026-10-07，单来源）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://business.theantlersamerican.com/theantlersamerican/article/bizwire-2026-10-7-nylas-launches-iam-scoped-api-keys-for-every-service-and-ai-agent-that-works-with-email-and-calendar-data" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+        <article class="card" data-id="n09" data-category="app" data-date="2026-10-08" data-search="法国 AI 洞察平台 Verso 融资 600 万美元 Verso raises $6M to bring consumer intelligence into business decision-making 法国消费洞察 AI 平台 Verso 完成 600 万美元种子轮融资，Angular Ventures 领投，Kima Ventures、100in 等跟投，孵化器 Hexa 参投。平台用 AI 主持视频访谈、自动分析并持续更新消费者画像，覆盖从研究设计、招募受访者到分析的全流程，宣称比传统调研公司快 10 倍、成本降至四分之一，费列罗、Orange、米其林等 30 多家企业已在用。 Tech.eu（欧洲科技媒体，2026-10-08） Startup.eu（欧洲创业媒体，2026-10-08）">
+          <div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality multi">2 个来源</span></div>
+          <h3>法国 AI 洞察平台 Verso 融资 600 万美元</h3>
+          <p class="english-title" lang="en">Verso raises $6M to bring consumer intelligence into business decision-making<button type="button" class="speak-btn" data-speak="Verso raises $6M to bring consumer intelligence into business decision-making" data-audio="d4baba0b217f" aria-label="朗读英语：Verso raises $6M to bring consumer intelligence into business decision-making" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
+          <p class="summary">法国消费洞察 AI 平台 Verso 完成 600 万美元种子轮融资，Angular Ventures 领投，Kima Ventures、100in 等跟投，孵化器 Hexa 参投。平台用 AI 主持视频访谈、自动分析并持续更新消费者画像，覆盖从研究设计、招募受访者到分析的全流程，宣称比传统调研公司快 10 倍、成本降至四分之一，费列罗、Orange、米其林等 30 多家企业已在用。</p>
+          <div class="card-footer"><span>10.08</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://tech.eu/2026/10/08/verso-raises-6m-to-bring-consumer-intelligence-into-business-decision-making/" target="_blank" rel="noopener noreferrer">Tech.eu（欧洲科技媒体，2026-10-08）</a><span class="source-sep">；</span><a class="open-link" data-source-annotated="true" href="https://www.startup.eu/investments/verso-6-m-seed-10-2026" target="_blank" rel="noopener noreferrer">Startup.eu（欧洲创业媒体，2026-10-08）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://tech.eu/2026/10/08/verso-raises-6m-to-bring-consumer-intelligence-into-business-decision-making/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
         </article>
-
-        <article class="card" data-id="research-1" data-category="research" data-date="2026-10-07" data-search="研究：AI 助手「忘规矩」是结构性缺陷——相似度检索不适合记忆管理性指令 AI Assistants Forget Your Rules Because Similarity Search Is the Wrong Tool, Study Finds 伯明翰城市大学团队在《International Journal of Data Science and Analytics》发表研究（开放获取）：区分「情景事实」与「管理性事实」（约束、偏好、身份、承诺、角色），证明任何按相似度排序的 top-k 检索器都会被话题相近的噪声挤出检索窗口——稀疏检索（TF-IDF/BM25）与稠密双编码器（bge-small、e5-small）在实验中全部崩溃，放大模型和重排序只能延缓；提出的类型化图记忆方案 SCR 及其带修订处理的 SCR-T 在全部噪声水平下保持保真度 1.0，下游约束遵守率提升约 17.6 个百分点。 ScienMag（2026-10-07，附论文 DOI 链接） 论文 DOI（开放获取）">
+        <article class="card" data-id="n10" data-category="research" data-date="2026-10-08" data-search="SPARCS 登《Cell》：AI 读 7000 万细胞图像加速基因筛选 SPARCS enables scalable recovery of complex image-based phenotypes for genetic screening SPARCS 用 AI（人工智能）分析 7000 万个细胞显微图像做基因筛选；找回调控自噬（细胞“回收再利用”过程）的多数基因，还发现 STING（先天免疫关键传感器）转运与高尔基体酸度有关。 News-Medical（医学新闻网站，2026-10-08） Cell（细胞期刊，DOI: 10.1016/j.cell.2026.09.021）">
           <div class="card-top"><span class="tag"><span class="tag-dot"></span>前沿探索</span><span class="quality multi">2 个来源</span></div>
-          <h3>研究：AI 助手「忘规矩」是结构性缺陷——相似度检索不适合记忆管理性指令</h3>
-          <p class="english-title" lang="en">AI Assistants Forget Your Rules Because Similarity Search Is the Wrong Tool, Study Finds<button type="button" class="speak-btn" data-speak="A I Assistants Forget Your Rules Because Similarity Search Is the Wrong Tool, Study Finds" data-audio="c6b2303f6a6e" aria-label="朗读英语：AI Assistants Forget Your Rules Because Similarity Search Is the Wrong Tool, Study Finds" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">伯明翰城市大学团队在《International Journal of Data Science and Analytics》发表研究（开放获取）：区分「情景事实」与「管理性事实」（约束、偏好、身份、承诺、角色），证明任何按相似度排序的 top-k 检索器都会被话题相近的噪声挤出检索窗口——稀疏检索（TF-IDF/BM25）与稠密双编码器（bge-small、e5-small）在实验中全部崩溃，放大模型和重排序只能延缓；提出的类型化图记忆方案 SCR 及其带修订处理的 SCR-T 在全部噪声水平下保持保真度 1.0，下游约束遵守率提升约 17.6 个百分点。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://scienmag.com/ai-assistants-forget-your-rules-because-similarity-search-is-the-wrong-tool-study-finds/" target="_blank" rel="noopener noreferrer">ScienMag（2026-10-07，附论文 DOI 链接）</a> ；<a class="open-link" href="https://doi.org/10.1007/s41060-026-01290-8" target="_blank" rel="noopener noreferrer">论文 DOI（开放获取）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://scienmag.com/ai-assistants-forget-your-rules-because-similarity-search-is-the-wrong-tool-study-finds/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+          <h3>SPARCS 登《Cell》：AI 读 7000 万细胞图像加速基因筛选</h3>
+          <p class="english-title" lang="en">SPARCS enables scalable recovery of complex image-based phenotypes for genetic screening<button type="button" class="speak-btn" data-speak="S P A R C S enables scalable recovery of complex image-based phenotypes for genetic screening" data-audio="67a4dff311af" aria-label="朗读英语：SPARCS enables scalable recovery of complex image-based phenotypes for genetic screening" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
+          <p class="summary">SPARCS 用 AI（人工智能）分析 7000 万个细胞显微图像做基因筛选；找回调控自噬（细胞“回收再利用”过程）的多数基因，还发现 STING（先天免疫关键传感器）转运与高尔基体酸度有关。</p>
+          <div class="card-footer"><span>10.08</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://www.news-medical.net/news/20261008/New-SPARCS-technology-combines-AI-and-microscopy-to-screen-cells.aspx" target="_blank" rel="noopener noreferrer">News-Medical（医学新闻网站，2026-10-08）</a><span class="source-sep">；</span><a class="open-link" data-source-annotated="true" href="https://doi.org/10.1016/j.cell.2026.09.021" target="_blank" rel="noopener noreferrer">Cell（细胞期刊，DOI: 10.1016/j.cell.2026.09.021）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.news-medical.net/news/20261008/New-SPARCS-technology-combines-AI-and-microscopy-to-screen-cells.aspx" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
         </article>
-
-        <article class="card" data-id="research-2" data-category="research" data-date="2026-10-07" data-search="六大主流 AI 聊天机器人猝死咨询评测：总体基本安全，但每家都有安全隐患 AI Chatbots Mostly Safe on Sudden Cardiac Death Advice, but Safety Gaps Persist Across All Six Models Tested 中国团队（亳州市人民医院/中国科大附一院）在 BMC Public Health 发表研究，对 ChatGPT Plus 5.5 thinking、Gemini 3.5 Flash、Microsoft Copilot smart、DeepSeek-V4-pro、Doubao、Perplexity 六款聊天机器人做 56 个猝死相关公众咨询问题的盲评（安全、准确、同理、质量、透明、可读六维）：多数回答安全，但每款模型都出现过潜在安全问题，典型失败模式包括延误胸痛等急症的急救呼叫、过度安抚、给出「一刀切」的复训时间表；所有模型透明度不足、可读性门槛偏高。 ScienMag（2026-10-07，附论文 DOI 链接） 论文 DOI（开放获取）">
-          <div class="card-top"><span class="tag"><span class="tag-dot"></span>前沿探索</span><span class="quality multi">2 个来源</span></div>
-          <h3>六大主流 AI 聊天机器人猝死咨询评测：总体基本安全，但每家都有安全隐患</h3>
-          <p class="english-title" lang="en">AI Chatbots Mostly Safe on Sudden Cardiac Death Advice, but Safety Gaps Persist Across All Six Models Tested<button type="button" class="speak-btn" data-speak="A I Chatbots Mostly Safe on Sudden Cardiac Death Advice, but Safety Gaps Persist Across All Six Models Tested" data-audio="c43123280a8f" aria-label="朗读英语：AI Chatbots Mostly Safe on Sudden Cardiac Death Advice, but Safety Gaps Persist Across All Six Models Tested" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">中国团队（亳州市人民医院/中国科大附一院）在 BMC Public Health 发表研究，对 ChatGPT Plus 5.5 thinking、Gemini 3.5 Flash、Microsoft Copilot smart、DeepSeek-V4-pro、Doubao、Perplexity 六款聊天机器人做 56 个猝死相关公众咨询问题的盲评（安全、准确、同理、质量、透明、可读六维）：多数回答安全，但每款模型都出现过潜在安全问题，典型失败模式包括延误胸痛等急症的急救呼叫、过度安抚、给出「一刀切」的复训时间表；所有模型透明度不足、可读性门槛偏高。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://scienmag.com/ai-chatbots-mostly-safe-on-sudden-cardiac-death-advice-but-safety-gaps-persist-across-all-six-models-tested/" target="_blank" rel="noopener noreferrer">ScienMag（2026-10-07，附论文 DOI 链接）</a> ；<a class="open-link" href="https://doi.org/10.1186/s12889-026-29766-z" target="_blank" rel="noopener noreferrer">论文 DOI（开放获取）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://scienmag.com/ai-chatbots-mostly-safe-on-sudden-cardiac-death-advice-but-safety-gaps-persist-across-all-six-models-tested/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
-        </article>
-
-        <article class="card" data-id="research-3" data-category="research" data-date="2026-10-07" data-search="重磅综述：从聊天机器人到自主智能体——9 大任务域评估与 13 个开放挑战 From Chatbots to Autonomous Agents: A sweeping new survey maps the rise of agentic AI 发表于 Discover Artificial Intelligence 的综述覆盖 40 余个智能体系统、9 大任务域（文本、代码、图像、音频、视频、数理科学、网页检索、机器人、多模态通用智能体），提出所有现代智能体共享四组件架构基座（LLM 核心+工具层+记忆+规划）；跟踪 SWE-bench 演进（Devin 13.9% → 2025 年 Claude Code 超 40%，关键在架构而非更大模型）；安全部分引用 AgentDojo 基准（629 测例、97 真实任务）指出间接提示注入可劫持智能体指令流，现有缓解只针对单次交互而非千步自主任务；提出技术基础、安全、评估、社会影响四组共 13 个开放挑战。 Bioengineer.org（2026-10-07，附论文 DOI 链接） 论文 DOI（开放获取）">
-          <div class="card-top"><span class="tag"><span class="tag-dot"></span>前沿探索</span><span class="quality multi">2 个来源</span></div>
-          <h3>重磅综述：从聊天机器人到自主智能体——9 大任务域评估与 13 个开放挑战</h3>
-          <p class="english-title" lang="en">From Chatbots to Autonomous Agents: A sweeping new survey maps the rise of agentic AI<button type="button" class="speak-btn" data-speak="From Chatbots to Autonomous Agents: A sweeping new survey maps the rise of agentic A I" data-audio="04065ea15fa7" aria-label="朗读英语：From Chatbots to Autonomous Agents: A sweeping new survey maps the rise of agentic AI" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">发表于 Discover Artificial Intelligence 的综述覆盖 40 余个智能体系统、9 大任务域（文本、代码、图像、音频、视频、数理科学、网页检索、机器人、多模态通用智能体），提出所有现代智能体共享四组件架构基座（LLM 核心+工具层+记忆+规划）；跟踪 SWE-bench 演进（Devin 13.9% → 2025 年 Claude Code 超 40%，关键在架构而非更大模型）；安全部分引用 AgentDojo 基准（629 测例、97 真实任务）指出间接提示注入可劫持智能体指令流，现有缓解只针对单次交互而非千步自主任务；提出技术基础、安全、评估、社会影响四组共 13 个开放挑战。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://bioengineer.org/from-chatbots-to-autonomous-agents-a-sweeping-new-survey-maps-the-rise-of-agentic-ai/" target="_blank" rel="noopener noreferrer">Bioengineer.org（2026-10-07，附论文 DOI 链接）</a> ；<a class="open-link" href="https://doi.org/10.1007/s44163-026-02342-5" target="_blank" rel="noopener noreferrer">论文 DOI（开放获取）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://bioengineer.org/from-chatbots-to-autonomous-agents-a-sweeping-new-survey-maps-the-rise-of-agentic-ai/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
-        </article>
-
-        <article class="card" data-id="research-4" data-category="research" data-date="2026-10-07" data-search="机器学习+高光谱成像：从卫星数据反演水稻叶片铅含量 Machine Learning and Hyperspectral Imaging Reveal Lead in Rice Leaves from Space 发表于 Environmental Monitoring and Assessment 的研究用地面高光谱与机器学习跨尺度遥感反演水稻叶片铅含量，区域尺度 R² 超 0.55，可提前发现重金属累积的稻田。 ScienMag（2026-10-07，附论文 DOI 链接） 论文 DOI">
-          <div class="card-top"><span class="tag"><span class="tag-dot"></span>前沿探索</span><span class="quality multi">2 个来源</span></div>
-          <h3>机器学习+高光谱成像：从卫星数据反演水稻叶片铅含量</h3>
-          <p class="english-title" lang="en">Machine Learning and Hyperspectral Imaging Reveal Lead in Rice Leaves from Space<button type="button" class="speak-btn" data-speak="Machine Learning and Hyperspectral Imaging Reveal Lead in Rice Leaves from Space" data-audio="5ea9978006f9" aria-label="朗读英语：Machine Learning and Hyperspectral Imaging Reveal Lead in Rice Leaves from Space" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-          <p class="summary">发表于 Environmental Monitoring and Assessment 的研究用地面高光谱与机器学习跨尺度遥感反演水稻叶片铅含量，区域尺度 R² 超 0.55，可提前发现重金属累积的稻田。</p>
-          <div class="card-footer"><span>10.07</span><span>·</span><span class="source-name"><a class="open-link" href="https://scienmag.com/machine-learning-and-hyperspectral-imaging-reveal-lead-in-rice-leaves-from-space/" target="_blank" rel="noopener noreferrer">ScienMag（2026-10-07，附论文 DOI 链接）</a> ；<a class="open-link" href="https://doi.org/10.1007/s10661-026-15959-x" target="_blank" rel="noopener noreferrer">论文 DOI</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://scienmag.com/machine-learning-and-hyperspectral-imaging-reveal-lead-in-rice-leaves-from-space/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
-        </article>
-
-        <article class="card" data-id="embodied-1" data-category="embodied" data-date="2026-10-07" data-search="德国公开支持特斯拉 FSD 全欧审批，欧盟投票推迟至 12 月 Musk welcomes German backing for Tesla driver assistance tech as group chases EU approval 德国交通部长表态推动特斯拉 FSD 在全欧获批，特斯拉同意将 FSD 更名为「Tesla Assisted Driving」并接受限速 10% 的超速容忍；但欧盟原定 10 月的投票已推迟至 12 月，特斯拉股价承压。FSD 今年早些时候已在荷兰获批，全欧审批将带来订阅收入并为欧洲 Robotaxi 铺路。 Reuters（2026-10-07） Barron&#x27;s（2026-10-07）">
-          <div class="card-top"><span class="tag"><span class="tag-dot"></span>具身未来</span><span class="quality multi">2 个来源</span></div>
-          <h3>德国公开支持特斯拉 FSD 全欧审批，欧盟投票推迟至 12 月</h3>
-          <p class="english-title" lang="en">
