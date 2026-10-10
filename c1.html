@@ -765,6 +765,72 @@
       .deep-body { margin-top: 24px; font-size: calc(var(--body-size) + 1px); line-height: 1.88; }
       .deep-body h3 { margin-top: 1.9em; font-size: 1.35em; }
     }
+
+
+    /* Terminology learning — preserves the square-rule A4 editorial system. */
+    .terms-section { margin-top: 42px; padding-top: 22px; border-top: 3px double var(--text); }
+    .terms-intro { display: grid; grid-template-columns: 126px minmax(0, 1fr); gap: 22px; align-items: start; margin-bottom: 24px; }
+    .terms-intro .section-index { padding-top: 8px; }
+    .terms-intro h2 { margin: 0; font-family: "Noto Serif SC", "Songti SC", serif; font-size: clamp(30px, 4.3vw, 50px); line-height: 1.12; letter-spacing: -.04em; }
+    .terms-intro p { grid-column: 2; margin: -10px 0 0; max-width: 650px; color: var(--muted); }
+    .term-controls { display: grid; grid-template-columns: minmax(220px, 1fr) auto auto; gap: 10px; align-items: center; padding: 12px 0; border-top: 1px solid var(--text); border-bottom: 1px solid var(--text); }
+    .term-search-label { position: relative; display: flex; align-items: center; min-width: 0; }
+    .term-search-label svg { position: absolute; left: 11px; width: 17px; height: 17px; color: var(--muted); fill: none; stroke: currentColor; stroke-width: 1.8; pointer-events: none; }
+    .term-search { width: 100%; height: 42px; padding: 0 12px 0 38px; border: 1px solid var(--line-strong); border-radius: 0; background: var(--surface); color: var(--text); }
+    .term-count { color: var(--muted); font: 500 11px/1.4 "IBM Plex Mono", monospace; white-space: nowrap; }
+    .term-mode-btn, .flash-nav-btn { min-height: 42px; padding: 0 14px; border: 1px solid var(--text); border-radius: 0; background: var(--surface); color: var(--text); cursor: pointer; font-weight: 700; }
+    .term-mode-btn:hover, .term-mode-btn.active, .flash-nav-btn:hover { background: var(--text); color: var(--surface); }
+    .term-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 38px; border-bottom: 1px solid var(--text); }
+    .term-list[hidden] { display: none; }
+    .term-card { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; min-width: 0; padding: 24px 0 26px; border-top: 1px solid var(--line); }
+    .term-card:nth-child(-n+2) { border-top-color: var(--text); }
+    .term-card[hidden] { display: none; }
+    .term-number { padding-top: 6px; color: var(--accent); font: 500 10px/1 "IBM Plex Mono", monospace; }
+    .term-copy { min-width: 0; }
+    .term-english-line { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .term-english-line h3 { margin: 0; min-width: 0; overflow-wrap: anywhere; font-family: "Noto Serif SC", "Songti SC", serif; font-size: 21px; line-height: 1.35; letter-spacing: -.02em; }
+    .term-english-line .speak-btn { flex: none; }
+    .term-ipa { margin: 5px 0 0; color: var(--faint); font: 500 11px/1.5 "IBM Plex Mono", monospace; overflow-wrap: anywhere; }
+    .term-chinese { margin: 11px 0 0; color: var(--accent); font-weight: 800; }
+    .term-definition { margin: 7px 0 0; color: var(--muted); line-height: 1.75; }
+    .term-empty { display: none; padding: 54px 18px; text-align: center; border-bottom: 1px solid var(--text); color: var(--muted); }
+    .term-empty.visible { display: block; }
+    .flash-stage { padding-top: 22px; }
+    .flash-stage[hidden] { display: none; }
+    .flash-meta { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; }
+    .flash-progress { color: var(--muted); text-align: center; font: 500 11px/1.4 "IBM Plex Mono", monospace; }
+    .flash-card { position: relative; display: grid; min-height: 430px; margin-top: 12px; border: 1px solid var(--text); background: var(--surface); cursor: pointer; overflow: hidden; touch-action: pan-y; }
+    .flash-card:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 3px; }
+    .flash-face { grid-area: 1 / 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: clamp(28px, 7vw, 78px); text-align: center; backface-visibility: hidden; transition: transform .42s ease, opacity .25s ease; }
+    .flash-front { opacity: 1; transform: rotateY(0deg); }
+    .flash-back { opacity: 0; transform: rotateY(180deg); pointer-events: none; }
+    .flash-card.flipped .flash-front { opacity: 0; transform: rotateY(-180deg); pointer-events: none; }
+    .flash-card.flipped .flash-back { opacity: 1; transform: rotateY(0deg); pointer-events: auto; }
+    .flash-kicker { color: var(--accent); font: 500 10px/1 "IBM Plex Mono", monospace; letter-spacing: .12em; }
+    .flash-english { margin: 24px 0 0; max-width: 780px; overflow-wrap: anywhere; font-family: "Noto Serif SC", "Songti SC", serif; font-size: clamp(38px, 7vw, 72px); line-height: 1.08; letter-spacing: -.05em; }
+    .flash-flip-hint { margin: 30px 0 0; color: var(--faint); font-size: 12px; }
+    .flash-cn { margin: 18px 0 0; color: var(--accent); font-family: "Noto Serif SC", "Songti SC", serif; font-size: clamp(27px, 4vw, 42px); line-height: 1.2; }
+    .flash-ipa { margin: 11px 0 0; color: var(--faint); font: 500 13px/1.6 "IBM Plex Mono", monospace; overflow-wrap: anywhere; }
+    .flash-definition { margin: 24px 0 0; max-width: 670px; font-size: clamp(16px, 2vw, 20px); line-height: 1.75; }
+    .flash-back .speak-btn { margin-top: 24px; width: 38px; height: 38px; }
+    .flash-swipe-note { margin: 12px 0 0; color: var(--faint); text-align: center; font-size: 11px; }
+    @media (max-width: 700px) {
+      .terms-section { margin-top: 34px; }
+      .terms-intro { grid-template-columns: 1fr; gap: 8px; }
+      .terms-intro .section-index { padding-top: 0; }
+      .terms-intro p { grid-column: 1; margin: 4px 0 0; }
+      .term-controls { grid-template-columns: 1fr auto; }
+      .term-search-label { grid-column: 1 / -1; }
+      .term-count { justify-self: start; }
+      .term-list { grid-template-columns: 1fr; }
+      .term-card:nth-child(2) { border-top-color: var(--line); }
+      .flash-card { min-height: 390px; }
+      .flash-face { padding: 26px 20px; }
+      .flash-nav-btn { min-width: 82px; padding: 0 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .flash-face { transition: none; }
+    }
   </style>
 </head>
 <body>
@@ -814,6 +880,7 @@
           <button class="tab" data-filter="research">前沿探索<span class="count">02</span></button>
           <button class="tab" data-filter="embodied">具身未来<span class="count">03</span></button>
           <button class="tab" data-filter="deep">深度解读<span class="count">13</span></button>
+          <button class="tab" data-filter="terms">术语学习<span class="count">70</span></button>
           <button class="tab" data-filter="archive">往期回顾<span class="count">308</span></button>
           <button class="tab" data-filter="expo">全球AI展讯<span class="count">77</span></button>
           <button class="tab" data-filter="saved">收藏<span class="count" id="savedCount">00</span></button>
@@ -922,12 +989,4 @@
  <article class="card" data-id="n12" data-category="embodied" data-date="2026-10-09" data-search="Danu Robotics 获 500 万美元 late-seed：回收分拣机器人「一条产线年增收 48.5 万美元」，下周亮相 TechCrunch Disrupt Danu Robotics Raises $5M Late Seed for Recycling-Sorting Robot 回收分拣机器人公司 Danu Robotics（丹努机器人）完成 500 万美元后期种子轮（late-seed）融资（TechCrunch 10 月 9 日报道）。公司与 Glacier、RecycleEye 的吸盘式分拣臂路线不同，主打更便宜、效率更高的分拣方案：创始人向 TechCrunch 算账，一条分拣线部署其机器人可年增收约 48.5 万美元，初始投入 16 万美元、年维护费 2.4 万美元。公司已出货，下一步把机器人做得更小更便携，以进入活动、商场、医院、机场等场景做源头回收。公司将参加 10 月 13–15 日在旧金山 Moscone（莫斯康）中心举行的 TechCrunch Disrupt Startup Battlefield 200（创业竞技场 200 强）。 TechCrunch（2026-10-09）">
 <div class="card-top"><span class="tag"><span class="tag-dot"></span>具身未来</span><span class="quality single">1 个来源</span></div>
 <h3>Danu Robotics 获 500 万美元 late-seed：回收分拣机器人「一条产线年增收 48.5 万美元」，下周亮相 TechCrunch Disrupt</h3>
-<p class="english-title" lang="en" data-no-inline-speech>Danu Robotics Raises $5M Late Seed for Recycling-Sorting Robot<button type="button" class="speak-btn" data-speak="Danu Robotics Raises $5M Late Seed for Recycling-Sorting Robot" data-audio="ac647c9d8c57" aria-label="朗读英语：Danu Robotics Raises $5M Late Seed for Recycling-Sorting Robot" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-<p class="summary">回收分拣机器人公司 Danu Robotics（丹努机器人）完成 500 万美元后期种子轮（late-seed）融资（TechCrunch 10 月 9 日报道）。公司与 Glacier、RecycleEye 的吸盘式分拣臂路线不同，主打更便宜、效率更高的分拣方案：创始人向 TechCrunch 算账，一条分拣线部署其机器人可年增收约 48.5 万美元，初始投入 16 万美元、年维护费 2.4 万美元。公司已出货，下一步把机器人做得更小更便携，以进入活动、商场、医院、机场等场景做源头回收。公司将参加 10 月 13–15 日在旧金山 Moscone（莫斯康）中心举行的 TechCrunch Disrupt Startup Battlefield 200（创业竞技场 200 强）。</p>
-<div class="card-footer"><span>10.09</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://techcrunch.com/2026/10/09/danu-robotics-fight-to-build-a-better-recycling-robot/" target="_blank" rel="noopener noreferrer">TechCrunch（2026-10-09）</a></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://techcrunch.com/2026/10/09/danu-robotics-fight-to-build-a-better-recycling-robot/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
-</article>
- <article class="card" data-id="n13" data-category="embodied" data-date="2026-10-09" data-search="Zipline 无人机配送登陆奥斯汀：Round Rock 首发 5000 名额早鸟计划，FAA 环评公示期未结束就先开飞 Zipline Launches First Flight Drone Delivery Program in Austin 无人机配送公司 Zipline（兹普莱恩，Platform 2 平台）10 月 9 日在奥斯汀地区启动 First Flight（首飞）早鸟计划，首站在 Round Rock（朗德罗克）向 5000 名注册居民开放：通过 Zipline App 下单，免服务费和配送费，前三单各减 10 美元。这是它继达拉斯-沃斯堡（2025 年 8 月）、休斯敦（2026 年 4 月）之后 14 个月内拿下的第三个得州都市区，公司称累计商业配送已超 300 万次、飞行里程超 1.4 亿英里。值得注意的是，美国联邦航空管理局（FAA）针对奥斯汀运营的环境评估草案公示期到 10 月 11 日才截止，等于先开飞后走完公示。 Unite.AI（AI 媒体，2026-10-09） DroneXL（无人机媒体，2026-10-09） RuntimeWire（AI 资讯，2026-10-09）">
-<div class="card-top"><span class="tag"><span class="tag-dot"></span>具身未来</span><span class="quality multi">3 个来源</span></div>
-<h3>Zipline 无人机配送登陆奥斯汀：Round Rock 首发 5000 名额早鸟计划，FAA 环评公示期未结束就先开飞</h3>
-<p class="english-title" lang="en" data-no-inline-speech>Zipline Launches First Flight Drone Delivery Program in Austin<button type="button" class="speak-btn" data-speak="Zipline Launches First Flight Drone Delivery Program in Austin" data-audio="063fec258dd8" aria-label="朗读英语：Zipline Launches First Flight Drone Delivery Program in Austin" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p>
-<p class="summary">
+<p class="english-title" lang="en" data-no-inline-speech>Danu Robotics Raises $5M Late Seed for Recycling-Sorting Robot<button type="button" class="speak-btn" data-speak="Danu Robotics Raises $5M Late Seed for Recycling-Sorting Robot" data-audio="ac647c9d8c57" aria-label="朗读英语：Danu Robotics Raises $5M Late Seed for Recycling-Sorting Robot" title="播放英语发音">
