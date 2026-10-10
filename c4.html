@@ -1,4 +1,4 @@
-
+<a class="archive-title" href="https://www.webpronews.com/digitalocean-positions-agents-as-the-new-cloud-front-door-with-managed-agents-preview/" target="_blank" rel="noopener noreferrer">DigitalOcean 推出 Managed Agents 预览与 Agent Droplets 订阅</a><span class="archive-meta">2026-10-02<br>WebProfs（10-04，引述 InfoQ 10-02 报道）</span></li>
               <li class="archive-item" data-search="Dataiku Agent Management 10 月 GA：给企业所有 AI agent 建统一台账 无界应用 2026-10-01 Pondero.ai（09-27，引述官方公告） 2026-10-05 16:16"><span class="archive-category">无界应用</span><a class="archive-title" href="https://pondero.ai/news/2026-09-27-dataiku-agent-management/" target="_blank" rel="noopener noreferrer">Dataiku Agent Management 10 月 GA：给企业所有 AI agent 建统一台账</a><span class="archive-meta">2026-10-01<br>Pondero.ai（09-27，引述官方公告）</span></li>
               <li class="archive-item" data-search="151 页巨作：Seth、Legg 等提出 AI 意识评估的层级贝叶斯框架 前沿探索 2026-10-02 arXivIQ（引述 arXiv 论文，10-02） 2026-10-05 16:16"><span class="archive-category">前沿探索</span><a class="archive-title" href="https://arxiviq.substack.com/p/from-cacophony-to-hierarchy-a-principled" target="_blank" rel="noopener noreferrer">151 页巨作：Seth、Legg 等提出 AI 意识评估的层级贝叶斯框架</a><span class="archive-meta">2026-10-02<br>arXivIQ（引述 arXiv 论文，10-02）</span></li>
               <li class="archive-item" data-search="WashU 大规模审计：Google AI Overviews 的回答与其引用来源存在落差 前沿探索 2026-09-29 Phys.org（09-29，引述 arXiv 预印本） 2026-10-05 16:16"><span class="archive-category">前沿探索</span><a class="archive-title" href="https://phys.org/news/2026-09-extensive-reveals-gaps-google-ai.html" target="_blank" rel="noopener noreferrer">WashU 大规模审计：Google AI Overviews 的回答与其引用来源存在落差</a><span class="archive-meta">2026-09-29<br>Phys.org（09-29，引述 arXiv 预印本）</span></li>
@@ -71,6 +71,156 @@
           <p>长文 · 按日期倒序</p>
         </div>
         <div class="deep-list">
+          <article class="card deep-article" data-id="deep-2026-10-09" data-category="deep" data-date="2026-10-09" data-search="722 篇正确的论文砸下来 数学家却怒了 AI 证明了答案 却绕过了数学本身 OpenAI math Lean Nature 四色定理 Appel Haken Lakatos 证明与反驳 Bourbaki 陶哲轩 数学证明 学术信任">
+            <header class="deep-article-header">
+              <div class="deep-date">2026-10-09<br>AI 深度解读</div>
+              <h2 class="deep-title">722 篇&quot;正确&quot;的论文砸下来，数学家却怒了：AI 证明了答案，却绕过了数学本身</h2>
+            </header>
+            <div class="deep-body">
+              <p><strong>新闻由头</strong>：10 月 6 日晚，OpenAI 在 GitHub 新建 openai/math 仓库，一次性上传 722 篇数学手稿，分属 372 个结果族，覆盖数论、组合、拓扑、数学物理等 17 个领域。官方口径：这些手稿出自一个未公开的内部前沿模型在约 4000 个开放问题上做评估时的产出，每个结果平均耗费约 3 小时 ChatGPT Pro 级思考算力；其中 162 篇主结果已用 Lean（形式化证明语言：把证明写成机器能逐行检验的格式）完成验证，其余仍待人工核验。上线 24 小时内，3 篇被撤回——一个符号错误连带作废了两篇依赖它的论文，另有 14 篇被修订。10 月 7 日，《Nature》以&quot;mathematicians are up in arms&quot;（数学家们怒了）为题报道了这场风波。（<a class="open-link" href="https://www.nature.com/articles/d41586-026-03196-8" target="_blank" rel="noopener noreferrer">Nature</a>；<a class="open-link" href="https://aiweekly.co/alerts/openai-dumps-722-ai-math-preprints-to-github-pulls-three" target="_blank" rel="noopener noreferrer">aiweekly 事实梳理</a>）</p>
+
+              <p>一夜之间，722 篇数学论文砸进 GitHub。</p>
+              <p>作者栏，空着。</p>
+              <p>数学家们的反应不是鼓掌，是愤怒。</p>
+              <p>最魔幻的是愤怒的理由：不是&quot;AI 写错了&quot;。</p>
+              <p>恰恰相反——<strong>它很可能是对的，而这正是最让人害怕的地方。</strong></p>
+
+              <h3>先把事实摆齐：这 722 篇到底是什么</h3>
+              <p>4000 个开放问题喂进去，372 个结果族吐出来，通过率不到一成。</p>
+              <p>每个结果，平均烧掉 3 小时 ChatGPT Pro 级别的思考算力。</p>
+              <p>162 篇，主结果已经用 Lean 写成了机器可逐行检验的形式——这是含金量最高的子集。</p>
+              <p>剩下的一半左右，据 aiweekly 梳理，发布时未经任何独立验证。官方原话是&quot;仍待人工核验&quot;，翻译一下：<strong>可能有错，我们也不知道错在哪。</strong></p>
+              <p>然后 24 小时就应验了：3 篇撤回，14 篇修订。</p>
+              <p>一个符号错误（sign error），就能让一篇论文的论证作废，顺带拖死两篇引用了它的论文。</p>
+              <p>这就是 AI 数学论文的&quot;供应链&quot;：快，但脆。</p>
+              <p>数学界的声音是分裂的。</p>
+              <p>康涅狄格大学的 Álvaro Lozano-Robledo 在 X 上说，一次性砸出这个数量&quot;staggering&quot;（令人咋舌），并质问：&quot;OpenAI 为什么要把几百个数学问题攒在一起一次性发布？&quot;</p>
+              <p>Anthropic 的数学家 Levent Alpöge 说得最有意思，一句话里装了两种情绪：会有&quot;令人难过的故事&quot;（一些数学家的研究计划会被抢先），但&quot;先把这个放一边——这显然是数学史上最重要的时刻&quot;。</p>
+              <p>康奈尔的 Alex Townsend 批评发布策略：既然知道数学界对 AI 充满怀疑，就应该先公布 Lean 验证过的子集。</p>
+              <p>MIT 的 Andrew Sutherland 说，快速撤回是&quot;负责任的做法&quot;，但&quot;要赚回失去的信任，远不止于此&quot;。</p>
+              <p>最狠的是一封数学家联名信，落款是一个自称&quot;人类数学协会&quot;（Association for Human Mathematics）的团体——据转述，连陶哲轩都在自己博客里转载了这份声明（<a class="open-link" href="https://nandasiddhardha.medium.com/openai-dumped-722-math-papers-on-github-overnight-and-mathematicians-are-not-having-it-4ddb04203d72" target="_blank" rel="noopener noreferrer">转述来源</a>）。</p>
+              <p>信里只有一句话真正杀人：</p>
+              <p><strong>&quot;一次放出 700 多个文件，不是学术的展示，而是权力的展示。&quot;</strong>（not a demonstration of scholarship, but a demonstration of power）</p>
+              <p>一位物理学家则发明了一个词：slopocalypse——&quot;slop&quot;（AI 吐出来的低质内容）+ apocalypse（末日）。</p>
+              <p>据转述，这已经是两个月里第二次引发同款争吵：8 月的内部模型 Astra、9 月号称解决 Navier-Stokes 千禧难题的 166 页手稿在前，每一次都是&quot;先扔出来，再慢慢吵&quot;（<a class="open-link" href="https://startupfortune.com/openai-drops-722-ai-math-proofs-and-mathematicians-are-not-impressed/" target="_blank" rel="noopener noreferrer">转述来源</a>）。</p>
+
+              <h3>我的论点先摆出来：愤怒的从来不是&quot;被抢发&quot;</h3>
+              <p>先排除一个最浅的解释：数学家嫉妒 AI、怕失业、怕被抢优先权。</p>
+              <p>优先权之争，数学史上多的是。</p>
+              <p>牛顿和莱布尼茨为微积分打了一辈子，皇家学会的调查委员会还是牛顿自己任命的。</p>
+              <p>这次不一样。</p>
+              <p>这次被绕过的，不是一个人的成果，而是一整套&quot;证明如何成立&quot;的社会机制。</p>
+              <p>数学证明有两个身体。</p>
+              <p>一个叫&quot;真&quot;：逻辑上无懈可击，机器能逐行检验，Lean 能盖章。</p>
+              <p>另一个叫&quot;信&quot;：人类同行读得懂、跟得上、挑得出刺，愿意为它背书。</p>
+              <p><strong>AI 把第一个身体练到了极致，却把第二个身体整个跳过了。</strong></p>
+              <p>而过去两千五百年，数学恰恰是靠第二个身体活下来的。</p>
+              <p>前一篇里讲过的那个故事可以作个对照：Anthropic 的 agent 声称&quot;亲眼看见&quot;了新的酶系统，那场争吵争的是&quot;发现&quot;算谁的。</p>
+              <p>这一次，争的比&quot;谁先看到&quot;更深一层——</p>
+              <p><strong>&quot;证明&quot;本身，还算不算数。</strong></p>
+
+              <h3>第一个故事：1976 年，计算机第一次&quot;证明&quot;定理，数学界也炸过一次</h3>
+              <p><strong>谁</strong>：Kenneth Appel 和 Wolfgang Haken，美国伊利诺伊大学厄巴纳-香槟分校的两位数学家。</p>
+              <p><strong>在哪、何时</strong>：1976 年 6 月 21 日，两人宣布证明了四色定理。</p>
+              <p><strong>发生了什么</strong>：四色定理说的是：任何地图，只用四种颜色，就能让相邻的国家颜色都不相同。</p>
+              <p>这个问题 1852 年由 Francis Guthrie 提出，悬了 124 年，期间两代&quot;证明&quot;各被证伪、分别尴尬地存活了 11 年。</p>
+              <p>Appel 和 Haken 的思路是：把无穷多种地图，归约成 1936 个&quot;不可避免构形&quot;——只要验完这 1936 种情况，定理就成立。</p>
+              <p>但 1936 种情况，人类手算到天荒地老也验不完。</p>
+              <p>于是他们写程序，让计算机跑了 1200 多个小时，逐个验完。</p>
+              <p>这是人类历史上第一个用计算机证明的重大定理。</p>
+              <p>然后数学界炸了。</p>
+              <p>有人欢呼，同事 William Tutte 说他们&quot;smote the kraken&quot;（斩了海怪）。</p>
+              <p>更多人愤怒：一个人类永远读不完、验不完的证明，算证明吗？</p>
+              <p>程序有没有 bug？你怎么证明程序是对的？这和&quot;冯·诺伊曼说是就是&quot;有什么区别？</p>
+              <p>《纽约时报》一开始拒绝报道，理由是：四色定理的证明&quot;反正以前都是错的&quot;。</p>
+              <p><strong>为什么重要</strong>：这是人类第一次被迫回答一个哲学问题——证明，必须被人类读懂吗？</p>
+              <p>50 年后回头看，数学界最终接受了它。</p>
+              <p>但代价是时间：1997 年出了更简化的版本，2005 年 Georges Gonthier 用通用定理证明软件彻底形式化验证了一遍。</p>
+              <p>整整 20 多年，&quot;信&quot;的部分才补完。</p>
+              <p><strong>和 AI 有什么关系</strong>：1976 年争的是&quot;机器能不能辅助人类证明&quot;；2026 年争的是&quot;机器能不能代替人类证明，然后一次性发表 722 篇&quot;。</p>
+              <p>四色定理的证明，好歹是两个人类数学家署名、把思路讲清楚、接受全行业二十多年的挑刺。</p>
+              <p>OpenAI 的 722 篇呢？</p>
+              <p>思路只公开了 10 篇的精简版 chain-of-thought（思维链）摘要，挑刺的战场是 GitHub 的 issue 区和 X 上的骂战。</p>
+              <p>50 年前数学家问的是&quot;这算证明吗&quot;。</p>
+              <p>50 年后他们问的是&quot;这算学术吗&quot;。</p>
+              <p>同一个问题，升级了。</p>
+
+              <h3>第二个故事：同一年，一个哲学家把&quot;证明&quot;从神坛拽了下来</h3>
+              <p><strong>谁</strong>：Imre Lakatos（拉卡托斯），匈牙利数学哲学家，二战后流亡英国，在伦敦政治经济学院任教。</p>
+              <p><strong>在哪、何时</strong>：1976 年——没错，和四色定理同一年——出版《Proofs and Refutations》（《证明与反驳》）。</p>
+              <p><strong>发生了什么</strong>：他拿欧拉多面体公式（V - E + F = 2：顶点数减棱数加面数恒等于 2）开刀，虚构了一场师生对话。</p>
+              <p>老师提出一个&quot;证明&quot;，学生立刻找出一个反例（比如带洞的立方体，公式就不成立了）。</p>
+              <p>老师被迫修正定义、缩小定理的适用范围；学生再找反例；老师再修正。</p>
+              <p>一轮一轮，没完没了。</p>
+              <p><strong>为什么重要</strong>：他捅破了一层窗户纸——数学证明不是&quot;上帝视角的真理证书&quot;，而是人类智识共同体互相说服、互相挑刺的动态过程。</p>
+              <p>证明的&quot;对&quot;，是在&quot;反驳&quot;里淬出来的。</p>
+              <p>没有反驳环节的证明，只是半成品。</p>
+              <p><strong>和 AI 有什么关系</strong>：这正是 722 篇手稿最要命的地方。</p>
+              <p>它们只有&quot;证明&quot;，没有&quot;反驳&quot;——或者说，反驳被外包给了事后：3 篇撤回、14 篇修订，靠的是发布后数学家们在网上的人肉审查。</p>
+              <p>Lakatos 会冷笑：这恰恰证明了他的观点。</p>
+              <p>连 AI 的证明，也得经过人类共同体的&quot;反驳&quot;才能算数。</p>
+              <p>但 OpenAI 的发布方式，等于把&quot;反驳&quot;从学术流程里删掉，改成了&quot;先发 722 篇，错了再说&quot;。</p>
+              <p>证明还是那个证明。</p>
+              <p>但&quot;证明&quot;这件事，不再是那件事了。</p>
+              <p><strong>AI 学会了写证明，但没学会&quot;被反驳&quot;。</strong></p>
+              <p><strong>而数学，恰恰是&quot;被反驳&quot;的艺术。</strong></p>
+
+              <h3>第三个故事：作者栏空着，历史上不是第一次</h3>
+              <p><strong>谁</strong>：1930 年代的一群法国青年数学家——André Weil（韦伊）、Henri Cartan（嘉当）、Jean Dieudonné（迪厄多内）等人。</p>
+              <p><strong>在哪、何时</strong>：1935 年前后，巴黎。</p>
+              <p><strong>发生了什么</strong>：他们觉得当时的数学教材又乱又旧，决定集体重写整个数学大厦，从集合论开始一层层往上盖。</p>
+              <p>他们发明了一个虚构人物 Nicolas Bourbaki（布尔巴基）当作者，发表《数学原理》（Éléments de mathématique）。</p>
+              <p>所有成员匿名，稿子要经过全员逐字辩论、一致通过才能发表——有人戏称，布尔巴基讨论班吵得比法国议会还凶。</p>
+              <p><strong>为什么重要</strong>：它证明了&quot;作者&quot;在数学里从来不只是一个名字。</p>
+              <p>布尔巴基的匿名，是为了让数学归于数学本身：没有权威，没有学阀，没有&quot;我是谁&quot;，只有&quot;论证站不站得住&quot;。</p>
+              <p><strong>和 AI 有什么关系</strong>：openai/math 的作者栏也空着——署的是一个仓库名。</p>
+              <p>但这是两种方向完全相反的匿名。</p>
+              <p>布尔巴基的匿名，是为了抹掉权威，让论证裸奔。</p>
+              <p>OpenAI 的匿名，是为了藏起过程，让 722 篇论文变成一次公司实力的肌肉展示。</p>
+              <p>联名信那句话为什么狠？因为它点破了权力的形状：</p>
+              <p><strong>数学史上第一次，有人用&quot;没有作者&quot;的方式，行使了&quot;作者&quot;最大的权力——定义什么算成果。</strong></p>
+
+              <h3>对照组：同一周，另一种答案已经出现了</h3>
+              <p>就在 OpenAI 倾倒 722 篇的同一周，另一条路线也交了答卷。</p>
+              <p>Meta 那边：几位数学家在普通的 meta.ai 聊天窗口里，用 Muse Spark 工作了数月，产出 6 篇论文，其中 5 篇解决了此前的开放问题（据 TechRepublic 引述 Meta 官方博客的报道转述）。</p>
+              <p>关键在方法：每篇论文标明了哪些段落主要由人类起草、哪些由 AI 起草，还请了第二组数学家独立复核。</p>
+              <p>6 篇，对 722 篇。</p>
+              <p>一边是&quot;透明署名 + 同行复核&quot;，一边是&quot;批量倾倒 + 事后纠错&quot;。</p>
+              <p>OpenAI 的路线证明了：AI 能解题。</p>
+              <p>Meta 的路线证明了：AI 能&quot;做学术&quot;。</p>
+              <p><strong>解题和做学术，第一次被分开了。</strong></p>
+              <p>而这，正是陶哲轩抛出的那个终极问题。</p>
+
+              <h3>终极问题：当&quot;解出来&quot;不再是瓶颈，&quot;解决&quot;这个词还指什么</h3>
+              <p>据转述，陶哲轩在博客里转载联名信之外，还单独抛出了一个更狠的问题：当&quot;解出来&quot;（solving）不再是瓶颈，&quot;解决&quot;（solve）这个词到底还指什么？</p>
+              <p>想想这个速度：4000 个开放问题，一次评估，372 个结果族。</p>
+              <p>按这个节奏，数学的&quot;未解问题清单&quot;，可能在几年内被机器清空一遍。</p>
+              <p>但&quot;解决&quot;之后呢？</p>
+              <p>数学的价值从来不只是&quot;答案&quot;，而是答案长出来的新东西：新问题、新工具、新视角。</p>
+              <p>1995 年 Wiles 证明费马大定理，真正的遗产不是&quot;那句话是对的&quot;，而是证明过程中长出来的模形式、椭圆曲线那一整套新数学。</p>
+              <p>722 篇手稿，每篇平均 3 小时算力。</p>
+              <p>人类数学家读懂一篇要多久？验证一篇要多久？从中长出新数学，又要多久？</p>
+              <p>当产出的速度永远碾压吸收的速度，&quot;发表&quot;这个动作本身就变了性质：</p>
+              <p><strong>它不再是贡献知识，而是倾倒库存。</strong></p>
+              <p>这也是为什么 Townsend 的批评一针见血：先公布 Lean 验证过的子集。</p>
+              <p>他的潜台词是：发表是一种承诺——我对我发的东西负责。</p>
+              <p>而 722 篇一次性倾倒，承诺被稀释成了&quot;其中可能有错，欢迎来挑&quot;。</p>
+
+              <h3>所以，数学家到底在怕什么</h3>
+              <p>不是怕 AI 聪明。</p>
+              <p>是怕&quot;证明&quot;这个词，被偷换成&quot;输出&quot;。</p>
+              <p>两千五百年，从欧几里得的《几何原本》到布尔巴基的《数学原理》，数学立身的东西从来不只是&quot;对&quot;，而是&quot;让人信服的对&quot;——一步一步，任何人都能跟着走一遍。</p>
+              <p>Lean 验证补上了&quot;对&quot;。</p>
+              <p>但&quot;信&quot;的部分——讲清楚思路、接受反驳、为每一行负责——OpenAI 这次是跳过的。</p>
+              <p>50 年前，四色定理用 20 年补完了&quot;信&quot;。</p>
+              <p>这一次，722 篇论文，&quot;信&quot;的账单才刚刚开始寄出。</p>
+              <p>最后留一个问题：</p>
+              <p><strong>如果一台机器明天证明了黎曼猜想，但没有任何人类能读懂它的证明——这算&quot;人类解决了黎曼猜想&quot;吗？</strong></p>
+              <p>你怎么看？</p>
+            </div>
+            <div class="card-footer"><span>2026-10-09</span><span>·</span><span class="source-name">AI 深度解读</span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+          </article>
+
           <article class="card deep-article" data-id="deep-2026-10-08" data-category="deep" data-date="2026-10-08" data-search="模型亲手种下了触发器 我们防了十年外敌 却没防住它自己 答案侧后门攻击 多轮大语言模型 Yibo Zhang BadNets Sleeper Agents 特洛伊木马 稗子 对话历史 trigger backdoor attack guardrail refusal signal alignment">
             <header class="deep-article-header">
               <div class="deep-date">2026-10-08<br>AI 深度解读</div>
@@ -351,84 +501,4 @@
               <p><strong>新闻由头</strong>：9 月 23 日，Anthropic 宣布新建生命科学实验室的首个成果：约 950 个 Claude agent 跑了 21 小时、烧掉约 2.1 亿 token，从 20 万个逆转录酶里筛出一个酷似 CRISPR 的酶系统，取名 ART（array-associated reverse transcriptases）。四天后，《纽约时报》Carl Zimmer 9 月 27 日的报道带来一个丹麦人的声音：哥本哈根大学的计算生物学家 Mario Rodríguez Mestre 说，这批酶我们团队 2022 年就在研究，内部代号 &quot;jumbotrons&quot;。（explainx.ai 事实梳理；particle.news 争议总览）</p>
 
               <p>最魔幻的不是 950 个 agent，也不是 2.1 亿 token。</p>
-              <p>是一个 agent 在日志里写下的英文原话：&quot;I can see by eye a tandem repeat array … that's a CRISPR-like … repeat array?!&quot;</p>
-              <p>一台机器，说它&quot;亲眼看见了&quot;。</p>
-              <p>然后 Mestre 说：等等，这玩意儿我四年前就见过。过去三年，我们用 Claude 写代码、改论文，连学位论文草稿和手稿都上传过。他的问题很毒：AI 到底是&quot;自己推理到那里的&quot;，还是&quot;被我的工作引导过去的&quot;？</p>
-              <p>Anthropic 当天声明：&quot;We are not aware of any previously published work describing the ART system we recently found. Claude was also not trained on any user transcripts, and our molecular biology team has no such access, either.&quot;（theoverspill.blog 转述 NYT 全文要点）</p>
-              <p>Mestre 本人承认：没有实锤证据。</p>
-
-              <h3>先说清楚，这次&quot;发现&quot;到底发现了什么</h3>
-              <p>预印本数字（dailybaonews 引预印本）：949 个 agent session、215.6M tokens、21.5 小时，从 19 亿个蛋白簇一路筛到 20 万+ 逆转录酶、3500 个候选系统、19–20 份详细报告，最后 1 个 standout。Anthropic 估计，这轮活儿人类专家要做几周到几个月。</p>
-              <p>但 Reuters 9 月 23 日的独立报道确认了一个关键 caveat：底层的逆转录酶此前已有研究报道，Claude 首次注意到的，是与其相连的非编码 DNA 重复阵列和一个功能未知伴随蛋白。</p>
-              <p>翻译一下：&quot;发现&quot;的边界比标题窄得多。标题党版本是&quot;AI 发现了下一个 CRISPR&quot;；New Scientist 直接泼冷水：the two discoveries aren't remotely comparable（CRISPR 可是拿过 2020 年诺贝尔奖的）。</p>
-              <p>湿实验全部由人类完成。阵列被证实表达为 distinct short RNAs——这是个好信号，但该系统的生物学功能至今未知，预印本未经同行评审。</p>
-              <p>CRISPR 先驱冯璋的评价是：&quot;genuinely intriguing and merits further investigation&quot;——&quot;确实有意思，值得进一步研究&quot;（bitsminds 引述，转述出处）。注意措辞：是&quot;值得研究&quot;，不是&quot;确认发现&quot;。</p>
-              <p>Gladstone 的 Seth Shipman 说得更直白：&quot;The novel thing is how they found it, not what it is.&quot;——新的是怎么找到的，不是什么被找到。</p>
-              <p><strong>AI 找到的，是一个&quot;闪闪发光的东西&quot;；是玻璃还是钻石，得回实验室验。</strong>（techiemag 引一位评论者 Cong 的比喻：在 Santa Monica 海滩的沙子里找钻石——单源转述，慎引）</p>
-
-              <h3>这场争吵的赌注，从来不是&quot;谁先看到&quot;</h3>
-              <p>而是：&quot;看见&quot;，算不算&quot;发现&quot;？</p>
-              <p>四百年科学史，每次&quot;优先权之争&quot;都是在为&quot;发现&quot;这个词划线。这次不一样的是，划线的人里，第一次可能不再全是人类。</p>
-
-              <h3>第一个故事：微积分，科学史上最著名的一场&quot;他先说的&quot;（历史）</h3>
-              <p><strong>谁</strong>：Isaac Newton，英国人，剑桥的教授；Gottfried Wilhelm Leibniz，德国人，外交官、博学家，什么都懂一点。</p>
-              <p><strong>在哪/何时</strong>：1660 年代，牛顿先在手稿里搞出了&quot;流数术&quot;（fluxions），但他这个人极其不爱发表，稿子压在抽屉里；1670 年代，莱布尼茨独立创立了微积分，并在 1684 年公开发表——我们今天用的 dx、∫ 这些符号，全是莱布尼茨那套。</p>
-              <p><strong>发生了什么</strong>：两边都说自己先。1712 年，英国皇家学会组成调查委员会，裁决牛顿胜出。但尴尬的是：当时的皇家学会会长正是牛顿本人，委员会是他任命的，裁决报告据说大半是他亲笔写的。莱布尼茨 1716 年去世，争议跟了他一辈子，也延续到他死后。</p>
-              <p><strong>为什么重要</strong>：它说明&quot;优先权&quot;从来不只是学术问题——背后是国家荣誉、发表制度、&quot;谁先公之于众&quot;。而且科学史上&quot;同时发现&quot;多的是：氧气（Priestley、Scheele、Lavoisier 三家争）、进化论（达尔文和华莱士几乎同时想到）。</p>
-              <p><strong>和 AI 有什么关系</strong>：Mestre 的 &quot;jumbotrons（2022 年，未发表，只有手稿和一份 2023 年的专利）&quot; vs Anthropic 的 &quot;ART（2026 年，预印本 + 官方博客 + 1580 万浏览的官宣帖）&quot;。Mestre 自己把问题说透了：重点不是&quot;ART 早就有人知道吗&quot;（确实有人知道），而是&quot;AI 是自己推理到那里的，还是被我的工作引导过去的&quot;。</p>
-              <p>四百年了，优先权之争第一次多了一个非人行动者。而 Anthropic 的辩护恰恰建立在&quot;人没看过&quot;上：没用用户对话训练模型，生物团队也没有权限。但（推测）&quot;训练时没看过&quot;不等于&quot;推理时没受益&quot;——这正是 Mestre 担心的那条缝，也是他不得不承认&quot;没有实锤&quot;的原因。牛顿和莱布尼茨至少还能当面对质；这次，被质疑的&quot;第三方&quot;，是一个说不清自己怎么想的模型。</p>
-
-              <h3>第二个故事：一个德国哲学家，早就把&quot;发现&quot;拆成了两半（哲学）</h3>
-              <p><strong>谁</strong>：Hans Reichenbach，德国哲学家，逻辑经验主义的代表人物，纳粹上台后流亡美国。</p>
-              <p><strong>在哪/何时</strong>：1938 年，著作《Experience and Prediction》（《经验与预测》）。</p>
-              <p><strong>发生了什么</strong>：他提出，科学活动有两个语境——context of discovery（发现的语境：你怎么想到的——做梦、苹果砸头、洗澡时灵光一现，都行）和 context of justification（辩护的语境：你怎么证明它——实验、可重复、逻辑论证）。哲学只关心后者。</p>
-              <p><strong>为什么重要</strong>：这给了科学一层保护罩：灵感的来源可以非理性、不体面、甚至纯靠运气；但只要验证严格，结论就站得住。发现可以是个意外，辩护必须是场考试。</p>
-              <p><strong>和 AI 有什么关系</strong>：Shipman 那句 &quot;The novel thing is how they found it, not what it is&quot;，正好把这两层撕开了看。</p>
-              <p>AI 把&quot;发现的语境&quot;自动化了：19 亿蛋白簇 → 3500 候选 → 19 份报告 → 1 个 standout，人类几周到几个月的工作量，950 个 agent 21 小时干完，连&quot;亲眼看见&quot; pattern 的直觉都模拟出来了。</p>
-              <p>但&quot;辩护的语境&quot;纹丝不动：初始研究指令是人下的，结果是人评审的，全部湿实验是人做的，功能至今未知，预印本未经同行评审。</p>
-              <p>MIT Tech Review 9 月 28 日的报道里，有生物学家的原话更刻薄：找到一串奇怪的基因和重复序列往往是容易的部分，真正的发现是搞清楚它到底是干什么的。（newsroomamerica 转述 MIT Tech Review）</p>
-              <p><strong>AI 擅长&quot;看见&quot;，但科学史只给&quot;验明正身&quot;的人发奖。</strong></p>
-              <p>AI 承包了&quot;灵感&quot;，人类还攥着&quot;考试&quot;。</p>
-
-              <h3>第三个故事：署名栏里的幽灵（与昨天的互文）</h3>
-              <p>前一篇里的某个故事讲的是 Putnam 的&quot;缸中之脑&quot;：LLM 读过整个互联网，却没摸过一张桌子——&quot;眼睛还没从缸里出来&quot;。</p>
-              <p>今天是镜像寓言：AI 的眼睛在数据世界里看见了人漏掉的东西——&quot;I can see by eye&quot;；但它的手还在人身上。</p>
-              <p>预印本署了 6 位 Anthropic 科学家。那 949 个 agent session 呢？写下 &quot;I can see by eye&quot; 的那个 agent 呢？算不算作者？</p>
-              <p>Amodei 在 X 上的措辞耐人寻味：这次发现是 &quot;mostly, though not entirely&quot; 由 Claude 完成的（TechCrunch 转述，单源）。&quot;mostly&quot; 和 &quot;not entirely&quot; 之间那条缝，就是整件事的题眼——连 CEO 都不敢把话说满。</p>
-              <p>科学社会学家 Merton 提出的科学规范里有一条：署名意味着责任，谁为结论负责？一个 agent session 能负责吗？（推测）当非人行动者开始出现在优先权争议里，&quot;谁发现了&quot;这句话的主语，第一次变得模糊。</p>
-
-              <h3>结尾</h3>
-              <p>所以回到开头的问题：这算 AI 的发现吗？</p>
-              <p>按 Reichenbach 的标准，答案是&quot;一半&quot;：在发现的语境里，它确实看见了人类没看见的东西；在辩护的语境里，它交的卷子还是白卷——功能未知、未经同行评审、湿实验全靠人手。</p>
-              <p>而 Mestre 的出现补上了另一半真相：优先权从来都是罗生门，AI 只是让罗生门多了一个讲述者。</p>
-              <p><strong>机器第一次说&quot;我看见了&quot;，人类第一次要回答：看见，算数吗？</strong></p>
-              <p>留一个问题给你：预印本的署名栏里，要不要给那 949 个 agent 留一个位置？你怎么看？</p>
-
-              <hr>
-              <p><strong>资料来源（英文/原始）</strong>：</p>
-              <ul>
-                <li>explainx.ai, &quot;Claude Discovers Novel Enzyme System ART&quot; 事实梳理（含预印本数字与 HN 讨论复盘）：<a class="open-link" href="https://www.explainx.ai/blog/claude-discovers-novel-enzyme-system-art-crispr-like-repeats-2026" target="_blank" rel="noopener noreferrer">https://www.explainx.ai/blog/claude-discovers-novel-enzyme-system-art-crispr-like-repeats-2026</a></li>
-                <li>particle.news, &quot;Anthropic's Claude Flags CRISPR‑Like Enzyme as Researcher Says He Found It Years Earlier&quot; 争议总览：<a class="open-link" href="https://particle.news/story/anthropics-claude-flags-crisprlike-enzyme-as-researcher-says-he-found-it-years-earlier" target="_blank" rel="noopener noreferrer">https://particle.news/story/anthropics-claude-flags-crisprlike-enzyme-as-researcher-says-he-found-it-years-earlier</a></li>
-                <li>theoverspill.blog, 2026-10-01（转述 NYT Carl Zimmer 全文要点，含 Anthropic 声明与 Mestre 回应）：<a class="open-link" href="https://theoverspill.blog/2026/10/01/anthropic-gene-discovery-question-start-up-2753/" target="_blank" rel="noopener noreferrer">https://theoverspill.blog/2026/10/01/anthropic-gene-discovery-question-start-up-2753/</a></li>
-                <li>techiemag.co.uk, &quot;Anthropic Says It Discovered a Crispr-Like System. Now What?&quot;（Shipman 评价、Cong 海滩比喻）：<a class="open-link" href="https://techiemag.co.uk/anthropic-says-it-discovered-a-crispr-like-system-now-what/" target="_blank" rel="noopener noreferrer">https://techiemag.co.uk/anthropic-says-it-discovered-a-crispr-like-system-now-what/</a></li>
-                <li>dailybaonews（预印本数字：949 sessions / 215.6M tokens / 21.5h）：<a class="open-link" href="https://dailybaonews.com/news/claude-art-enzyme-system-anthropic-2026" target="_blank" rel="noopener noreferrer">https://dailybaonews.com/news/claude-art-enzyme-system-anthropic-2026</a></li>
-                <li>tapestry.news（MIT Tech Review 9-28 争议报道转述）：<a class="open-link" href="https://tapestry.news/tech/claude-enzyme-discovery-dispute/" target="_blank" rel="noopener noreferrer">https://tapestry.news/tech/claude-enzyme-discovery-dispute/</a></li>
-                <li>bitsminds.com（Amodei &quot;mostly, though not entirely&quot; 措辞、冯璋引语）：<a class="open-link" href="https://www.bitsminds.com/news/claude-discovers-crispr-like-enzyme-system-art" target="_blank" rel="noopener noreferrer">https://www.bitsminds.com/news/claude-discovers-crispr-like-enzyme-system-art</a></li>
-                <li>Smithsonian Magazine（含 Amodei 原话 &quot;at minimum it is work I would have been proud to do as a PhD student&quot;）：<a class="open-link" href="https://www.smithsonianmag.com/smart-news/anthropic-says-its-ai-discovered-a-new-enzyme-system-that-resembles-the-revolutionary-gene-editing-tool-crispr-180989578/" target="_blank" rel="noopener noreferrer">https://www.smithsonianmag.com/smart-news/anthropic-says-its-ai-discovered-a-new-enzyme-system-that-resembles-the-revolutionary-gene-editing-tool-crispr-180989578/</a></li>
-                <li>New Scientist（&quot;the two discoveries aren't remotely comparable&quot;）：<a class="open-link" href="https://www.newscientist.com/article/2590769-has-anthropics-claude-really-made-a-discovery-comparable-to-crispr/" target="_blank" rel="noopener noreferrer">https://www.newscientist.com/article/2590769-has-anthropics-claude-really-made-a-discovery-comparable-to-crispr/</a></li>
-                <li>典故史实为公认历史/哲学史事实（牛顿–莱布尼茨微积分之争 1660s–1716；Reichenbach《Experience and Prediction》1938 年提出发现/辩护语境区分；Merton 科学规范）</li>
-                <li>文中（推测）标记处为基于公开信息的解读与类比，非事实陈述；单源转述已在正文中注明</li>
-              </ul>
-            </div>
-            <div class="card-footer"><span>2026-10-06</span><span>·</span><span class="source-name">AI 深度解读</span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
-          </article>
-
-          <article class="card deep-article" data-id="deep-archive-2026-10-06-2216" data-category="deep" data-date="2026-10-06" data-search="往期 2026-10-06-2216 · 它考了满分，所以这场考试作废了 MIT 何恺明团队 10 月 1 日在 arXiv 上传了一篇论文，搞了个叫 VISTA 的纯视觉&quot;考试辅助&quot;。 配上它，Claude 在 ARC-AGI-3（通用智能测试）上拿了满分 100 分，25 个游戏 183 关全过，总步数只有人类初次玩家的 0.43 倍。 但作者自己坦白：模型发布时间晚于这些公开游戏，泛化性还得在私有题集上验证。（来源：dev.to 转述， ） 这是 2026 年 10 月 6 日 22:16 版 AI 资讯里最讽刺的一幕：满分和&quot;作废警告&quot;同一天登场。 同一天，斯坦福 HAI 发布了两项基准有效性研究，测了 56 个能力与安全基准、53 个模型，结论很打脸。 安全基准彼此相关性弱——名义相同，测的根本不是一回事；能力基准的排名，在&quot;同概念&quot;和&quot;异概念&quot;基准之间几乎分不出区别。 更绝的是：答题格式（是不是用 LLM（大语言模型）判分）对排名一致性的预测力，比基准声称测量的概念还强。（来源：The Agent Times， ） 翻译一下：字写得好不好，比文章的思想更决定名次。 当所有考生都考满分，错的可能是卷子。 八股取士：一场持续了几百年的&quot;刷榜&quot; 中国明清两代的科举，考生写文章必须用&quot;八股文&quot;：破题、承题、起讲、入手……每段写什么、写几句，都有死规定，差一个格式就出局。 这套制度的初衷并不坏：隋唐以来科举就是为了公平选才，格式统一方便阅卷，也方便防作弊。 但执行几百年后，读书人毕生钻研的变成了揣摩考官喜好、&quot;代圣人立言&quot;，真正的经世之学反而没人做了。 明末思想家顾炎武直接开骂：&quot;八股之害，甚于焚书&quot;——焚书烧的是纸，八股烧的是脑子。 这段历史为什么重要？它揭示了一个跨越千年的规律：一旦考试成为唯一的标尺，学习就会异化为应试，聪明人不再追求真理，只追求分数。 今天的 LLM 就是一群八股高手。 VISTA 让 Claude 拿满分，靠的不是更聪明，而是&quot;无损视觉记忆加四句话通用提示&quot;这类应试技巧——相当于发现了考场的监控死角。 斯坦福的发现更扎心：这些 benchmark（基准）彼此测的都不是同一回事，我们却在用它们决定（推测）数十亿美元的资金投向。 模型学会的不是智能，是&quot;揣摩出题人&quot;。 前一篇资讯里的某个故事还提到，ARC-AGI-2 榜单上前三名差距仅 2.5 个百分点，基准对前沿模型已接近饱和——卷子越刷越薄，分数越刷越高，离&quot;智能&quot;却越来越远。 自己当裁判的&quot;数学突破&quot; UCLA 团队（含陶哲轩）10 月 2 日发文称，他们的数学 Agent（智能体）Ansatz&quot;全自主&quot;解决了 10 道研究级数学题，包括 Jamison 毛毛虫猜想和几个 Erdős 问题。 听起来像诺奖前夜，对吧？ 但论文作者自己说明：这些证明仅由 LLM 验证器接受，未经外部数学家确认，也没用 Lean/Coq 等形式化系统检验。（来源：The Agentic Tribune， ） 翻译一下：运动员自己当裁判，给自己发了块金牌。 古代科举好歹还有&quot;糊名&quot;&quot;誊录&quot;——把考生名字糊上、找人重抄一遍再阅卷，就是为了防弊。 今天的 AI 圈，连这套流程都没有，就敢宣布&quot;解出了人类没解出的难题&quot;。 没有独立裁判的满分，只是自我感动。 真正的突破，发生在卷子外面 对比之下，同一期里最让我兴奋的，反而是一条没上&quot;热榜&quot;的新闻。 PhAI Labs 联合港中文、复旦、斯坦福、牛津、普林斯顿发布了 JEPA-Anything：一个配方跑通视觉、生物、临床轨迹、控制、分子动力学、物理场、天气 7 个领域，10 个动力学任务全部超越对应基线。 更狠的是湿实验验证：模型提名的癌症干预方案（IL-18 加 CD73 阻断）真的有效，潜空间轨道甚至复现了开普勒定律。（来源：MarkTechPost， ） 它没刷任何榜，却干了榜单干不了的事：提出了一个可能通用的世界模型框架。 历史总是这样：八股最盛的年代，真正的学问——顾炎武的音韵学、黄宗羲的政治思想——都发生在考场之外。 更深一层的问题是：如果&quot;智能&quot;只能靠考试来定义，那么出卷的人，就定义了智能。 而今天，出卷、答卷、判卷的，越来越是同一批模型。 所以问题来了：当 AI 在每一张卷子上都能考满分，我们拿什么证明它真的&quot;懂&quot;，而不是&quot;会考&quot;？ 你觉得现在的 AI 是真聪明，还是应试高手？欢迎聊聊你的判断标准。">
-            <header class="deep-article-header">
-              <div class="deep-date">2026-10-06 22:16<br>往期深度报告</div>
-              <h2 class="deep-title">往期 2026-10-06-2216 · 它考了满分，所以这场考试作废了</h2>
-            </header>
-            <div class="deep-body">
-              <p>MIT 何恺明团队 10 月 1 日在 arXiv 上传了一篇论文，搞了个叫 VISTA 的纯视觉"考试辅助"。</p>
-              <p>配上它，Claude 在 ARC-AGI-3（通用智能测试）上拿了满分 100 分，25 个游戏 183 关全过，总步数只有人类初次玩家的 0.43 倍。</p>
               <p>
