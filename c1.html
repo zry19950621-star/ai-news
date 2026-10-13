@@ -1,86 +1,888 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=1080">
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    width: 1080px; height: 1440px;
-    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: #f5f7f9; color: #12171f;
-    -webkit-font-smoothing: antialiased;
-  }
-  .header {
-    background: #08796d; color: #fff;
-    padding: 28px 40px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .header .brand { font-size: 32px; font-weight: 800; letter-spacing: 2px; }
-  .header .meta { font-size: 22px; opacity: .85; }
-  .cat-bar { padding: 28px 40px 0; }
-  .cat-tag {
-    display: inline-block; background: #dff3ef; color: #08796d;
-    font-size: 26px; font-weight: 700;
-    padding: 10px 28px; border-radius: 30px;
-  }
-  .cat-count { font-size: 22px; color: #626c78; margin-left: 16px; }
-  .list { padding: 20px 36px; }
-  .card {
-    background: #fff; border-radius: 18px;
-    padding: 28px 32px; margin-bottom: 18px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.04);
-  }
-  .card h2 {
-    font-size: 30px; font-weight: 800; line-height: 1.45;
-    margin-bottom: 14px; color: #12171f;
-    letter-spacing: .5px;
-  }
-  .card p {
-    font-size: 26px; line-height: 1.75; color: #3a4450;
-    text-align: justify; margin-bottom: 12px;
-  }
-  .card .src {
-    font-size: 22px; color: #08796d; font-weight: 600;
-  }
-  .footer {
-    position: absolute; bottom: 0; width: 1080px;
-    padding: 24px 40px;
-    display: flex; justify-content: space-between;
-    font-size: 20px; color: #626c78;
-  }
-  .footer .brand2 { color: #08796d; font-weight: 700; }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="data:," />
+  <title>AI智页</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@600;700;900&display=swap');
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7f9;
+      --surface: #ffffff;
+      --surface-2: #eef1f4;
+      --text: #12171f;
+      --muted: #626c78;
+      --faint: #8c96a3;
+      --line: #dce1e6;
+      --line-strong: #c8ced5;
+      --accent: #08796d;
+      --accent-soft: #dff3ef;
+      --amber: #9a5b00;
+      --amber-soft: #fff1d2;
+      --red: #b33a34;
+      --red-soft: #fbe9e7;
+      --blue: #2563a9;
+      --blue-soft: #e5eef9;
+      --shadow: 0 12px 40px rgba(24, 31, 41, .09);
+      --card-radius: 16px;
+      --body-size: 15px;
+      --card-pad: 20px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1116;
+        --surface: #151b22;
+        --surface-2: #1d252e;
+        --text: #f2f5f7;
+        --muted: #aab4bf;
+        --faint: #7f8a96;
+        --line: #28323d;
+        --line-strong: #3a4652;
+        --accent: #55cabb;
+        --accent-soft: #163b37;
+        --amber: #f1b44d;
+        --amber-soft: #3d2c12;
+        --red: #ef8a82;
+        --red-soft: #3d2524;
+        --blue: #7bb0eb;
+        --blue-soft: #1a3048;
+        --shadow: 0 16px 50px rgba(0, 0, 0, .28);
+      }
+    }
+    :root[data-theme="light"] {
+      --bg: #f5f7f9; --surface: #ffffff; --surface-2: #eef1f4; --text: #12171f; --muted: #626c78;
+      --faint: #8c96a3; --line: #dce1e6; --line-strong: #c8ced5; --accent: #08796d; --accent-soft: #dff3ef;
+      --amber: #9a5b00; --amber-soft: #fff1d2; --red: #b33a34; --red-soft: #fbe9e7; --blue: #2563a9;
+      --blue-soft: #e5eef9; --shadow: 0 12px 40px rgba(24, 31, 41, .09);
+    }
+    :root[data-theme="dark"] {
+      --bg: #0d1116; --surface: #151b22; --surface-2: #1d252e; --text: #f2f5f7; --muted: #aab4bf;
+      --faint: #7f8a96; --line: #28323d; --line-strong: #3a4652; --accent: #55cabb; --accent-soft: #163b37;
+      --amber: #f1b44d; --amber-soft: #3d2c12; --red: #ef8a82; --red-soft: #3d2524; --blue: #7bb0eb;
+      --blue-soft: #1a3048; --shadow: 0 16px 50px rgba(0, 0, 0, .28);
+    }
+    :root[data-size="small"] { --body-size: 14px; }
+    :root[data-size="large"] { --body-size: 17px; }
+    :root[data-density="compact"] { --card-pad: 14px; --card-radius: 12px; }
+
+    * { box-sizing: border-box; }
+    html { min-width: 0; background: var(--bg); }
+    body {
+      margin: 0;
+      min-width: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: var(--body-size);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }
+    .app { width: min(1420px, 100%); margin: 0 auto; min-height: 100vh; }
+    .topbar {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 12px clamp(16px, 3vw, 34px);
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      backdrop-filter: blur(14px);
+    }
+    .status { display: flex; align-items: center; gap: 10px; min-width: 0; color: var(--muted); font-size: 12px; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent); flex: none; }
+    .mono { font-family: "IBM Plex Mono", monospace; letter-spacing: .01em; }
+    .top-actions { display: flex; gap: 6px; flex: none; }
+    .icon-btn {
+      width: 38px; height: 38px; padding: 0; border: 1px solid transparent; border-radius: 10px;
+      display: grid; place-items: center; color: var(--muted); background: transparent; cursor: pointer;
+    }
+    .icon-btn:hover, .icon-btn[aria-expanded="true"] { color: var(--text); background: var(--surface-2); border-color: var(--line); }
+    .icon-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+    .masthead { padding: clamp(26px, 5vw, 58px) clamp(16px, 4vw, 58px) 20px; }
+    .date-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; color: var(--muted); font-size: 12px; }
+    .date-line strong { color: var(--text); font-weight: 600; }
+    .edition { padding: 3px 8px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 11px; }
+    .masthead h1 {
+      margin: 18px 0 12px;
+      max-width: 970px;
+      font-size: clamp(30px, 5.2vw, 68px);
+      line-height: 1.08;
+      letter-spacing: -.045em;
+      font-weight: 700;
+    }
+    .deck { max-width: 820px; margin: 0; color: var(--muted); font-size: clamp(14px, 1.4vw, 18px); line-height: 1.75; }
+    .signal-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .signal { display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+    .signal b { color: var(--text); font-weight: 600; }
+
+    .toolbar-wrap { position: sticky; top: 63px; z-index: 20; background: color-mix(in srgb, var(--bg) 94%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+    .toolbar { display: flex; align-items: center; gap: 10px; padding: 10px clamp(16px, 4vw, 58px); overflow: hidden; }
+    .tabs { display: flex; align-items: center; gap: 4px; min-width: 0; flex-wrap: wrap; }
+    .tab { border: 0; background: transparent; color: var(--muted); padding: 8px 11px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-size: 13px; }
+    .tab:hover { background: var(--surface-2); color: var(--text); }
+    .tab.active { color: var(--surface); background: var(--text); }
+    .count { opacity: .65; margin-left: 4px; font-family: "IBM Plex Mono", monospace; font-size: 10px; }
+    .spacer { flex: 1; }
+    .search-wrap { display: none; flex: 1; min-width: 120px; max-width: 420px; }
+    .search-wrap.open { display: block; }
+    .search { width: 100%; height: 36px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--surface); color: var(--text); padding: 0 12px; }
+
+    .content { padding: 22px clamp(16px, 4vw, 58px) 64px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+    .section-head h2 { margin: 0; font-size: 18px; letter-spacing: -.015em; }
+    .section-head p { margin: 0; color: var(--faint); font-size: 12px; }
+    .lead-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr); gap: 14px; margin-bottom: 24px; }
+    .lead-card, .brief-card { background: var(--surface); border: 1px solid var(--line); box-shadow: 0 1px 0 rgba(0,0,0,.02); }
+    .lead-card { border-radius: 20px; padding: clamp(22px, 3.5vw, 38px); min-height: 320px; display: flex; flex-direction: column; justify-content: space-between; }
+    .lead-card .kicker { color: var(--accent); font-size: 12px; font-weight: 700; }
+    .lead-card h2 { margin: 16px 0 12px; font-size: clamp(24px, 3vw, 42px); line-height: 1.2; letter-spacing: -.035em; }
+    .lead-card p { margin: 0; color: var(--muted); max-width: 760px; }
+    .lead-meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 26px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .lead-side { display: grid; gap: 14px; }
+    .brief-card { border-radius: 14px; padding: 18px; }
+    .brief-card .label { font-size: 11px; color: var(--faint); }
+    .brief-card strong { display: block; margin-top: 7px; font-size: 16px; line-height: 1.4; }
+    .brief-card p { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+
+    .news-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .card {
+      min-width: 0; border-radius: var(--card-radius); background: var(--surface); border: 1px solid var(--line);
+      padding: var(--card-pad); display: flex; flex-direction: column; min-height: 315px; transition: border-color .2s ease, box-shadow .2s ease, opacity .2s ease;
+    }
+    .card:hover { border-color: var(--line-strong); box-shadow: var(--shadow); }
+    .card.hidden { display: none; }
+    .card.read { opacity: .66; }
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .tag { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-size: 11px; font-weight: 600; }
+    .tag-dot { width: 6px; height: 6px; border-radius: 2px; background: currentColor; }
+    .quality { padding: 3px 7px; border-radius: 6px; font-size: 10px; background: var(--accent-soft); color: var(--accent); }
+    .quality.multi { background: var(--blue-soft); color: var(--blue); }
+    .quality.single { background: var(--amber-soft); color: var(--amber); }
+    .card h3 { margin: 18px 0 10px; font-size: clamp(18px, 1.5vw, 23px); line-height: 1.36; letter-spacing: -.02em; }
+    .card .summary { margin: 0; color: var(--muted); font-size: .92em; }
+    .english-title { margin: -3px 0 12px; color: var(--faint); font: 500 11px/1.55 "IBM Plex Mono", monospace; }
+    .why { margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--line); color: var(--text); font-size: .88em; }
+    .why b { color: var(--accent); }
+    .card-footer { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 20px; color: var(--faint); font-size: 11px; }
+    .source-name { min-width: 0; overflow: visible; white-space: normal; line-height: 1.5; }
+    .card-actions { display: flex; gap: 2px; margin-left: auto; }
+    .mini-btn { width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: var(--faint); display: grid; place-items: center; cursor: pointer; }
+    .mini-btn:hover, .mini-btn.active { background: var(--surface-2); color: var(--accent); }
+    .mini-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .mini-btn.active .bookmark-shape { fill: currentColor; }
+    .open-link { color: inherit; text-decoration: none; }
+    .open-link:hover { color: var(--accent); }
+    .empty { display: none; padding: 56px 18px; text-align: center; border: 1px dashed var(--line-strong); border-radius: 16px; color: var(--muted); }
+    .empty.visible { display: block; }
+    .hidden-section { display: none !important; }
+    .expo-section { margin-top: 42px; }
+    .expo-head > div { display: grid; gap: 2px; }
+    .section-index { color: var(--accent); font-size: 10px; letter-spacing: .08em; }
+    .expo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .expo-card { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 18px; min-height: 290px; }
+    .expo-date { align-self: start; padding-top: 2px; color: var(--accent); }
+    .expo-date strong { display: block; font: 500 22px/1 "IBM Plex Mono", monospace; }
+    .expo-date span { display: block; margin-top: 8px; color: var(--faint); font: 500 10px/1.45 "IBM Plex Mono", monospace; letter-spacing: .08em; }
+    .expo-copy { min-width: 0; display: flex; flex-direction: column; }
+    .expo-card .card-footer { width: 100%; }
+
+    .sheet-backdrop { position: fixed; inset: 0; z-index: 60; background: rgba(4,9,14,.35); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+    .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+    .sheet {
+      position: fixed; z-index: 70; right: 12px; top: 12px; bottom: 12px; width: min(430px, calc(100% - 24px));
+      padding: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 24px 80px rgba(0,0,0,.24);
+      transform: translateX(calc(100% + 24px)); transition: transform .24s ease; overflow-y: auto;
+    }
+    .sheet.open { transform: translateX(0); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .sheet h2 { margin: 0; font-size: 20px; }
+    .sheet h3 { margin: 26px 0 8px; font-size: 14px; }
+    .sheet p { margin: 0; color: var(--muted); font-size: 13px; }
+    .source-list { display: grid; gap: 9px; margin-top: 12px; }
+    .source-row { display: grid; grid-template-columns: 74px 1fr; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+    .source-tier { color: var(--accent); font-weight: 600; }
+    .controls { display: grid; gap: 12px; margin-top: 14px; }
+    .control-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+    .control-row > span { font-size: 13px; color: var(--muted); }
+    .seg { display: flex; gap: 3px; padding: 3px; border-radius: 9px; background: var(--surface-2); }
+    .seg button { border: 0; border-radius: 7px; background: transparent; color: var(--muted); padding: 6px 9px; cursor: pointer; font-size: 12px; }
+    .seg button.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+    .toast { position: fixed; z-index: 100; left: 50%; bottom: 22px; transform: translate(-50%, 18px); opacity: 0; pointer-events: none; background: var(--text); color: var(--surface); border-radius: 9px; padding: 9px 13px; font-size: 12px; transition: .2s ease; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .footer { padding: 0 clamp(16px, 4vw, 58px) 38px; display: flex; justify-content: space-between; gap: 18px; color: var(--faint); font-size: 11px; }
+
+    /* Inline English pronunciation and plain-Chinese notes. Added at runtime so every refreshed card inherits it. */
+    .speakable { display: inline; }
+    .speak-btn {
+      display: inline-grid; place-items: center; width: 22px; height: 22px; margin: 0 4px;
+      padding: 0; vertical-align: -3px; border: 1px solid var(--line-strong); border-radius: 50%;
+      background: var(--surface); color: var(--accent); cursor: pointer;
+    }
+    .speak-btn:hover, .speak-btn.is-speaking { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+    .speak-btn:disabled { cursor: not-allowed; color: var(--faint); background: var(--surface-2); border-color: var(--line); opacity: .55; }
+    .speak-btn:disabled:hover { color: var(--faint); background: var(--surface-2); border-color: var(--line); }
+    .speak-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+    .term-note { color: var(--muted); font-size: .84em; font-weight: 400; }
+    .source-note { color: var(--muted); font-size: .92em; }
+    :root[data-speech="off"] .speak-btn { display: none; }
+    #speechToggle[aria-pressed="true"] { color: var(--accent); background: var(--accent-soft); border-color: var(--line); }
+    #speechToggle:disabled { cursor: not-allowed; color: var(--faint); background: var(--surface-2); border-color: var(--line); opacity: .55; }
+    .speech-help { margin-top: 8px !important; padding: 10px 12px; border-top: 1px solid var(--line); }
+
+    @media (max-width: 980px) {
+      .lead-grid { grid-template-columns: 1fr; }
+      .lead-side { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .topbar { padding: 9px 12px; }
+      .status .desktop-only { display: none; }
+      .masthead { padding: 22px 16px 16px; }
+      .masthead h1 { font-size: 32px; }
+      .deck { font-size: 14px; line-height: 1.7; }
+      .signal-row { display: grid; grid-template-columns: 1fr 1fr; }
+      .signal { min-width: 0; }
+      .toolbar-wrap { top: 57px; }
+      .toolbar { padding: 8px 10px; }
+      .tabs { row-gap: 6px; }
+      .tab { padding: 7px 9px; font-size: 12px; }
+      .toolbar.searching .tabs, .toolbar.searching .spacer { display: none; }
+      .search-wrap.open { max-width: none; }
+      .content { padding: 16px 12px 54px; }
+      .lead-side { grid-template-columns: 1fr; }
+      .lead-card { min-height: 280px; }
+      .lead-card h2 { font-size: 26px; }
+      .news-grid { grid-template-columns: 1fr; }
+      .card { min-height: 0; }
+      .footer { padding: 0 16px 28px; flex-direction: column; }
+    }
+    @media (max-width: 380px) {
+      .signal-row { grid-template-columns: 1fr; }
+      .date-line .edition { display: none; }
+      .card h3 { font-size: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+
+    /* A4 poster edition — portrait paper, editorial rules, compact reading rhythm */
+    :root {
+      --bg: #d9dcda;
+      --surface: #f7f4ec;
+      --surface-2: #ece8dd;
+      --text: #111513;
+      --muted: #535b57;
+      --faint: #767e79;
+      --line: #c9c8be;
+      --line-strong: #949890;
+      --accent: #006b5e;
+      --accent-soft: #d5e9e3;
+      --shadow: 0 28px 80px rgba(31, 36, 33, .18);
+      --card-radius: 0;
+      --card-pad: 18px 0 22px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0e1110;
+        --surface: #191c1a;
+        --surface-2: #252a27;
+        --text: #f3f0e7;
+        --muted: #b4bab5;
+        --faint: #89918c;
+        --line: #383e3a;
+        --line-strong: #626963;
+        --accent: #70c9b9;
+        --accent-soft: #1f443e;
+        --shadow: 0 28px 80px rgba(0, 0, 0, .42);
+      }
+    }
+    :root[data-theme="light"] {
+      --bg: #d9dcda; --surface: #f7f4ec; --surface-2: #ece8dd; --text: #111513; --muted: #535b57;
+      --faint: #767e79; --line: #c9c8be; --line-strong: #949890; --accent: #006b5e; --accent-soft: #d5e9e3;
+      --shadow: 0 28px 80px rgba(31, 36, 33, .18);
+    }
+    :root[data-theme="dark"] {
+      --bg: #0e1110; --surface: #191c1a; --surface-2: #252a27; --text: #f3f0e7; --muted: #b4bab5;
+      --faint: #89918c; --line: #383e3a; --line-strong: #626963; --accent: #70c9b9; --accent-soft: #1f443e;
+      --shadow: 0 28px 80px rgba(0, 0, 0, .42);
+    }
+    body { background: var(--bg); }
+    .app {
+      position: relative;
+      width: min(1040px, calc(100% - 56px));
+      margin: 28px auto 48px;
+      min-height: 1414px;
+      overflow: clip;
+      background: var(--surface);
+      border: 1px solid var(--line-strong);
+      box-shadow: var(--shadow);
+    }
+    .app::before {
+      content: "A4 / WEEKLY INTELLIGENCE";
+      position: absolute;
+      z-index: 2;
+      top: 112px;
+      right: 18px;
+      color: var(--faint);
+      font: 500 9px/1 "IBM Plex Mono", monospace;
+      letter-spacing: .16em;
+      writing-mode: vertical-rl;
+    }
+    .topbar {
+      position: relative;
+      top: auto;
+      padding: 14px 38px 12px;
+      background: var(--surface);
+      backdrop-filter: none;
+      border-bottom: 3px double var(--text);
+    }
+    .status { font-size: 10px; letter-spacing: .04em; text-transform: uppercase; }
+    .live-dot { width: 6px; height: 6px; border-radius: 0; box-shadow: none; }
+    .icon-btn { border-radius: 0; }
+    .icon-btn:hover, .icon-btn[aria-expanded="true"] { border-color: var(--line-strong); }
+    .masthead {
+      position: relative;
+      padding: 30px 54px 30px 38px;
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      column-gap: 28px;
+      border-bottom: 1px solid var(--text);
+    }
+    .date-line {
+      grid-column: 1;
+      align-content: start;
+      display: grid;
+      gap: 9px;
+      padding-top: 8px;
+      border-top: 8px solid var(--accent);
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .date-line strong { font-family: "IBM Plex Mono", monospace; font-size: 11px; }
+    .edition { width: max-content; padding: 2px 0; border: 0; border-bottom: 1px solid var(--line-strong); border-radius: 0; }
+    .masthead h1 {
+      grid-column: 2;
+      margin: 0;
+      max-width: none;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(46px, 6.5vw, 72px);
+      line-height: 1.05;
+      letter-spacing: -.055em;
+      font-weight: 900;
+    }
+    .deck {
+      grid-column: 2;
+      margin-top: 18px;
+      max-width: 720px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      font-size: 16px;
+      line-height: 1.8;
+    }
+    .signal-row {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin: 30px 0 0;
+      border-top: 1px solid var(--text);
+      border-bottom: 1px solid var(--text);
+    }
+    .signal {
+      min-height: 54px;
+      padding: 10px 14px;
+      border: 0;
+      border-right: 1px solid var(--line-strong);
+      border-radius: 0;
+      background: transparent;
+      align-items: baseline;
+    }
+    .signal:last-child { border-right: 0; }
+    .signal b { font: 500 22px/1 "IBM Plex Mono", monospace; color: var(--accent); }
+    .toolbar-wrap {
+      position: sticky;
+      top: 0;
+      background: var(--text);
+      border: 0;
+      backdrop-filter: none;
+    }
+    .toolbar { padding: 8px 38px; }
+    .tab { color: color-mix(in srgb, var(--surface) 68%, transparent); border-radius: 0; }
+    .tab:hover { background: color-mix(in srgb, var(--surface) 12%, transparent); color: var(--surface); }
+    .tab.active { color: var(--text); background: var(--surface); }
+    .search { border-radius: 0; }
+    .content { padding: 28px 38px 58px; }
+    .lead-grid {
+      grid-template-columns: minmax(0, 1.45fr) minmax(240px, .55fr);
+      gap: 0;
+      margin-bottom: 38px;
+      border-top: 8px solid var(--text);
+      border-bottom: 1px solid var(--text);
+    }
+    .lead-card, .brief-card { background: transparent; border: 0; box-shadow: none; }
+    .lead-card {
+      min-height: 348px;
+      padding: 30px 34px 26px 0;
+      border-right: 1px solid var(--line-strong);
+      border-radius: 0;
+    }
+    .lead-card .kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: .04em; }
+    .lead-card h2 {
+      margin: 15px 0 14px;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(31px, 4vw, 47px);
+      line-height: 1.18;
+      font-weight: 900;
+    }
+    .lead-meta { border-top-color: var(--line-strong); }
+    .lead-side { display: grid; gap: 0; }
+    .brief-card { padding: 24px 0 22px 24px; border-bottom: 1px solid var(--line-strong); border-radius: 0; }
+    .brief-card:last-child { border-bottom: 0; }
+    .brief-card .label { font-family: "IBM Plex Mono", monospace; color: var(--accent); }
+    .brief-card strong { font-family: "Noto Serif SC", "Songti SC", serif; font-size: 18px; line-height: 1.5; }
+    .section-head { align-items: baseline; margin-bottom: 0; padding-bottom: 10px; border-bottom: 1px solid var(--text); }
+    .section-head h2 { font-family: "Noto Serif SC", "Songti SC", serif; font-size: 26px; }
+    .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; }
+    .expo-section { margin-top: 44px; padding-top: 18px; border-top: 8px solid var(--accent); }
+    .expo-head { margin-bottom: 0; }
+    .expo-head h2 { font-size: 32px; }
+    .expo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; }
+    .expo-card { grid-template-columns: 92px minmax(0, 1fr); gap: 20px; min-height: 318px; }
+    .expo-date { padding: 20px 16px 0 0; border-right: 1px solid var(--line); }
+    .expo-date strong { font-size: 24px; }
+    .expo-copy { padding-top: 18px; }
+    .expo-card h3 { margin-top: 14px; }
+    .card {
+      position: relative;
+      min-height: 334px;
+      border: 0;
+      border-bottom: 1px solid var(--line-strong);
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    .card:nth-child(odd)::after {
+      content: "";
+      position: absolute;
+      top: 18px;
+      right: -16px;
+      bottom: 22px;
+      width: 1px;
+      background: var(--line);
+    }
+    .card:hover { border-color: var(--text); box-shadow: none; }
+    .card h3 {
+      margin: 17px 0 10px;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(20px, 2.2vw, 26px);
+      line-height: 1.38;
+      font-weight: 700;
+    }
+    .quality { border-radius: 0; font-family: "IBM Plex Mono", monospace; }
+    .tag { font-family: "IBM Plex Mono", monospace; letter-spacing: .03em; }
+    .tag-dot { border-radius: 0; }
+    .why b { font-family: "Noto Serif SC", "Songti SC", serif; }
+    .mini-btn { border-radius: 0; }
+    .footer { padding: 18px 38px 34px; border-top: 3px double var(--text); }
+    .sheet { border-radius: 0; }
+    .seg, .seg button, .toast, .empty { border-radius: 0; }
+
+    @media (max-width: 980px) {
+      .app { width: min(860px, calc(100% - 32px)); margin-top: 16px; }
+      .masthead { grid-template-columns: 150px minmax(0, 1fr); padding-left: 28px; }
+      .topbar, .toolbar { padding-left: 28px; padding-right: 28px; }
+      .content { padding-left: 28px; padding-right: 28px; }
+      .footer { padding-left: 28px; padding-right: 28px; }
+      .lead-side { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .app { width: 100%; min-height: 100vh; margin: 0; border: 0; box-shadow: none; }
+      .app::before { display: none; }
+      .topbar { padding: 10px 14px; border-bottom-width: 1px; }
+      .masthead { display: block; padding: 22px 16px 20px; }
+      .date-line { display: flex; padding-top: 7px; margin-bottom: 20px; }
+      .masthead h1 { font-size: clamp(38px, 12vw, 56px); }
+      .deck { margin-top: 18px; padding-top: 14px; }
+      .signal-row { grid-template-columns: 1fr 1fr; }
+      .signal:nth-child(2) { border-right: 0; }
+      .signal:nth-child(-n+2) { border-bottom: 1px solid var(--line-strong); }
+      .toolbar { padding: 8px 10px; }
+      .content { padding: 20px 16px 46px; }
+      .lead-grid { display: block; }
+      .lead-card { min-height: 0; padding: 24px 0 26px; border-right: 0; border-bottom: 1px solid var(--line-strong); }
+      .lead-card h2 { font-size: 31px; }
+      .brief-card { padding-left: 0; }
+      .news-grid, .expo-grid { grid-template-columns: 1fr; }
+      .expo-section { margin-top: 34px; }
+      .expo-card { grid-template-columns: 74px minmax(0, 1fr); gap: 14px; }
+      .expo-date { padding-right: 10px; }
+      .expo-date strong { font-size: 18px; }
+      .card { min-height: 0; }
+      .card:nth-child(odd)::after { display: none; }
+      .section-head { align-items: flex-start; }
+      .footer { padding: 16px; }
+    }
+
+    /* Archive — compact edition index inside the A4 editorial system */
+    .archive-section { margin-top: 44px; padding-top: 18px; border-top: 8px solid var(--accent); }
+    .archive-head > div { display: grid; gap: 2px; }
+    .archive-list { border-bottom: 1px solid var(--text); }
+    .archive-edition { border-bottom: 1px solid var(--line-strong); }
+    .archive-edition:last-child { border-bottom: 0; }
+    .archive-summary {
+      list-style: none; cursor: pointer; display: grid; grid-template-columns: 132px minmax(0, 1fr) auto;
+      align-items: center; gap: 20px; padding: 18px 0; color: var(--text);
+    }
+    .archive-summary::-webkit-details-marker { display: none; }
+    .archive-number { color: var(--accent); font: 500 11px/1.3 "IBM Plex Mono", monospace; letter-spacing: .06em; }
+    .archive-time { font-family: "Noto Serif SC", "Songti SC", serif; font-size: 19px; font-weight: 700; }
+    .archive-count { display: inline-flex; align-items: center; gap: 12px; color: var(--muted); font: 500 11px/1 "IBM Plex Mono", monospace; }
+    .archive-count::after { content: "+"; width: 24px; height: 24px; display: grid; place-items: center; border: 1px solid var(--line-strong); color: var(--accent); font-size: 16px; }
+    .archive-edition[open] .archive-count::after { content: "−"; }
+    .archive-items { margin: 0; padding: 0 0 14px; list-style: none; border-top: 3px double var(--text); }
+    .archive-item { display: grid; grid-template-columns: 112px minmax(0, 1fr) minmax(150px, 220px); gap: 18px; align-items: baseline; padding: 13px 0; border-bottom: 1px solid var(--line); }
+    .archive-item:last-child { border-bottom: 0; }
+    .archive-item[hidden] { display: none; }
+    .archive-category { color: var(--accent); font: 500 10px/1.4 "IBM Plex Mono", monospace; letter-spacing: .04em; }
+    .archive-title { color: var(--text); font-family: "Noto Serif SC", "Songti SC", serif; font-size: 16px; font-weight: 700; line-height: 1.55; text-decoration: none; }
+    .archive-title:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .archive-meta { color: var(--faint); font-size: 10px; line-height: 1.55; text-align: right; overflow-wrap: anywhere; }
+    .archive-edition:not([open]) > .archive-report { display: none; }
+    .archive-report { margin: 0 0 20px; border-top: 3px double var(--text); border-bottom: 1px solid var(--line-strong); }
+    .archive-report-summary {
+      list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center; gap: 18px; padding: 18px 0; color: var(--text);
+      font-family: "Noto Serif SC", "Songti SC", serif; font-size: 18px; font-weight: 700; line-height: 1.5;
+    }
+    .archive-report-summary::-webkit-details-marker { display: none; }
+    .archive-report-summary::after { content: "展开"; min-width: 42px; color: var(--accent); font: 500 10px/1 "IBM Plex Mono", monospace; text-align: right; }
+    .archive-report[open] .archive-report-summary::after { content: "收起"; }
+    .archive-report-body {
+      width: min(720px, 100%); margin: 0 auto; padding: 8px 0 28px;
+      font-family: "Noto Serif SC", "Songti SC", serif; font-size: calc(var(--body-size) + 1px); line-height: 1.95;
+    }
+    .archive-report-body p { margin: 0 0 1.15em; overflow-wrap: anywhere; }
+    .archive-report-body h4 {
+      margin: 2.1em 0 .8em; padding-top: .65em; border-top: 1px solid var(--line-strong);
+      font-size: 1.35em; line-height: 1.45;
+    }
+    .archive-report-body a { color: var(--accent); text-underline-offset: 3px; overflow-wrap: anywhere; }
+    .archive-report-body strong { font-weight: 900; }
+    @media (max-width: 700px) {
+      .archive-section { margin-top: 34px; }
+      .archive-summary { grid-template-columns: 82px minmax(0, 1fr) auto; gap: 10px; padding: 15px 0; }
+      .archive-time { font-size: 16px; }
+      .archive-count span { display: none; }
+      .archive-item { grid-template-columns: 76px minmax(0, 1fr); gap: 8px 12px; padding: 13px 0; }
+      .archive-meta { grid-column: 2; text-align: left; }
+      .archive-report { margin-bottom: 16px; }
+      .archive-report-summary { padding: 16px 0; gap: 12px; font-size: 16px; }
+      .archive-report-body { padding-bottom: 22px; font-size: var(--body-size); line-height: 1.88; }
+      .archive-report-body h4 { margin-top: 1.8em; font-size: 1.25em; }
+    }
+
+    /* Deep reading — a single-column newspaper essay within the existing A4 system */
+    .deep-section { margin-top: 44px; padding-top: 18px; border-top: 8px solid var(--text); }
+    .deep-head { margin-bottom: 0; }
+    .deep-head > div { display: grid; gap: 2px; }
+    .deep-reader {
+      display: grid;
+      grid-template-columns: minmax(210px, 250px) minmax(0, 1fr);
+      gap: 34px;
+      align-items: start;
+      padding-top: 24px;
+    }
+    .deep-toc {
+      position: sticky;
+      top: 54px;
+      max-height: calc(100vh - 74px);
+      overflow-y: auto;
+      border-top: 3px double var(--text);
+      border-bottom: 1px solid var(--text);
+      scrollbar-width: thin;
+      scrollbar-color: var(--line-strong) transparent;
+    }
+    .deep-toc-label {
+      margin: 0;
+      padding: 12px 0 10px;
+      color: var(--muted);
+      font: 500 10px/1.4 "IBM Plex Mono", monospace;
+      letter-spacing: .08em;
+      border-bottom: 1px solid var(--line-strong);
+    }
+    .deep-toc-list { display: grid; }
+    .deep-toc-item {
+      width: 100%;
+      padding: 13px 8px 14px 0;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      text-align: left;
+      cursor: pointer;
+    }
+    .deep-toc-item:last-child { border-bottom: 0; }
+    .deep-toc-item:hover { color: var(--text); }
+    .deep-toc-item.active {
+      color: var(--text);
+      box-shadow: inset 4px 0 0 var(--accent);
+      padding-left: 14px;
+    }
+    .deep-toc-date {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent);
+      font: 500 9px/1.2 "IBM Plex Mono", monospace;
+      letter-spacing: .05em;
+    }
+    .deep-toc-title {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+    .deep-mobile-picker { display: none; }
+    .deep-list { display: grid; min-width: 0; }
+    .deep-article.deep-inactive { display: none; }
+    .deep-article.is-current {
+      margin-top: 0;
+      padding-top: 10px;
+      border-top: 0;
+      scroll-margin-top: 62px;
+    }
+    .deep-article.is-current .deep-title { font-size: clamp(32px, 4.4vw, 48px); }
+    .deep-article.is-current .deep-body,
+    .deep-article.is-current .card-footer { width: 100%; }
+    .deep-article {
+      display: block;
+      min-height: 0;
+      padding: 34px 0 10px;
+      border-bottom: 0;
+    }
+    .deep-article::after { display: none !important; }
+    .deep-article:hover { border-color: transparent; }
+    .deep-article + .deep-article { margin-top: 52px; padding-top: 42px; border-top: 8px solid var(--text); }
+    .deep-article-header {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 28px;
+      padding-bottom: 28px;
+      border-bottom: 3px double var(--text);
+    }
+    .deep-date {
+      align-self: start;
+      padding-top: 8px;
+      border-top: 6px solid var(--accent);
+      color: var(--muted);
+      font: 500 11px/1.7 "IBM Plex Mono", monospace;
+    }
+    .deep-title {
+      margin: 0;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1.16;
+      letter-spacing: -.045em;
+      font-weight: 900;
+    }
+    .deep-body {
+      width: min(720px, 100%);
+      margin: 30px auto 0;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: calc(var(--body-size) + 2px);
+      line-height: 1.95;
+    }
+    .deep-body p { margin: 0 0 1.15em; }
+    .deep-body ul { margin: 0 0 1.15em; padding-left: 1.35em; }
+    .deep-body li { margin-bottom: .65em; }
+    .deep-body a { overflow-wrap: anywhere; }
+    .deep-body hr { margin: 2.4em 0; border: 0; border-top: 1px solid var(--line-strong); }
+    .deep-body h3 {
+      margin: 2.2em 0 .8em;
+      padding-top: .65em;
+      border-top: 1px solid var(--line-strong);
+      color: var(--text);
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: 1.48em;
+      line-height: 1.4;
+      letter-spacing: -.02em;
+    }
+    .deep-body strong { font-weight: 900; }
+    .deep-article .card-footer {
+      width: min(720px, 100%);
+      margin: 28px auto 0;
+      padding: 18px 0 0;
+      border-top: 1px solid var(--text);
+    }
+    @media (max-width: 700px) {
+      .deep-section { margin-top: 34px; }
+      .deep-head p { display: none; }
+      .deep-reader { display: block; padding-top: 16px; }
+      .deep-toc { display: none; }
+      .deep-mobile-picker {
+        position: sticky;
+        top: 130px;
+        z-index: 21;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        gap: 10px;
+        margin: 0 -16px 12px;
+        padding: 10px 16px;
+        border-top: 1px solid var(--text);
+        border-bottom: 1px solid var(--text);
+        background: var(--surface);
+      }
+      .deep-mobile-picker label {
+        color: var(--accent);
+        font: 500 10px/1 "IBM Plex Mono", monospace;
+        letter-spacing: .05em;
+      }
+      .deep-mobile-select {
+        width: 100%;
+        min-width: 0;
+        height: 38px;
+        padding: 0 32px 0 10px;
+        border: 1px solid var(--line-strong);
+        border-radius: 0;
+        background: var(--surface);
+        color: var(--text);
+        font: 600 13px/1.4 "Noto Sans SC", sans-serif;
+      }
+      .deep-article { padding-top: 24px; }
+      .deep-article.is-current { padding-top: 12px; scroll-margin-top: 102px; }
+      .deep-article-header { display: block; padding-bottom: 22px; }
+      .deep-date { width: max-content; margin-bottom: 18px; }
+      .deep-title, .deep-article.is-current .deep-title { font-size: clamp(30px, 9.5vw, 42px); line-height: 1.2; }
+      .deep-body { margin-top: 24px; font-size: calc(var(--body-size) + 1px); line-height: 1.88; }
+      .deep-body h3 { margin-top: 1.9em; font-size: 1.35em; }
+    }
+
+
+    /* Terminology learning — preserves the square-rule A4 editorial system. */
+    .terms-section { margin-top: 42px; padding-top: 22px; border-top: 3px double var(--text); }
+    .terms-intro { display: grid; grid-template-columns: 126px minmax(0, 1fr); gap: 22px; align-items: start; margin-bottom: 24px; }
+    .terms-intro .section-index { padding-top: 8px; }
+    .terms-intro h2 { margin: 0; font-family: "Noto Serif SC", "Songti SC", serif; font-size: clamp(30px, 4.3vw, 50px); line-height: 1.12; letter-spacing: -.04em; }
+    .terms-intro p { grid-column: 2; margin: -10px 0 0; max-width: 650px; color: var(--muted); }
+    .term-controls { display: grid; grid-template-columns: minmax(220px, 1fr) auto auto; gap: 10px; align-items: center; padding: 12px 0; border-top: 1px solid var(--text); border-bottom: 1px solid var(--text); }
+    .term-search-label { position: relative; display: flex; align-items: center; min-width: 0; }
+    .term-search-label svg { position: absolute; left: 11px; width: 17px; height: 17px; color: var(--muted); fill: none; stroke: currentColor; stroke-width: 1.8; pointer-events: none; }
+    .term-search { width: 100%; height: 42px; padding: 0 12px 0 38px; border: 1px solid var(--line-strong); border-radius: 0; background: var(--surface); color: var(--text); }
+    .term-count { color: var(--muted); font: 500 11px/1.4 "IBM Plex Mono", monospace; white-space: nowrap; }
+    .term-mode-btn, .flash-nav-btn { min-height: 42px; padding: 0 14px; border: 1px solid var(--text); border-radius: 0; background: var(--surface); color: var(--text); cursor: pointer; font-weight: 700; }
+    .term-mode-btn:hover, .term-mode-btn.active, .flash-nav-btn:hover { background: var(--text); color: var(--surface); }
+    .term-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 38px; border-bottom: 1px solid var(--text); }
+    .term-list[hidden] { display: none; }
+    .term-card { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; min-width: 0; padding: 24px 0 26px; border-top: 1px solid var(--line); }
+    .term-card:nth-child(-n+2) { border-top-color: var(--text); }
+    .term-card[hidden] { display: none; }
+    .term-number { padding-top: 6px; color: var(--accent); font: 500 10px/1 "IBM Plex Mono", monospace; }
+    .term-copy { min-width: 0; }
+    .term-english-line { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .term-english-line h3 { margin: 0; min-width: 0; overflow-wrap: anywhere; font-family: "Noto Serif SC", "Songti SC", serif; font-size: 21px; line-height: 1.35; letter-spacing: -.02em; }
+    .term-english-line .speak-btn { flex: none; }
+    .term-ipa { margin: 5px 0 0; color: var(--faint); font: 500 11px/1.5 "IBM Plex Mono", monospace; overflow-wrap: anywhere; }
+    .term-chinese { margin: 11px 0 0; color: var(--accent); font-weight: 800; }
+    .term-definition { margin: 7px 0 0; color: var(--muted); line-height: 1.75; }
+    .term-empty { display: none; padding: 54px 18px; text-align: center; border-bottom: 1px solid var(--text); color: var(--muted); }
+    .term-empty.visible { display: block; }
+    .flash-stage { padding-top: 22px; }
+    .flash-stage[hidden] { display: none; }
+    .flash-meta { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; }
+    .flash-progress { color: var(--muted); text-align: center; font: 500 11px/1.4 "IBM Plex Mono", monospace; }
+    .flash-card { position: relative; display: grid; min-height: 430px; margin-top: 12px; border: 1px solid var(--text); background: var(--surface); cursor: pointer; overflow: hidden; touch-action: pan-y; }
+    .flash-card:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 3px; }
+    .flash-face { grid-area: 1 / 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: clamp(28px, 7vw, 78px); text-align: center; backface-visibility: hidden; transition: transform .42s ease, opacity .25s ease; }
+    .flash-front { opacity: 1; transform: rotateY(0deg); }
+    .flash-back { opacity: 0; transform: rotateY(180deg); pointer-events: none; }
+    .flash-card.flipped .flash-front { opacity: 0; transform: rotateY(-180deg); pointer-events: none; }
+    .flash-card.flipped .flash-back { opacity: 1; transform: rotateY(0deg); pointer-events: auto; }
+    .flash-kicker { color: var(--accent); font: 500 10px/1 "IBM Plex Mono", monospace; letter-spacing: .12em; }
+    .flash-english { margin: 24px 0 0; max-width: 780px; overflow-wrap: anywhere; font-family: "Noto Serif SC", "Songti SC", serif; font-size: clamp(38px, 7vw, 72px); line-height: 1.08; letter-spacing: -.05em; }
+    .flash-flip-hint { margin: 30px 0 0; color: var(--faint); font-size: 12px; }
+    .flash-cn { margin: 18px 0 0; color: var(--accent); font-family: "Noto Serif SC", "Songti SC", serif; font-size: clamp(27px, 4vw, 42px); line-height: 1.2; }
+    .flash-ipa { margin: 11px 0 0; color: var(--faint); font: 500 13px/1.6 "IBM Plex Mono", monospace; overflow-wrap: anywhere; }
+    .flash-definition { margin: 24px 0 0; max-width: 670px; font-size: clamp(16px, 2vw, 20px); line-height: 1.75; }
+    .flash-back .speak-btn { margin-top: 24px; width: 38px; height: 38px; }
+    .flash-swipe-note { margin: 12px 0 0; color: var(--faint); text-align: center; font-size: 11px; }
+    @media (max-width: 700px) {
+      .terms-section { margin-top: 34px; }
+      .terms-intro { grid-template-columns: 1fr; gap: 8px; }
+      .terms-intro .section-index { padding-top: 0; }
+      .terms-intro p { grid-column: 1; margin: 4px 0 0; }
+      .term-controls { grid-template-columns: 1fr auto; }
+      .term-search-label { grid-column: 1 / -1; }
+      .term-count { justify-self: start; }
+      .term-list { grid-template-columns: 1fr; }
+      .term-card:nth-child(2) { border-top-color: var(--line); }
+      .flash-card { min-height: 390px; }
+      .flash-face { padding: 26px 20px; }
+      .flash-nav-btn { min-width: 82px; padding: 0 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .flash-face { transition: none; }
+    }
+  </style>
 </head>
 <body>
-  <div class="header">
-    <div class="brand">AI智页</div>
-    <div class="meta">2026-10-13 · 新智基座</div>
-  </div>
-  <div class="cat-bar">
-    <span class="cat-tag">新智基座</span>
-    <span class="cat-count">5 条</span>
-  </div>
-  <div class="list">
-    <div class="card">
-      <h2>Lumentum / Astera Labs / 康宁（Corning）联合演示机架级 PCIe 光互连，为 AI 铜线瓶颈找解法</h2>
-      <p>三家公司联合开发布会，讲的是一个行业焦虑：AI 机架里的铜线快到物理极限了。Lumentum、Astera Labs、康宁在 OCP 峰会上演示 PCIe over Optics——用光代替铜传 PCIe 信号。但注意信源：这是 Business Wire 上的企业通稿，不是独立测试。真正的看点不在技术参数，而在站队：三家二线厂商抱团，想在英伟达用 NVLink 锁死生态之前，先把开放标准的话语权抢下来。演示很漂亮，量产时间表没提。</p>
-      <div class="src">来源：Business Wire</div>
+  <div class="app">
+    <header class="topbar">
+      <div class="status">
+        <span class="live-dot" aria-hidden="true"></span>
+        <strong>全球 AI 周报</strong>
+        <span class="desktop-only">·</span>
+        <span class="mono desktop-only">更新于 2026-10-13 10:16 CST · 每 6 小时自动刷新</span>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="speechToggle" aria-label="英语发音已开启，点击关闭" aria-pressed="true" title="英语发音开关">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg>
+        </button>
+        <button class="icon-btn" id="searchToggle" aria-label="搜索资讯" aria-expanded="false">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
+        </button>
+        <button class="icon-btn" id="settingsToggle" aria-label="调整界面" aria-expanded="false">
+          <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="masthead">
+<div class="date-line"><strong>2026 年 10 月 13 日</strong><span class="edition">2026-10-13 10:16 版</span><span>15 条资讯 · 113 场展讯</span></div>
+<h1>Lumentum / Astera Labs / 康宁（Corning）联合演示机架级 PCIe 光互连，为 AI 铜线瓶颈找解法</h1><p class="deck">三家公司联合开发布会，讲的是一个行业焦虑：AI 机架里的铜线快到物理极限了。Lumentum、Astera Labs、康宁在 OCP 峰会上演示 PCIe over Optics——用光代替铜传 PCIe 信号。但注意信源：这是 Business Wire 上的企业通稿，不是独立测试。真正的看点不在技术参数，而在站队：三家二线厂商抱团，想在英伟达用 NVLink 锁死生态之前，先把开放标准的话语权抢下来。演示很漂亮，量产时间表没提。</p>
+<div class="signal-row" aria-label="本期关键数据"><span class="signal"><b>5</b> 个新智基座事件</span><span class="signal"><b>3</b> 个无界应用事件</span><span class="signal"><b>2</b> 个前沿探索事件</span><span class="signal"><b>5</b> 个具身未来事件</span></div>
+</section>
+
+<div class="toolbar-wrap">
+      <div class="toolbar" id="toolbar">
+        <nav class="tabs" aria-label="资讯分类">
+          <button class="tab active" data-filter="all">全部<span class="count">15</span></button>
+          <button class="tab" data-filter="base">新智基座<span class="count">05</span></button>
+          <button class="tab" data-filter="app">无界应用<span class="count">03</span></button>
+          <button class="tab" data-filter="research">前沿探索<span class="count">02</span></button>
+          <button class="tab" data-filter="embodied">具身未来<span class="count">05</span></button>
+          <button class="tab" data-filter="deep">深度解读<span class="count">16</span></button>
+          <button class="tab" data-filter="terms">术语学习<span class="count">70</span></button>
+          <button class="tab" data-filter="archive">往期回顾<span class="count">275</span></button>
+          <button class="tab" data-filter="expo">全球AI展讯<span class="count">113</span></button>
+          <button class="tab" data-filter="saved">收藏<span class="count" id="savedCount">00</span></button>
+        </nav>
+        <div class="spacer"></div>
+        <div class="search-wrap" id="searchWrap"><input class="search" id="searchInput" type="search" placeholder="搜索标题、机构或关键词" aria-label="搜索标题、机构或关键词" /></div>
+      </div>
     </div>
-    <div class="card">
-      <h2>Meta（脸书母公司）发布首款前沿级模型 Muse Wonder：智能指数 56 分，仅次于 Claude Opus 5.5</h2>
-      <p>Meta 发布了自家第一款前沿模型，但最耐人寻味的不是分数，而是路线转向。这家靠 Llama 开源叙事起家的公司，现在把更强的 Wonder Full 锁在自家订阅里，连 API 都不开放。第三方 Artificial Analysis 给 Wonder Full 打 56 分，确实进了第一梯队，但仍落后 Claude Opus 5.5 的 58 分。所谓的 Active Memory 和 Active Focus，包装得很漂亮，实际效果要等开发者真用起来才知道。Meta 的开源钟摆，摆回去了。</p>
-      <div class="src">来源：VentureBeat</div>
-    </div>
-    <div class="card">
-      <h2>SWI Group 融资 8 亿欧元，要把与 FTX 暴雷案挂钩的比特币矿场改造成 AI 数据中心</h2>
-      <p>FTX 暴雷案关联的比特币矿场，现在要改造成 AI 数据中心。SWI Group 融了 8 亿欧元，估值 61 亿，故事很性感：1.3GW 的电力容量，多在得克萨斯。但记者要问的数字是改造成本——每兆瓦 800 万到 1500 万美元，制冷、网络、可用性要求和挖矿完全不是一个量级。1.3GW 全改下来，8 亿欧元可能只是首付。这是真实的转型，还是一次成功的融资叙事？看明年有多少兆瓦真正通电。</p>
-      <div class="src">来源：Particle</div>
-    </div>
-  </div>
-  <div class="footer">
-    <span class="brand2">AI智页完整版</span>
-    <span>1 / 4</span>
-  </div>
-</body>
-</html>
+
+    <main class="content">
+      <section class="lead-grid" aria-labelledby="lead-title">
+<article class="lead-card"><div><span class="kicker">本期主线 · 新智基座</span><h2 id="lead-title">Lumentum / Astera Labs / 康宁（Corning）联合演示机架级 PCIe 光互连，为 AI 铜线瓶颈找解法</h2><p>三家公司联合开发布会，讲的是一个行业焦虑：AI 机架里的铜线快到物理极限了。Lumentum、Astera Labs、康宁在 OCP 峰会上演示 PCIe over Optics——用光代替铜传 PCIe 信号。但注意信源：这是 Business Wire 上的企业通稿，不是独立测试。真正的看点不在技术参数，而在站队：三家二线厂商抱团，想在英伟达用 NVLink 锁死生态之前，先把开放标准的话语权抢下来。演示很漂亮，量产时间表没提。</p></div><div class="lead-meta"><span data-source-annotated="true">Business Wire（企业新闻专线，2026-10-12）</span><span class="mono">10 / 12</span></div></article><div class="lead-side"><article class="brief-card"><span class="label mono">SECONDARY SIGNAL</span><strong>Meta（脸书母公司）发布首款前沿级模型 Muse Wonder：智能指数 56 分，仅次于 Claude Opus 5.5</strong><p>Meta 发布了自家第一款前沿模型，但最耐人寻味的不是分数，而是路线转向。这家靠 Llama 开源叙事起家的公司，现在把更强的 Wonder Full 锁在自家订阅里，连 API 都不开放。第三方 Artificial Analysis 给 Wonder Full 打 56 分，确实进了第一梯队，但仍落后 Claude Opus 5.5 的 58 分。所谓的 Active Memory 和 Active Focus，包装得很漂亮，实际效果要等开发者真用起来才知道。Meta 的开源钟摆，摆回去了。</p></article><article class="brief-card"><span class="label mono">WATCHLIST</span><strong>SWI Group 融资 8 亿欧元，要把与 FTX 暴雷案挂钩的比特币矿场改造成 AI 数据中心</strong><p>FTX 暴雷案关联的比特币矿场，现在要改造成 AI 数据中心。SWI Group 融了 8 亿欧元，估值 61 亿，故事很性感：1.3GW 的电力容量，多在得克萨斯。但记者要问的数字是改造成本——每兆瓦 800 万到 1500 万美元，制冷、网络、可用性要求和挖矿完全不是一个量级。1.3GW 全改下来，8 亿欧元可能只是首付。这是真实的转型，还是一次成功的融资叙事？看明年有多少兆瓦真正通电。</p></article></div>
+</section>
+
+<section class="collection-section" id="weeklySection"><div class="section-head"><h2>本期值得读</h2><p id="resultLabel">按影响力与信源质量排序</p></div><div class="news-grid" id="newsGrid"><article class="card" data-id="n01" data-category="base" data-date="2026-10-12" data-search="Lumentum / Astera Labs / 康宁（Corning）联合演示机架级 PCIe 光互连，为 AI 铜线瓶颈找解法 Lumentum, Astera Labs, and Corning to Demonstrate 1060 nm VCSEL-Based PCIe over Optics for AI Rack-Scale Connectivity at the 2026 OCP Global Summit Lumentum（光器件公司）、Astera Labs（连接芯片公司）与康宁（Corning）10 月 12 日宣布，在 2026 年 OCP 全球峰会（10 月 12-15 日，圣何塞）联合演示 PCIe over Optics（机架内光互连技术）：Astera Labs 的 Scorpio 智能交换芯片搭配 Lumentum 1060 纳米 VCSEL 光互连平台和康宁多模光纤。该架构通过多路并行光通道传输 PCIe 信号，解决机架级 AI 系统中传统铜线互连在传输距离、线缆密度、信号完整性、功耗和散热上的瓶颈。 Business Wire（企业新闻专线，2026-10-12）"><div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality multi">2 个来源</span></div><h3>Lumentum / Astera Labs / 康宁（Corning）联合演示机架级 PCIe 光互连，为 AI 铜线瓶颈找解法</h3><p class="english-title" lang="en" data-no-inline-speech>Lumentum, Astera Labs, and Corning to Demonstrate 1060 nm VCSEL-Based PCIe over Optics for AI Rack-Scale Connectivity at the 2026 OCP Global Summit<button type="button" class="speak-btn" data-speak="Lumentum, Astera Labs, and Corning to Demonstrate 1060 nm V C S E L-Based PCIe over Optics for A I Rack-Scale Connectivity at the 2026 O C P Global Summit" data-audio="c71c42971a17" aria-label="朗读英语：Lumentum, Astera Labs, and Corning to Demonstrate 1060 nm VCSEL-Based PCIe over Optics for AI Rack-Scale Connectivity at the 2026 OCP Global Summit" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p><p class="summary">三家公司联合开发布会，讲的是一个行业焦虑：AI 机架里的铜线快到物理极限了。Lumentum、Astera Labs、康宁在 OCP 峰会上演示 PCIe over Optics——用光代替铜传 PCIe 信号。但注意信源：这是 Business Wire 上的企业通稿，不是独立测试。真正的看点不在技术参数，而在站队：三家二线厂商抱团，想在英伟达用 NVLink 锁死生态之前，先把开放标准的话语权抢下来。演示很漂亮，量产时间表没提。</p><div class="card-footer"><span>10.12</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://www.businesswire.com/news/home/20261012075402/en/Lumentum-Astera-Labs-and-Corning-to-Demonstrate-1060-nm-VCSEL-Based-PCIe-over-Optics-for-AI-Rack-Scale-Connectivity-at-the-2026-OCP-Global-Summit" target="_blank" rel="noopener noreferrer">Business Wire（企业新闻专线，2026-10-12）</a><button type="button" class="speak-btn" data-speak="Business Wire" data-audio="750c4b983eea" aria-label="朗读英语：Business Wire" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.businesswire.com/news/home/20261012075402/en/Lumentum-Astera-Labs-and-Corning-to-Demonstrate-1060-nm-VCSEL-Based-PCIe-over-Optics-for-AI-Rack-Scale-Connectivity-at-the-2026-OCP-Global-Summit" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div></article><article class="card" data-id="n02" data-category="base" data-date="2026-10-12" data-search="Meta（脸书母公司）发布首款前沿级模型 Muse Wonder：智能指数 56 分，仅次于 Claude Opus 5.5 Meta&#x27;s new Muse Wonder and Muse Wonder Full models achieve frontier performance Meta 超级智能实验室（Meta Superintelligence Labs）10 月 12 日发布 Muse Wonder 及更强版本 Muse Wonder Full，自称是其首款前沿级模型，是 Meta 成立该实验室约 14 个月来在前沿能力上的最大押注。第三方基准机构 Artificial Analysis 智能指数显示：Muse Wonder Full 得 56 分，仅次于 Claude Opus 5.5 的 58 分，与 Claude Sonnet 5.5 并列，超过 OpenAI 的 GPT-6 Astra 和谷歌（Google）的 Gemini 4；标准版 Muse Wonder 得 52 分。两款模型主打智能体能力：Active Memory（跨会话记忆重要上下文）、Active Focus（让智能体在多步骤任务中不偏离目标）。标准版通过 Meta 模型 API 按 $4/$20 每百万输入/输出 token 定价并接入 Muse Code；Wonder Full 暂不开放 API，仅限 Muse Code 付费订阅用户。 VentureBeat（美国科技媒体，2026-10-12）"><div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality multi">2 个来源</span></div><h3>Meta（脸书母公司）发布首款前沿级模型 Muse Wonder：智能指数 56 分，仅次于 Claude Opus 5.5</h3><p class="english-title" lang="en" data-no-inline-speech>Meta&#x27;s new Muse Wonder and Muse Wonder Full models achieve frontier performance<button type="button" class="speak-btn" data-speak="Meta&#x27;s new Muse Wonder and Muse Wonder Full models achieve frontier performance" data-audio="b43328767dd6" aria-label="朗读英语：Meta&#x27;s new Muse Wonder and Muse Wonder Full models achieve frontier performance" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p><p class="summary">Meta 发布了自家第一款前沿模型，但最耐人寻味的不是分数，而是路线转向。这家靠 Llama 开源叙事起家的公司，现在把更强的 Wonder Full 锁在自家订阅里，连 API 都不开放。第三方 Artificial Analysis 给 Wonder Full 打 56 分，确实进了第一梯队，但仍落后 Claude Opus 5.5 的 58 分。所谓的 Active Memory 和 Active Focus，包装得很漂亮，实际效果要等开发者真用起来才知道。Meta 的开源钟摆，摆回去了。</p><div class="card-footer"><span>10.12</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://venturebeat.com/technology/metas-new-muse-wonder-and-muse-wonder-full-models-achieve-frontier-performance-but-only-the-weaker-one-is-available-via-api" target="_blank" rel="noopener noreferrer">VentureBeat（美国科技媒体，2026-10-12）</a><button type="button" class="speak-btn" data-speak="VentureBeat" data-audio="c3c520583c89" aria-label="朗读英语：VentureBeat" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://venturebeat.com/technology/metas-new-muse-wonder-and-muse-wonder-full-models-achieve-frontier-performance-but-only-the-weaker-one-is-available-via-api" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div></article><article class="card" data-id="n03" data-category="base" data-date="2026-10-12" data-search="SWI Group 融资 8 亿欧元，要把与 FTX 暴雷案挂钩的比特币矿场改造成 AI 数据中心 SWI Group Turns FTX-Linked Bitcoin Mines Into AI Data-Center Play SWI Group 10 月 12 日宣布完成 8 亿欧元融资，公司估值 61 亿欧元，募资将用于把 Genesis Digital Assets（与 FTX 破产案有关的比特币矿企，SWI 已取得多数股权）旗下矿场改造成 AI 与高性能计算容量。Genesis 最核心的资产是约 1.3GW 的通电及已获批电网接入容量，分布在约 15 个站点，多在得克萨斯州；但改造代价高昂，每兆瓦改造成本估计 800 万至 1500 万美元，对制冷、网络与可用性要求远高于挖矿。 Particle（AI 新闻聚合，2026-10-12）"><div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality single">1 个来源</span></div><h3>SWI Group 融资 8 亿欧元，要把与 FTX 暴雷案挂钩的比特币矿场改造成 AI 数据中心</h3><p class="english-title" lang="en" data-no-inline-speech>SWI Group Turns FTX-Linked Bitcoin Mines Into AI Data-Center Play<button type="button" class="speak-btn" data-speak="S W I Group Turns F T X-Linked Bitcoin Mines Into A I Data-Center Play" data-audio="5509375ad7ca" aria-label="朗读英语：SWI Group Turns FTX-Linked Bitcoin Mines Into AI Data-Center Play" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p><p class="summary">FTX 暴雷案关联的比特币矿场，现在要改造成 AI 数据中心。SWI Group 融了 8 亿欧元，估值 61 亿，故事很性感：1.3GW 的电力容量，多在得克萨斯。但记者要问的数字是改造成本——每兆瓦 800 万到 1500 万美元，制冷、网络、可用性要求和挖矿完全不是一个量级。1.3GW 全改下来，8 亿欧元可能只是首付。这是真实的转型，还是一次成功的融资叙事？看明年有多少兆瓦真正通电。</p><div class="card-footer"><span>10.12</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://particle.news/story/swi-group-turns-ftxlinked-bitcoin-mines-into-ai-datacenter-play" target="_blank" rel="noopener noreferrer">Particle（AI 新闻聚合，2026-10-12）</a><button type="button" class="speak-btn" data-speak="Particle" data-audio="ba1dd0b660cc" aria-label="朗读英语：Particle" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://particle.news/story/swi-group-turns-ftxlinked-bitcoin-mines-into-ai-datacenter-play" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div></article><article class="card" data-id="n04" data-category="base" data-date="2026-10-12" data-search="比特小鹿（Bitdeer）马来西亚扩建 60MW 数据中心，专为英伟达（NVIDIA）Vera Rubin 平台设计 Bitdeer AI Expands Malaysia Campus with New 60MW A103 AI 新云服务商 Bitdeer AI（比特小鹿旗下 AI 云业务）10 月 12 日宣布，为其马来西亚赛城园区的 A103 设施签署一份 8 年期数据中心服务协议，新增 60MW 关键 IT 负载。A103 采用液冷机架级架构，专为英伟达（NVIDIA）下一代 Vera Rubin 平台设计，预计 2028 年第一季度通电。加上该设施，Bitdeer AI 已签约的全球 AI 云数据中心容量达约 333.5MW，接近 2028 年第一季度 350MW 的目标。 GlobeNewswire（企业新闻专线，2026-10-12）"><div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality single">1 个来源</span></div><h3>比特小鹿（Bitdeer）马来西亚扩建 60MW 数据中心，专为英伟达（NVIDIA）Vera Rubin 平台设计</h3><p class="english-title" lang="en" data-no-inline-speech>Bitdeer AI Expands Malaysia Campus with New 60MW A103<button type="button" class="speak-btn" data-speak="Bitdeer A I Expands Malaysia Campus with New 60MW A103" data-audio="edf9e2023d15" aria-label="朗读英语：Bitdeer AI Expands Malaysia Campus with New 60MW A103" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p><p class="summary">又一家矿转 AI。Bitdeer 在马来西亚加 60MW，签了 8 年长约，专为英伟达 Vera Rubin 平台设计——问题是 Vera Rubin 要到 2028 年才出货，现在建的是给两年后硬件准备的房子。Bitdeer 全球已签约 333.5MW，接近 350MW 目标。信源是 GlobeNewswire 企业通稿。值得注意的模式：比特币矿企手里有电、有地、有制冷，正在集体借尸还魂。但 8 年长约锁的是什么电价，通稿里没说。</p><div class="card-footer"><span>10.12</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://www.globenewswire.com/news-release/2026/10/12/3379255/0/en/bitdeer-ai-expands-malaysia-campus-with-new-60mw-a103-facility-closing-in-on-up-to-350mw-global-capacity-target.html" target="_blank" rel="noopener noreferrer">GlobeNewswire（企业新闻专线，2026-10-12）</a><button type="button" class="speak-btn" data-speak="GlobeNewswire" data-audio="7ac6cd41a3ad" aria-label="朗读英语：GlobeNewswire" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.globenewswire.com/news-release/2026/10/12/3379255/0/en/bitdeer-ai-expands-malaysia-campus-with-new-60mw-a103-facility-closing-in-on-up-to-350mw-global-capacity-target.html" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div></article><article class="card" data-id="n05" data-category="base" data-date="2026-10-11" data-search="阿里巴巴（Alibaba）平头哥（T-Head）发布 Zhenwu V900 AI 芯片：性能为上代 3 倍，可超千卡互连 T-Head unveils Zhenwu V900 AI chip in Alibaba&#x27;s push to expand its AI infrastructure stack 阿里旗下芯片子公司平头哥（T-Head）在 2026 杭州云栖大会上发布新一代 Zhenwu V900 AI 芯片，可同时用于模型训练与推理。据平头哥称，V900 采用自研并行计算架构，性能为上一代 Zhenwu M890 的 3 倍，配备 216GB 显存、芯片间带宽 1200GB/s，原生支持 FP8/FP4 低精度计算。平头哥通过自研 ICN 交换芯片将 1000 枚以上 V900 互连为超节点，可统一寻址、训练万亿参数级模型。 TechNode（动点科技，2026-10-11，经 AIChina News 译稿）"><div class="card-top"><span class="tag"><span class="tag-dot"></span>新智基座</span><span class="quality single">1 个来源</span></div><h3>阿里巴巴（Alibaba）平头哥（T-Head）发布 Zhenwu V900 AI 芯片：性能为上代 3 倍，可超千卡互连</h3><p class="english-title" lang="en" data-no-inline-speech>T-Head unveils Zhenwu V900 AI chip in Alibaba&#x27;s push to expand its AI infrastructure stack<button type="button" class="speak-btn" data-speak="T-Head unveils Zhenwu V900 A I chip in Alibaba&#x27;s push to expand its A I infrastructure stack" data-audio="b43c2e4c9fde" aria-label="朗读英语：T-Head unveils Zhenwu V900 AI chip in Alibaba&#x27;s push to expand its AI infrastructure stack" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p><p class="summary">阿里平头哥发布 Zhenwu V900，号称性能是上代 3 倍，216GB 显存，千卡互连可训万亿参数模型。所有数字都来自平头哥自己——没有第三方基准，没有 MLPerf 成绩，没有独立评测。信源是 TechNode 经 AIChina News 的译稿，原始发布会在云栖大会上。这条新闻的真正价值不在参数，而在信号：中国大厂在系统性地补国产算力这块拼图。但参数好看不等于好用，生态和软件栈才是硬仗，通稿里一个字没提。</p><div class="card-footer"><span>10.11</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://aichina.news/news/t-head-unveils-zhenwu-v900-ai-chip-as-alibaba-expands-its-ai-kfabfr/" target="_blank" rel="noopener noreferrer">TechNode（动点科技，2026-10-11，经 AIChina News 译稿）</a><button type="button" class="speak-btn" data-speak="TechNode" data-audio="769ec91b64e1" aria-label="朗读英语：TechNode" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://aichina.news/news/t-head-unveils-zhenwu-v900-ai-chip-as-alibaba-expands-its-ai-kfabfr/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div></article><article class="card" data-id="n06" data-category="app" data-date="2026-10-13" data-search="LG Uplus 把 U+one 客服 App 升级为可办事的 AI 智能体，能查账单、缴费、办漫游 LG Uplus Upgrades U+one App With AI Agents for Billing, Roaming 韩国运营商 LG Uplus 10 月 13 日宣布，将其综合客服平台 U+one 的 AI 搜索功能逐步改造为可直接办事的 AI 智能体：用户通过对话即可查账单、缴费、获取漫游推荐并订购套餐，不再需要跳转菜单。此前已上线账单缴费智能体（8 月）与漫游智能体（9 月）：可解释账单变动原因、展示未缴金额与折扣明细，并在聊天窗口内完成缴费（需用户最终确认，系统会提示重复缴费风险）。 Seoul Economic Daily（首尔经济日报英文版，2026-10-13）"><div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality single">1 个来源</span></div><h3>LG Uplus 把 U+one 客服 App 升级为可办事的 AI 智能体，能查账单、缴费、办漫游</h3><p class="english-title" lang="en" data-no-inline-speech>LG Uplus Upgrades U+one App With AI Agents for Billing, Roaming<button type="button" class="speak-btn" data-speak="L G Uplus Upgrades U+one App With A I Agents for Billing, Roaming" data-audio="bc306545c4d0" aria-label="朗读英语：LG Uplus Upgrades U+one App With AI Agents for Billing, Roaming" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p><p class="summary">韩国运营商 LG Uplus 把客服 App 改造成 AI 智能体：查账单、缴费、办漫游，对话里直接办完。没有革命性技术，但这是 AI 智能体少见的真实落地——8 月上线账单智能体，9 月上线漫游智能体，10 月整合。渐进式，有用户，有闭环。记者喜欢这种：不讲故事，讲转化率。唯一要追问的是，韩国运营商客服投诉率有没有真的下降，通稿里没给数字。</p><div class="card-footer"><span>10.13</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://en.sedaily.com/technology/2026/10/13/lg-uplus-upgrades-uone-app-with-ai-agents-for-billing" target="_blank" rel="noopener noreferrer">Seoul Economic Daily（首尔经济日报英文版，2026-10-13）</a><button type="button" class="speak-btn" data-speak="Seoul Economic Daily" data-audio="8f0defafd068" aria-label="朗读英语：Seoul Economic Daily" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://en.sedaily.com/technology/2026/10/13/lg-uplus-upgrades-uone-app-with-ai-agents-for-billing" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div></article><article class="card" data-id="n07" data-category="app" data-date="2026-10-13" data-search="微软（Microsoft）Copilot 打通聊天与文档编辑，在 Word / Excel / PowerPoint 里边聊边改 The Era of Separate AI Applications is Over: Expanding Seamless AI Integration 微软（Microsoft）10 月 13 日推出新功能，把 Copilot 聊天界面与 Word、Excel、PowerPoint 的文档编辑打通：用户可在聊天窗口旁直接修改文档，并根据文档批注做相应改动，该功能将先向 Frontier 计划用户逐步推送。报道还提到谷歌（Google）9 月已在 Workspace 上线跨应用 Gemini 任务功能，印证 AI 正从独立窗口走向无缝嵌入各类应用。 Aju Press（韩国经济媒体，2026-10-13）"><div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality single">1 个来源</span></div><h3>微软（Microsoft）Copilot 打通聊天与文档编辑，在 Word / Excel / PowerPoint 里边聊边改</h3><p class="english-title" lang="en" data-no-inline-speech>The Era of Separate AI Applications is Over: Expanding Seamless AI Integration<button type="button" class="speak-btn" data-speak="The Era of Separate A I Applications is Over: Expanding Seamless A I Integration" data-audio="ba8a4db4e47e" aria-label="朗读英语：The Era of Separate AI Applications is Over: Expanding Seamless AI Integration" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p><p class="summary">微软把 Copilot 聊天和 Word、Excel、PowerPoint 编辑打通，标题起得很霸气：独立 AI 应用的时代结束了。翻译一下：微软要让 Copilot 无处不在，让你离不开。谷歌 9 月在 Workspace 干了同样的事。这不是功能更新，是平台战争——谁把 AI 嵌进你每天打开的软件，谁就赢了。Aju Press 的报道提到先向 Frontier 计划用户推送，说明还在灰度。真正的考验：用户是觉得方便，还是觉得被骚扰。</p><div class="card-footer"><span>10.13</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://www.ajupress.com/view/20261013101670750" target="_blank" rel="noopener noreferrer">Aju Press（韩国经济媒体，2026-10-13）</a><button type="button" class="speak-btn" data-speak="Aju Press" data-audio="be260d4143d2" aria-label="朗读英语：Aju Press" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.ajupress.com/view/20261013101670750" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div></article><article class="card" data-id="n08" data-category="app" data-date="2026-10-12" data-search="深度求索（DeepSeek）领投机器人 AI 初创 Winverse AI 种子轮，投后估值约 4 亿美元 DeepSeek to lead seed round in $400mn robot AI start-up, Bloomberg reports 据彭博社援引知情人士报道，深度求索（DeepSeek）已同意领投机器人 AI 初创 Winverse AI 的种子轮融资，金额达数千万美元，投后估值约 4 亿美元；美团旗下龙珠资本（Long-Z Investments）也已承诺出资，交易尚未最终敲定。Winverse 由前腾讯视觉-语言与具身基础模型团队负责人胡瀚于 2026 年创办，目前仍处隐身模式。这是 DeepSeek 将其超 120 亿美元新融资投入具身智能与机器人领域的重要一笔，此前它还入股了宇树科技（Unitree Robotics）约 2% 股权。 Bloomberg（彭博社，2026-10-12，经 Bloomberg Law）"><div class="card-top"><span class="tag"><span class="tag-dot"></span>无界应用</span><span class="quality multi">2 个来源</span></div><h3>深度求索（DeepSeek）领投机器人 AI 初创 Winverse AI 种子轮，投后估值约 4 亿美元</h3><p class="english-title" lang="en" data-no-inline-speech>DeepSeek to lead seed round in $400mn robot AI start-up, Bloomberg reports<button type="button" class="speak-btn" data-speak="DeepSeek to lead seed round in $400mn robot A I start-up, Bloomberg reports" data-audio="546065079b07" aria-label="朗读英语：DeepSeek to lead seed round in $400mn robot AI start-up, Bloomberg reports" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p><p class="summary">彭博社援引知情人士：DeepSeek 领投机器人 AI 初创 Winverse 种子轮，投后估值约 4 亿美元，美团龙珠资本跟投。几个记者本能的标注：第一，信源是匿名知情人士，交易尚未最终敲定；第二，Winverse 还在隐身模式，创始人是前腾讯具身团队负责人；第三，这是 DeepSeek 拿着超 120 亿美元新融资在当 VC——从模型公司变成资本配置者。结合它之前入股宇树 2%，路线很清楚：DeepSeek 在系统性布局具身智能。但 4 亿美元估值对应的技术是什么，外界还看不到。</p><div class="card-footer"><span>10.12</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://news.bloombergtax.com/artificial-intelligence/deepseek-backs-ex-tencent-ai-scientists-400-million-robot-lab" target="_blank" rel="noopener noreferrer">Bloomberg（彭博社，2026-10-12，经 Bloomberg Law）</a><button type="button" class="speak-btn" data-speak="Bloomberg" data-audio="d07296c662d3" aria-label="朗读英语：Bloomberg" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://news.bloombergtax.com/artificial-intelligence/deepseek-backs-ex-tencent-ai-scientists-400-million-robot-lab" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div></article><article class="card" data-id="n09" data-category="research" data-date="2026-10-12" data-search="谷歌（Google）DeepMind 的 AlphaProof Nexus 通过《科学》（Science）同行评审：解开 9 道悬而未决的埃尔德什（Erdos）数学难题 Google DeepMind&#x27;s AlphaProof Nexus solved dozens of open math problems and actually got peer reviewed 谷歌（Google）DeepMind 的数学证明系统 AlphaProof Nexus 的研究成果在 10 月 12 日正式发表于《科学》（Science）期刊，此前已于 5 月以预印本（preprint）形式公布。该系统攻克了 353 道公开埃尔德什（Erdos）难题中的 9 道，其中两道悬置长达 56 年，还证明了整数数列在线大全（OEIS，Online Encyclopedia of Integer Sequences）中的 44 条猜想、解决了一道代数几何（algebraic geometry）公开问题，并改进了最小最大优化（min-max optimization，已知用于训练部分 AI 模型的一种技术）的一个已有界限。系统以 Gemini 3.1 Pro 为核心，用形式化证明语言 Lean（一种机器可检查证明的语言）起草和修改证明，每次修改后由 Lean 自动校验、报错指导下一轮尝试，难题还可调用专用证明工具 AlphaProof。此举正值 AI 数学证明争论白热化之际：OpenAI 近期直接把数百份 AI 证明扔到代码托管平台 GitHub，而数学家特伦斯·陶（Terence Tao）牵头呼吁抵制，DeepMind 则选择了经过同行评审（peer review）的发表路径。 The Decoder（解码器，2026-10-12）"><div class="card-top"><span class="tag"><span class="tag-dot"></span>前沿探索</span><span class="quality multi">2 个来源</span></div><h3>谷歌（Google）DeepMind 的 AlphaProof Nexus 通过《科学》（Science）同行评审：解开 9 道悬而未决的埃尔德什（Erdos）数学难题</h3><p class="english-title" lang="en" data-no-inline-speech>Google DeepMind&#x27;s AlphaProof Nexus solved dozens of open math problems and actually got peer reviewed<button type="button" class="speak-btn" data-speak="Google DeepMind&#x27;s AlphaProof Nexus solved dozens of open math problems and actually got peer reviewed" data-audio="17c094a7da73" aria-label="朗读英语：Google DeepMind&#x27;s AlphaProof Nexus solved dozens of open math problems and actually got peer reviewed" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p><p class="summary">DeepMind 的 AlphaProof Nexus 登上《科学》期刊：解开 9 道埃尔德什难题，其中两道悬置 56 年。这条新闻的真正张力不在数学，而在发表路径的选择。OpenAI 前阵子把数百份 AI 证明直接扔上 GitHub，陶哲轩牵头呼吁抵制；DeepMind 选了最传统的路——同行评审，发《科学》。这是精心设计的对比：当对手在 AI 数学是否可信的争议里裸奔，DeepMind 用顶刊背书把自己洗成了负责任的一方。9 道题是真成绩，但发表策略是更深的棋。</p><div class="card-footer"><span>10.12</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://the-decoder.com/google-deepminds-alphaproof-nexus-solved-dozens-of-open-math-problems-and-actually-got-peer-reviewed/" target="_blank" rel="noopener noreferrer">The Decoder（解码器，2026-10-12）</a><button type="button" class="speak-btn" data-speak="The Decoder" data-audio="c946036f72ec" aria-label="朗读英语：The Decoder" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://the-decoder.com/google-deepminds-alphaproof-nexus-solved-dozens-of-open-math-problems-and-actually-got-peer-reviewed/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div></article><article class="card" data-id="n10" data-category="research" data-date="2026-10-12" data-search="阿里（Alibaba）Qwen 团队推出 QwenGyre：为“超长程”智能体（Agent）训练设计的弹性强化学习（RL）框架 Alibaba Qwen Introduces QwenGyre: Elastic Reinforcement Learning RL for XLong-Horizon Agents 阿里巴巴（Alibaba）Qwen 团队联合中国科学技术大学、清华大学的研究者在 arXiv 论文中详细公布了 QwenGyre——一个在线强化学习（RL）系统，专为训练能在数小时、近百万 token（token：模型处理文本的基本单位）滚动（rollout，一次完整任务执行）中持续运行的编程智能体（Agent）设计，而无需改写智能体已在使用的黑盒工具链。核心是“弹性调度器”（Elastic Scheduler）：在滚动生成与模型训练之间动态调配空闲 GPU（图形处理器），把分叉的智能体历史轨迹转为有界训练样本。在 2.4 万亿参数（2.4T）的 Qwen3.8 旗舰模型上，48 步训练仅用 75.42 小时、比基线 134.55 小时缩短约 44%；在仓库级编程基准（benchmark）NL2RepoBench 上通过率从 52.48% 提升至 58.54%，对比常规部署最高有 1.85 倍的端到端加速。目前论文未附公开代码仓库。 MarkTechPost（2026-10-12）"><div class="card-top"><span class="tag"><span class="tag-dot"></span>前沿探索</span><span class="quality multi">3 个来源</span></div><h3>阿里（Alibaba）Qwen 团队推出 QwenGyre：为“超长程”智能体（Agent）训练设计的弹性强化学习（RL）框架</h3><p class="english-title" lang="en" data-no-inline-speech>Alibaba Qwen Introduces QwenGyre: Elastic Reinforcement Learning RL for XLong-Horizon Agents<button type="button" class="speak-btn" data-speak="Alibaba Qwen Introduces QwenGyre: Elastic Reinforcement Learning R L for XLong-Horizon Agents" data-audio="3df2f7c8dc40" aria-label="朗读英语：Alibaba Qwen Introduces QwenGyre: Elastic Reinforcement Learning RL for XLong-Horizon Agents" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p><p class="summary">阿里 Qwen 团队发论文：QwenGyre，一个给超长程智能体训练用的弹性 RL 框架。数字很亮眼：48 步训练从 134 小时压到 75 小时，提速 44%。但记者要划三条线：第一，数据来自论文自报；第二，论文未附公开代码仓库，别人复现不了；第三，报道来自 MarkTechPost 等二手科技媒体，不是顶会。弹性调度 GPU 的想法是实在的，但 1.85 倍端到端加速这种数字，在代码开源之前都先打个问号。</p><div class="card-footer"><span>10.12</span><span>·</span><span class="source-name"><a class="open-link" data-source-annotated="true" href="https://www.marktechpost.com/2026/10/12/alibaba-qwen-introduces-qwengyre-elastic-reinforcement-learning-rl-for-xlong-horizon-agents/" target="_blank" rel="noopener noreferrer">MarkTechPost（2026-10-12）</a><button type="button" class="speak-btn" data-speak="MarkTechPost" data-audio="fe3ef546c5b4" aria-label="朗读英语：MarkTechPost" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><a class="mini-btn open-link" aria-label="打开原文" href="https://www.marktechpost.com/2026/10/12/alibaba-qwen-introduces-qwengyre-elastic-reinforcement-learning-rl-for-xlong-horizon-agents/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"></path><path d="M18 13v5H6V6h5"></path></svg></a><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div></article><article class="card" data-id="n11" data-category="embodied" data-date="2026-10-12" data-search="北醒（Benewake）发布固态多点激光雷达（LiDAR）NOVA20，主打机器人 1 米内近场安全感知 Benewake Introduces NOVA20 LiDAR to Close the Near-Field Gap in Robot Safety Perception 北京北醒（Benewake）10 月 12 日发布新一代固态多点激光雷达（LiDAR，用激光测距的环境感知传感器）NOVA20，面向机器人平台，解决机器人身体周围 1 米内的近场盲区感知问题。该传感器采用 20 点探测阵列、40 度视场，探测距离 0.05 至 1 米，在 10 万勒克斯（klux）环境光照下 1 米处仍可对 10% 反射率目标测距。传统 360 度旋转激光雷达在机身附近存在盲区、摄像头易受遮挡和光线影响，NOVA20 直接补上这块短板。 PR Newswire（美通社，2026-10-12）"><div class="card-top"><span class="tag"><span class="tag-dot"></span>具身未来</span><span class="quality single">1 个来源</span></div><h3>北醒（Benewake）发布固态多点激光雷达（LiDAR）NOVA20，主打机器人 1 米内近场安全感知</h3><p class="english-title" lang="en" data-no-inline-speech>Benewake Introduces NOVA20 LiDAR to Close the Near-Field Gap in Robot Safety Perception<button type="button" class="speak-btn" data-speak="Benewake Introduces NOVA20 LiDAR to Close the Near-Field Gap in Robot Safety Perception" data-audio="22c10451827c" aria-label="朗读英语：Benewake Introduces NOVA20 LiDAR to Close the Near-Field Gap in Robot Safety Perception" title="播放英语发音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l4 3V7L8 10H5z"></path><path d="M16 9.5c1.3 1.3 1.3 3.7 0 5M18.5 7c2.8 2.8 2.8 7.2 0 10"></path></svg></button></p><p class="summary">
