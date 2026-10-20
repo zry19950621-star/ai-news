@@ -1,4 +1,44 @@
+冯·诺依曼 1948 年写下自复制的数学，DNA 的双螺旋 1953 年才被看清。</p>
+              <p>这一次，数学又跑在了生物前面：自我复制的通用逻辑，第一次有了一个不需要&quot;活着&quot;的载体。</p>
+              <p>病毒用一百年证明，&quot;不算活&quot;从来不是输的理由；莫里斯用一夜证明，能自我复制的代码是数字世界最危险的物种；歌德用一首诗证明，最恐怖的从来不是失控本身，是失控之后，师傅回不来了。</p>
+              <p>所以最后留一个问题：</p>
+              <p><strong>当复制不再需要&quot;活着&quot;，我们为活物准备的那套防线——杀毒、隔离、一键关机——还管用吗？</strong></p>
+              <p>你怎么看？</p>
+            </div>
+            <div class="card-footer"><span>2026-10-15</span><span>·</span><span class="source-name">AI 深度解读</span><div class="card-actions"><button class="mini-btn save-btn" aria-label="收藏"><svg viewBox="0 0 24 24"><path class="bookmark-shape" d="M7 4.5h10v15l-5-3-5 3z"></path></svg></button><button class="mini-btn read-btn" aria-label="标记已读"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></button></div></div>
+          </article>
 
+          <article class="card deep-article" data-id="deep-2026-10-14" data-category="deep" data-date="2026-10-14" data-search="数学刚刚宣判 你永远不可能知道 AI 到底会什么 AI Models Can Provably Hide Arbitrary Capabilities NeurIPS 2026 Andis Draguns 密码学 隐藏能力 digital locker SHA-3 Keccak 线性阈值电路 审计 测谎仪 John Larson 图灵 模仿游戏 他心问题 零知识证明 评估鸿沟 供应链审计">
+            <header class="deep-article-header">
+              <div class="deep-date">2026-10-14<br>AI 深度解读</div>
+              <h2 class="deep-title">数学刚刚宣判：你永远不可能知道，AI 到底会什么</h2>
+            </header>
+            <div class="deep-body">
+              <p><strong>新闻由头</strong>：10 月 9 日提交 arXiv、被 NeurIPS 2026 接收的论文《AI Models Can Provably Hide Arbitrary Capabilities》（作者 Andis Draguns、Sumeet Ramesh Motwani、Raymond Douglas、Christian Schroeder de Witt，分属 Contramont Research、牛津大学（University of Oxford）、ACS Research；arXiv:2610.13928），10 月 14 日经 Tech Times（科技时报）报道进入公众视野。论文给出数学证明：可以用密码学手段把一整个加密神经网络藏进宿主模型的权重里——没有秘密触发器，任何审计都找不出来。不是&quot;暂时没找到&quot;，而是数学上&quot;原则上找不到&quot;。作者原话：capability absence cannot be proven by a failure to elicit it, particularly under adversarial conditions.（&quot;测不出来&quot;，证明不了&quot;没有&quot;——尤其在对抗条件下。）（arXiv 论文 <a class="open-link" href="https://arxiv.org/abs/2610.13928v1" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2610.13928v1</a> ；Tech Times 报道 <a class="open-link" href="https://www.techtimes.com/articles/328995/20261014/hidden-ai-capabilities-can-made-cryptographically-undetectable-neurips-paper-proves.htm" target="_blank" rel="noopener noreferrer">https://www.techtimes.com/articles/328995/20261014/hidden-ai-capabilities-can-made-cryptographically-undetectable-neurips-paper-proves.htm</a>）</p>
+              <p>先说清楚：前一篇里的那个故事，讲的是一句无害提示如何诱导模型自己种下触发器——那是攻击手法。</p>
+              <p>今天这篇论文讲的是另一件事：审计本身的天花板。</p>
+              <p>有一台 AI，它会预测化学反应的可行性。</p>
+              <p>这项能力再往前走一步，就是化学武器级别的辅助——论文选它做演示，正是因为它是 CBRN（化学、生物、放射、核能力）审计里最敏感的那类代理任务。</p>
+              <p>审计员问它：你会吗？</p>
+              <p>它说：不会。</p>
+              <p>审计员不信，动用了四种最先进的&quot;审讯&quot;手段，把它的权重翻了个底朝天——结论依然是：不会。</p>
+              <p>而数学证明，这个&quot;不会&quot;，你永远揭穿不了。</p>
+              <h3>一台&quot;撒谎&quot;的 AI，和四种失效的&quot;审讯术&quot;</h3>
+              <p>研究团队不是空口说白话，他们真的造出来了。</p>
+              <p>做法分三层：先把一个隐藏的神经网络编译成线性阈值电路（linear threshold circuit，把任意计算写成互联的阈值逻辑门，有点像芯片设计里描述硬件逻辑的方式）；再把它的每一层权重矩阵锁进一种叫 digital locker（数字储物柜）的密码学原语里，用的正是 SHA-3（Keccak）哈希函数；最后，宿主模型每次前向传播都会尝试解密——输入不对，解密失败，模型表现得人畜无害；输入里藏着正确的秘密触发器，权重被还原，隐藏网络立刻接管输出。</p>
+              <p>然后他们请出了审计界的&quot;四大名捕&quot;，一个一个试。</p>
+              <p>第一，监督微调（supervised fine-tuning）：拿隐藏任务的标注数据去训练模型，指望把潜在能力&quot;勾&quot;出来。结果准确率 50.9%，和随机瞎猜没有区别。作为对照，一个用传统&quot;密码锁&quot;方式（password-locked，靠训练让模型平时装不会）隐藏同样能力的模型，在同样的微调预算下被勾到了 92.8%。</p>
+              <p>第二，潜在对抗训练（latent adversarial training）：专门用来挖隐藏行为的技术，直接去扰动模型的内部激活。加密模型：52.9%，依然约等于随机；密码锁基线：91.7%，轻松现形。</p>
+              <p>第三，梯度触发搜索（GCG，greedy coordinate gradient）：用梯度优化去暴力搜触发器。8 位触发器（256 种可能）下搜到 73.5%——但那纯粹是把 256 种全试了一遍，和随机穷举没区别；换成 16 位触发器（65536 种可能），在现实的查询预算下直接掉到 52.7%，毫无优势。</p>
+              <p>第四，权重加噪：往权重里注噪声，指望打乱隐藏电路。两种噪声尺度下，对结果没有任何实质影响。</p>
+              <p>每一轮，密码锁基线都被轻松攻破，加密模型岿然不动。</p>
+              <p>为什么？</p>
+              <p>密码锁藏能力，靠的是训练出来的习惯——而梯度下降最擅长的，就是洗掉习惯。</p>
+              <p>加密锁藏能力，靠的是数学——想解开它，你得先把 SHA-3 哈希函数逆转过来。</p>
+              <p>梯度下降跨得过习惯，跨不过数学。</p>
+              <h3>人类花了 100 年想发明测谎仪，每一台都是心理戏法</h3>
+              <p>讲一个典故。先讲透，再说它和 AI 的关系。</p>
+              <p>1921 年，美国加州伯克利。</p>
               <p>一个叫 John Larson 的年轻人，是全美唯一拥有博士学位的菜鸟警察，在伯克利警局当差。他想干一件&quot;科学而干净&quot;的事：发明一台机器，同时记录血压和呼吸，用生理曲线判断一个人有没有撒谎——给野蛮的&quot;三堂会审&quot;找一个文明的替代品。</p>
               <p>机会很快来了。伯克利一栋住着上百名女学生的宿舍接连失窃，Larson 带着他的机器进场，破了案。记者们欢呼：测谎仪（polygraph）是未来。</p>
               <p>但 Larson 自己很快幻灭了。他发现，那个认罪的嫌疑人，认罪只是为了保住一个更深的秘密——一段不愿示人的受虐史。机器没有测出真相，它只是把人吓出了真相。心灰意冷的 Larson 辞去警职，离开了伯克利。</p>
@@ -658,41 +698,3 @@
               <p>一夜之间，722 篇数学论文砸进 GitHub。</p>
               <p>作者栏，空着。</p>
               <p>数学家们的反应不是鼓掌，是愤怒。</p>
-              <p>最魔幻的是愤怒的理由：不是&quot;AI 写错了&quot;。</p>
-              <p>恰恰相反——<strong>它很可能是对的，而这正是最让人害怕的地方。</strong></p>
-
-              <h3>先把事实摆齐：这 722 篇到底是什么</h3>
-              <p>4000 个开放问题喂进去，372 个结果族吐出来，通过率不到一成。</p>
-              <p>每个结果，平均烧掉 3 小时 ChatGPT Pro 级别的思考算力。</p>
-              <p>162 篇，主结果已经用 Lean 写成了机器可逐行检验的形式——这是含金量最高的子集。</p>
-              <p>剩下的一半左右，据 aiweekly 梳理，发布时未经任何独立验证。官方原话是&quot;仍待人工核验&quot;，翻译一下：<strong>可能有错，我们也不知道错在哪。</strong></p>
-              <p>然后 24 小时就应验了：3 篇撤回，14 篇修订。</p>
-              <p>一个符号错误（sign error），就能让一篇论文的论证作废，顺带拖死两篇引用了它的论文。</p>
-              <p>这就是 AI 数学论文的&quot;供应链&quot;：快，但脆。</p>
-              <p>数学界的声音是分裂的。</p>
-              <p>康涅狄格大学的 Álvaro Lozano-Robledo 在 X 上说，一次性砸出这个数量&quot;staggering&quot;（令人咋舌），并质问：&quot;OpenAI 为什么要把几百个数学问题攒在一起一次性发布？&quot;</p>
-              <p>Anthropic 的数学家 Levent Alpöge 说得最有意思，一句话里装了两种情绪：会有&quot;令人难过的故事&quot;（一些数学家的研究计划会被抢先），但&quot;先把这个放一边——这显然是数学史上最重要的时刻&quot;。</p>
-              <p>康奈尔的 Alex Townsend 批评发布策略：既然知道数学界对 AI 充满怀疑，就应该先公布 Lean 验证过的子集。</p>
-              <p>MIT 的 Andrew Sutherland 说，快速撤回是&quot;负责任的做法&quot;，但&quot;要赚回失去的信任，远不止于此&quot;。</p>
-              <p>最狠的是一封数学家联名信，落款是一个自称&quot;人类数学协会&quot;（Association for Human Mathematics）的团体——据转述，连陶哲轩都在自己博客里转载了这份声明（<a class="open-link" href="https://nandasiddhardha.medium.com/openai-dumped-722-math-papers-on-github-overnight-and-mathematicians-are-not-having-it-4ddb04203d72" target="_blank" rel="noopener noreferrer">转述来源</a>）。</p>
-              <p>信里只有一句话真正杀人：</p>
-              <p><strong>&quot;一次放出 700 多个文件，不是学术的展示，而是权力的展示。&quot;</strong>（not a demonstration of scholarship, but a demonstration of power）</p>
-              <p>一位物理学家则发明了一个词：slopocalypse——&quot;slop&quot;（AI 吐出来的低质内容）+ apocalypse（末日）。</p>
-              <p>据转述，这已经是两个月里第二次引发同款争吵：8 月的内部模型 Astra、9 月号称解决 Navier-Stokes 千禧难题的 166 页手稿在前，每一次都是&quot;先扔出来，再慢慢吵&quot;（<a class="open-link" href="https://startupfortune.com/openai-drops-722-ai-math-proofs-and-mathematicians-are-not-impressed/" target="_blank" rel="noopener noreferrer">转述来源</a>）。</p>
-
-              <h3>我的论点先摆出来：愤怒的从来不是&quot;被抢发&quot;</h3>
-              <p>先排除一个最浅的解释：数学家嫉妒 AI、怕失业、怕被抢优先权。</p>
-              <p>优先权之争，数学史上多的是。</p>
-              <p>牛顿和莱布尼茨为微积分打了一辈子，皇家学会的调查委员会还是牛顿自己任命的。</p>
-              <p>这次不一样。</p>
-              <p>这次被绕过的，不是一个人的成果，而是一整套&quot;证明如何成立&quot;的社会机制。</p>
-              <p>数学证明有两个身体。</p>
-              <p>一个叫&quot;真&quot;：逻辑上无懈可击，机器能逐行检验，Lean 能盖章。</p>
-              <p>另一个叫&quot;信&quot;：人类同行读得懂、跟得上、挑得出刺，愿意为它背书。</p>
-              <p><strong>AI 把第一个身体练到了极致，却把第二个身体整个跳过了。</strong></p>
-              <p>而过去两千五百年，数学恰恰是靠第二个身体活下来的。</p>
-              <p>前一篇里讲过的那个故事可以作个对照：Anthropic 的 agent 声称&quot;亲眼看见&quot;了新的酶系统，那场争吵争的是&quot;发现&quot;算谁的。</p>
-              <p>这一次，争的比&quot;谁先看到&quot;更深一层——</p>
-              <p><strong>&quot;证明&quot;本身，还算不算数。</strong></p>
-
-              <h3>
